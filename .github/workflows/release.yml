@@ -49,7 +49,8 @@ jobs:
           MANIFEST="$(node -p "require('./dxt/manifest.json').version")"
           SERVER="$(node -p "require('./server.json').version")"
           SERVER_PKG="$(node -p "require('./server.json').packages[0].version")"
-          echo "tag=$TAG  package.json=$PKG  manifest=$MANIFEST  server.json=$SERVER  server package=$SERVER_PKG"
+          SAFESKILL="$(node -p "require('./safeskill.manifest.json').version")"
+          echo "tag=$TAG  package.json=$PKG  manifest=$MANIFEST  server.json=$SERVER  server package=$SERVER_PKG  safeskill=$SAFESKILL"
           if [ "$TAG" != "$PKG" ]; then
             echo "::error::Tag v$TAG does not match package.json version $PKG. Bump with 'npm version' before tagging."
             exit 1
@@ -64,6 +65,10 @@ jobs:
           fi
           if [ "$SERVER_PKG" != "$PKG" ]; then
             echo "::error::server.json package version $SERVER_PKG does not match package.json $PKG."
+            exit 1
+          fi
+          if [ "$SAFESKILL" != "$PKG" ]; then
+            echo "::error::safeskill.manifest.json version $SAFESKILL does not match package.json $PKG."
             exit 1
           fi
 

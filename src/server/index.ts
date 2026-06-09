@@ -65,8 +65,29 @@ export function createServer(opts: CreateServerOptions): CreatedServer {
     registeredPrompts.push(p.name);
   }
 
-  logger.info("server ready", { tools: registered, prompts: registeredPrompts });
-  return { server, context: ctx, registered, registeredPrompts };
+  const registeredResources: string[] = [];
+  for (const r of opts.resources ?? []) {
+    registerResource(server, r, ctx);
+    registeredResources.push(r.uri);
+  }
+
+  logger.info("server ready", {
+    tools: registered,
+    prompts: registeredPrompts,
+    resources: registeredResources,
+  });
+  return { server, context: ctx, registered, registeredPrompts, registeredResources };
+}
+
+function registerResource(
+  server: McpServer,
+  r: ResourceDefinition,
+  ctx: ToolContext,
+): void {
+  server.resource(r.name, r.uri, { description: r.description, mimeType: r.mimeType }, async () => {
+    const result = await r.read(ctx.bridge ?? null);
+    return { contents: result.contents };
+  });
 }
 
 function registerPrompt(server: McpServer, p: PromptDefinition): void {

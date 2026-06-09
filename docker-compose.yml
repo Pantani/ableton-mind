@@ -16,6 +16,10 @@ services:
     image: ableton-mind
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # Linux gotcha: the Remote Script binds DEFAULT_HOST=127.0.0.1, so a
+    # container reaching it via host.docker.internal will fail to connect.
+    # Set ABLETON_MIND_HOST=0.0.0.0 in Live's User Library env so the bridge
+    # listens on all interfaces. See docs/guide/install for details.
     environment:
       ABLETON_MIND_HOST: host.docker.internal
       ABLETON_MIND_PORT: "9876"

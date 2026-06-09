@@ -55,7 +55,8 @@ describe(".github/workflows/*.yml — parseability + required keys", () => {
     const ci = read(".github/workflows/ci.yml");
     expect(ci).toMatch(/^name:\s*CI/m);
     expect(ci).toContain("npm run typecheck");
-    expect(ci).toContain("npm run test");
+    // After porting tdmcp's workflow shape, `test` runs as `npm test` (no `run`).
+    expect(ci).toMatch(/npm\s+(run\s+)?test/);
     expect(ci).toMatch(/python.*unittest/);
   });
 
@@ -65,7 +66,9 @@ describe(".github/workflows/*.yml — parseability + required keys", () => {
     expect(rel).toMatch(/^name:\s*Release/m);
     expect(rel).toContain("npm publish");
     expect(rel).toContain("ghcr.io");
-    expect(rel).toContain("softprops/action-gh-release");
+    // After porting tdmcp's workflow shape, the release is created with the
+    // `gh release create` CLI instead of the softprops/action-gh-release action.
+    expect(rel).toMatch(/gh release (create|upload)/);
   });
 
   it("release.yml requires expected permissions for OIDC + release", () => {

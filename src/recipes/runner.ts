@@ -45,7 +45,7 @@ function resolveValue(value: unknown, bindings: Record<string, unknown>): unknow
     // Substituição completa: string inteira é `{{x}}` → devolve o tipo original.
     const wholeMatch = value.match(/^\{\{([^}]+)\}\}$/);
     if (wholeMatch) {
-      return dottedGet(bindings, wholeMatch[1].trim());
+      return dottedGet(bindings, (wholeMatch[1] ?? "").trim());
     }
     // Substituição inline: stringifica.
     return value.replace(PLACEHOLDER_RE, (_, expr) => {
@@ -86,6 +86,7 @@ export async function applyRecipe(
   let completed = 0;
   for (let i = 0; i < recipe.steps.length; i++) {
     const step = recipe.steps[i];
+    if (!step) continue;
     const resolvedArgs = resolveValue(step.args, bindings) as Record<string, unknown>;
     try {
       const result = await bridge.call(step.op, resolvedArgs);

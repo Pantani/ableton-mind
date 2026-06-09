@@ -11,11 +11,10 @@ on:
       - ".github/workflows/docs.yml"
   workflow_dispatch:
 
-# Allow the GITHUB_TOKEN to deploy to Pages and verify the deployment origin.
+# Default to read-only at the workflow level; the deploy job opts into the
+# extra scopes it actually needs (least privilege).
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Allow one concurrent deployment; don't cancel an in-progress production deploy.
 concurrency:
@@ -53,6 +52,10 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write     # deploy to GitHub Pages
+      id-token: write  # verify the deployment origin
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -1,5 +1,3 @@
-# Ruff config for the Python Remote Script bridge under live/AbletonMind.
-# Mirrors tdmcp: implicit default rule set, with McCabe complexity capped at 10
-# (matching the project-wide CC<=10 invariant from CLAUDE.md).
-[tool.ruff.lint.mccabe]
-max-complexity = 10
+# Intentionally empty: Ruff configuration lives in ruff.toml (single source of
+# truth for the Python Remote Script under live/AbletonMind). This file exists
+# so tools that probe for pyproject.toml (e.g. uv) don't error.

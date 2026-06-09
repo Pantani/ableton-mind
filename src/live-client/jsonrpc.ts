@@ -108,7 +108,7 @@ export class JsonRpcRemoteError extends Error {
 
 /** Erro do transport (timeout, socket fechou, parse falhou). */
 export class JsonRpcTransportError extends Error {
-  public readonly cause?: unknown;
+  public override readonly cause?: unknown;
 
   constructor(message: string, cause?: unknown) {
     super(message);

@@ -46,7 +46,7 @@ function fmt(check: Check): string {
 }
 
 async function checkNode(): Promise<Check> {
-  const major = Number.parseInt(process.versions.node.split(".")[0], 10);
+  const major = Number.parseInt(process.versions.node.split(".")[0] ?? "0", 10);
   return {
     name: "Node.js >= 20",
     ok: major >= 20,
