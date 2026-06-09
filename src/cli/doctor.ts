@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * ableton-mind doctor — diagnostico de instalação.
  *
