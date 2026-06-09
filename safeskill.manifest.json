@@ -1,0 +1,30 @@
+{
+  "name": "ableton-mind",
+  "version": "0.0.21",
+  "summary": "Ableton Live MCP server — drives a local Remote Script bridge for music production workflows.",
+  "expectedCapabilities": {
+    "filesystem": {
+      "read": [
+        "project recipes, docs, package manifests and embedded device knowledge base",
+        "ableton-mind config files from the current project or user config directory"
+      ],
+      "write": [
+        "Remote Script files installed under the user's Ableton User Library when running `install:remote-script`"
+      ]
+    },
+    "network": {
+      "loopback": [
+        "Ableton Live Remote Script bridge on the configured host and port (default 127.0.0.1:9876)"
+      ],
+      "remote": []
+    },
+    "process": [
+      "spawns the bridge Remote Script only via the user's Ableton Live process — never directly"
+    ]
+  },
+  "securityNotes": [
+    "All Live mutations go through transactional Song.begin_undo_step()/end_undo_step() so undo is unitary.",
+    "Tools follow a read-before-write contract and return { ok, verified, diff } — never assume state.",
+    "Device parameters are addressed by name via the embedded knowledge base, not by raw index."
+  ]
+}

@@ -1,0 +1,5 @@
+# Ruff config for the Python Remote Script bridge under live/AbletonMind.
+# Mirrors tdmcp: implicit default rule set, with McCabe complexity capped at 10
+# (matching the project-wide CC<=10 invariant from CLAUDE.md).
+[tool.ruff.lint.mccabe]
+max-complexity = 10

@@ -27,7 +27,9 @@
     "entry_point": "dist/index.js",
     "mcp_config": {
       "command": "node",
-      "args": ["${__dirname}/dist/index.js"],
+      "args": [
+        "${__dirname}/dist/index.js"
+      ],
       "env": {
         "ABLETON_MIND_HOST": "${user_config.host}",
         "ABLETON_MIND_PORT": "${user_config.port}",
@@ -60,29 +62,80 @@
   },
   "compatibility": {
     "claude_desktop": ">=0.10.0",
-    "platforms": ["darwin", "win32"],
+    "platforms": [
+      "darwin",
+      "win32"
+    ],
     "runtimes": {
       "node": ">=20"
     }
   },
   "tools": [
-    { "name": "play", "description": "Start or continue Ableton Live playback (idempotent)." },
-    { "name": "stop", "description": "Stop Ableton Live playback (idempotent)." },
-    { "name": "set_tempo", "description": "Set the global tempo in BPM (20–999)." },
-    { "name": "track_list", "description": "List all tracks (regular, return, master) in the Live session." },
-    { "name": "track_create", "description": "Create a new MIDI or audio track at an optional index." },
-    { "name": "create_midi_clip", "description": "Create an empty MIDI clip in a session clip slot." }
+    {
+      "name": "play",
+      "description": "Start or continue Ableton Live playback (idempotent)."
+    },
+    {
+      "name": "stop",
+      "description": "Stop Ableton Live playback (idempotent)."
+    },
+    {
+      "name": "set_tempo",
+      "description": "Set the global tempo in BPM (20–999)."
+    },
+    {
+      "name": "track_list",
+      "description": "List all tracks (regular, return, master) in the Live session."
+    },
+    {
+      "name": "track_create",
+      "description": "Create a new MIDI or audio track at an optional index."
+    },
+    {
+      "name": "create_midi_clip",
+      "description": "Create an empty MIDI clip in a session clip slot."
+    }
   ],
   "prompts": [
-    { "name": "create_genre_track", "description": "Compose a full track in a specified genre using kit + bassline + chords + arrangement recipes." },
-    { "name": "build_mix_chain", "description": "Build a mixing chain for a specific source (drums/bass/vocal/master)." },
-    { "name": "build_arrangement", "description": "Lay out a song arrangement (intro/build/drop/break/outro) using session scenes." },
-    { "name": "sound_design_session", "description": "Explore a synth's parameter space to find a sound (lead/pad/bass/etc)." },
-    { "name": "process_vocal_take", "description": "Process a recorded vocal take with a complete chain." }
+    {
+      "name": "create_genre_track",
+      "description": "Compose a full track in a specified genre using kit + bassline + chords + arrangement recipes."
+    },
+    {
+      "name": "build_mix_chain",
+      "description": "Build a mixing chain for a specific source (drums/bass/vocal/master)."
+    },
+    {
+      "name": "build_arrangement",
+      "description": "Lay out a song arrangement (intro/build/drop/break/outro) using session scenes."
+    },
+    {
+      "name": "sound_design_session",
+      "description": "Explore a synth's parameter space to find a sound (lead/pad/bass/etc)."
+    },
+    {
+      "name": "process_vocal_take",
+      "description": "Process a recorded vocal take with a complete chain."
+    }
   ],
   "resources": [
-    { "uri": "live://session/state", "name": "session_state", "description": "Deep snapshot of the current Live session.", "mimeType": "application/json" },
-    { "uri": "live://knowledge/devices", "name": "knowledge_devices", "description": "Index of 55 embedded device schemas.", "mimeType": "application/json" },
-    { "uri": "live://recipes/index", "name": "recipes_index", "description": "Index of 14 embedded music recipes.", "mimeType": "application/json" }
+    {
+      "uri": "live://session/state",
+      "name": "session_state",
+      "description": "Deep snapshot of the current Live session.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "live://knowledge/devices",
+      "name": "knowledge_devices",
+      "description": "Index of 55 embedded device schemas.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "live://recipes/index",
+      "name": "recipes_index",
+      "description": "Index of 14 embedded music recipes.",
+      "mimeType": "application/json"
+    }
   ]
 }

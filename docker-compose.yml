@@ -1,0 +1,25 @@
+# Runs the ableton-mind MCP server in a container.
+#
+# NOTE: Ableton Live is NOT containerized — it runs natively on the host with the
+# AbletonMind Remote Script (default 127.0.0.1:9876). The container reaches it
+# via `host.docker.internal`, which the extra_hosts mapping below resolves to
+# the host gateway (required on Linux; a no-op on Docker Desktop).
+#
+# IMPORTANT: by default the server uses stdio transport, which does NOT cross
+# the container boundary. Run this container only when you have wired a custom
+# HTTP/SSE transport, or use the image as a build/test sandbox.
+services:
+  ableton-mind:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ableton-mind
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      ABLETON_MIND_HOST: host.docker.internal
+      ABLETON_MIND_PORT: "9876"
+      ABLETON_MIND_LOG_LEVEL: info
+    stdin_open: true
+    tty: true
+    restart: unless-stopped

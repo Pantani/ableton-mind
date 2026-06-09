@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ableton-mind": {
+      "command": "npx",
+      "args": ["-y", "ableton-mind"]
+    }
+  }
+}
