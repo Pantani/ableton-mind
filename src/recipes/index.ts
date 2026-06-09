@@ -14,8 +14,13 @@ import { fileURLToPath } from "node:url";
 
 import { z } from "zod";
 
-const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const RECIPES_DIR = join(REPO_ROOT, "recipes");
+// In dev (tsx) `import.meta.url` is src/recipes/index.ts → recipes/ at "../..".
+// In the published bundle the file is dist/index.js and scripts/copy-assets.mjs
+// places recipes next to it at dist/recipes/. Probe both so loader works in
+// both modes without an env flag.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const RECIPES_DIR = join(HERE, "..", "..", "recipes");
+const RECIPES_DIR_DIST = join(HERE, "recipes");
 
 // ----- Schema (ADR-0007) -----------------------------------------------------
 
@@ -58,16 +63,38 @@ export type RecipeStep = z.infer<typeof stepSchema>;
 
 // ----- Loader ----------------------------------------------------------------
 
+import { stat } from "node:fs/promises";
+
+let cachedRoot: string | null = null;
+async function recipesRoot(): Promise<string> {
+  if (cachedRoot) return cachedRoot;
+  for (const candidate of [RECIPES_DIR, RECIPES_DIR_DIST]) {
+    try {
+      const s = await stat(candidate);
+      if (s.isDirectory()) {
+        cachedRoot = candidate;
+        return candidate;
+      }
+    } catch {
+      // not here, try the next candidate
+    }
+  }
+  // Fall back to the dev path; readers will surface ENOENT clearly.
+  cachedRoot = RECIPES_DIR;
+  return RECIPES_DIR;
+}
+
 async function readJsonRecipe(relPath: string): Promise<Recipe> {
-  const raw = await readFile(join(RECIPES_DIR, relPath), "utf8");
+  const raw = await readFile(join(await recipesRoot(), relPath), "utf8");
   return recipeSchema.parse(JSON.parse(raw));
 }
 
 /** Lista recursivamente todos os .json em `recipes/`. */
 export async function listRecipes(): Promise<Recipe[]> {
   const all: Recipe[] = [];
+  const root = await recipesRoot();
   async function walk(rel: string): Promise<void> {
-    const entries = await readdir(join(RECIPES_DIR, rel), { withFileTypes: true }).catch(() => []);
+    const entries = await readdir(join(root, rel), { withFileTypes: true }).catch(() => []);
     for (const e of entries) {
       const next = rel ? `${rel}/${e.name}` : e.name;
       if (e.isDirectory()) {

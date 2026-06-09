@@ -72,10 +72,11 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Run bridge unittests
-        # Run from repo root with PYTHONPATH=. so test files that do
-        # `from live.AbletonMind...` resolve cleanly.
+        # Tests in this tree use two import styles — some do
+        # `from AbletonMind...` and others do `from live.AbletonMind...`.
+        # Put both repo root AND live/ on PYTHONPATH so both resolve.
         env:
-          PYTHONPATH: ${{ github.workspace }}
+          PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/live
         run: python -m unittest discover -s live/AbletonMind/tests -t . -v
 
   docker:

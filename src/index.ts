@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Entry point do servidor MCP ableton-mind.
  *
@@ -20,6 +19,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 
 import { TcpJsonRpcClient, performHandshake } from "./live-client/index.js";
 import { allPrompts } from "./prompts/index.js";
+import { allResources } from "./resources/index.js";
 import { createBridgeClient } from "./server/context.js";
 import { createServer } from "./server/index.js";
 import { attachNotificationForwarder, createMcpNotifier } from "./server/notifications.js";

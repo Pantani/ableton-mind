@@ -32,11 +32,16 @@
   },
   "files": [
     "dist",
+    "recipes",
+    "src/knowledge/devices",
+    "src/knowledge/scales.json",
     "README.md",
-    "LICENSE"
+    "README.en.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && node scripts/copy-assets.mjs",
     "dev": "tsup --watch",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
