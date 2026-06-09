@@ -335,30 +335,36 @@ describe("clipSetLoopTool", () => {
 // ----- Registry smoke --------------------------------------------------------
 
 describe("allTools registry", () => {
-  it("exposes 18 tools", () => {
-    const names = allTools.map((t) => t.name).sort();
-    expect(names).toEqual(
-      [
-        "browser_get_categories",
-        "clip_add_notes",
-        "clip_fire",
-        "clip_set_loop",
-        "clip_set_name",
-        "clip_stop",
-        "create_midi_clip",
-        "play",
-        "scene_fire",
-        "session_get_info",
-        "set_tempo",
-        "stop",
-        "track_create",
-        "track_get_info",
-        "track_list",
-        "track_set_name",
-        "track_set_volume",
-        "track_upsert",
-      ].sort(),
-    );
+  it("exposes the cycle 3-4 baseline tools", () => {
+    // Registry grew past 30 tools as later cycles landed; rather than
+    // freezing the full list here (it drifts every cycle), assert that
+    // the baseline transport/track/clip/scene/session tools introduced in
+    // Cycles 3-4 are still present.
+    const names = new Set(allTools.map((t) => t.name));
+    const baseline = [
+      "browser_get_categories",
+      "clip_add_notes",
+      "clip_fire",
+      "clip_set_loop",
+      "clip_set_name",
+      "clip_stop",
+      "create_midi_clip",
+      "play",
+      "scene_fire",
+      "session_get_info",
+      "set_tempo",
+      "stop",
+      "track_create",
+      "track_get_info",
+      "track_list",
+      "track_set_name",
+      "track_set_volume",
+      "track_upsert",
+    ];
+    for (const name of baseline) {
+      expect(names.has(name), `missing baseline tool: ${name}`).toBe(true);
+    }
+    expect(names.size).toBeGreaterThanOrEqual(baseline.length);
   });
 
   it("every tool has unique name", () => {
