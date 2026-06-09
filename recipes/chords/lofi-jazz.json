@@ -1,0 +1,48 @@
+{
+  "$schema": "../recipe-schema.json",
+  "id": "chords/lofi-jazz",
+  "name": "Lo-Fi Jazz Chords",
+  "category": "chords",
+  "version": "0.1",
+  "description": "Cria MIDI track 'Keys' com Operator (Rhodes preset) + Redux (bit crush leve) + Vinyl Distortion (crackle), pattern Cmaj7 → Am7 → Fmaj7 → G7.",
+  "tags": ["lo-fi", "jazz", "hip-hop", "rhodes", "chords"],
+  "inputs": {
+    "track_name": { "type": "string", "default": "Keys" },
+    "bit_depth": { "type": "int", "default": 12, "min": 4, "max": 16 },
+    "crackle": { "type": "number", "default": 0.4, "min": 0, "max": 1 }
+  },
+  "steps": [
+    { "op": "track.upsert", "args": { "name": "{{track_name}}", "type": "midi" }, "let": "keys" },
+    { "op": "browser.load_item", "args": { "path": ["instruments", "Operator", "Init"] } },
+    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Redux", "Init"] } },
+    { "op": "device.set_parameter", "args": { "track_index": "{{keys.track.index}}", "device_index": 1, "parameter_name": "Bit Depth", "value": "{{bit_depth}}" } },
+    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Vinyl Distortion", "Init"] } },
+    { "op": "device.set_parameter", "args": { "track_index": "{{keys.track.index}}", "device_index": 2, "parameter_name": "Crackle Density", "value": "{{crackle}}" } },
+    { "op": "clip.create_midi", "args": { "track_index": "{{keys.track.index}}", "clip_slot_index": 0, "length_beats": 16.0, "name": "Cmaj7-Am7-Fmaj7-G7" } },
+    {
+      "op": "clip.add_notes",
+      "args": {
+        "track_index": "{{keys.track.index}}",
+        "clip_slot_index": 0,
+        "notes": [
+          { "pitch": 60, "start": 0, "duration": 4, "velocity": 70 },
+          { "pitch": 64, "start": 0, "duration": 4, "velocity": 68 },
+          { "pitch": 67, "start": 0, "duration": 4, "velocity": 66 },
+          { "pitch": 71, "start": 0, "duration": 4, "velocity": 64 },
+          { "pitch": 57, "start": 4, "duration": 4, "velocity": 72 },
+          { "pitch": 60, "start": 4, "duration": 4, "velocity": 70 },
+          { "pitch": 64, "start": 4, "duration": 4, "velocity": 68 },
+          { "pitch": 67, "start": 4, "duration": 4, "velocity": 66 },
+          { "pitch": 65, "start": 8, "duration": 4, "velocity": 70 },
+          { "pitch": 69, "start": 8, "duration": 4, "velocity": 68 },
+          { "pitch": 72, "start": 8, "duration": 4, "velocity": 66 },
+          { "pitch": 76, "start": 8, "duration": 4, "velocity": 64 },
+          { "pitch": 67, "start": 12, "duration": 4, "velocity": 74 },
+          { "pitch": 71, "start": 12, "duration": 4, "velocity": 72 },
+          { "pitch": 74, "start": 12, "duration": 4, "velocity": 70 },
+          { "pitch": 77, "start": 12, "duration": 4, "velocity": 68 }
+        ]
+      }
+    }
+  ]
+}

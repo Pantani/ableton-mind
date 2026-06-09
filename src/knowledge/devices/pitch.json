@@ -1,0 +1,17 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.pitch",
+  "name": "Pitch",
+  "category": "midi_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "MIDI effect que transpõe notes em semitones e limita à faixa MIDI.",
+  "source": "curated (Cycle 13)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Pitch", "min": -128, "max": 128, "default": 0, "unit": "semitones", "automatable": true, "modulatable": true },
+    { "index": 1, "name": "Range", "min": 0, "max": 128, "default": 128, "unit": "semitones", "automatable": true },
+    { "index": 2, "name": "Lowest", "min": 0, "max": 127, "default": 0, "unit": "MIDI", "automatable": true }
+  ],
+  "todo": []
+}

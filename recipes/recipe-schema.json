@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Pantani/ableton-mind/recipe-schema.json",
+  "title": "ableton-mind recipe",
+  "description": "Recipe canônica conforme ADR-0007. Loader em src/recipes/index.ts (Zod).",
+  "type": "object",
+  "required": ["id", "name", "category", "version", "steps"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[a-z_]+/[a-z0-9_-]+$" },
+    "name": { "type": "string" },
+    "category": {
+      "type": "string",
+      "enum": ["drums", "bass", "chords", "racks", "arrangements", "mixing", "live_performance"]
+    },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "default"],
+        "properties": {
+          "type": { "enum": ["string", "int", "number", "bool"] },
+          "default": {},
+          "min": { "type": "number" },
+          "max": { "type": "number" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["op", "args"],
+        "properties": {
+          "op": { "type": "string", "description": "JSON-RPC method name (ex: 'track.upsert')." },
+          "args": { "type": "object" },
+          "let": { "type": "string", "description": "Bind step result em variável." }
+        }
+      }
+    }
+  }
+}

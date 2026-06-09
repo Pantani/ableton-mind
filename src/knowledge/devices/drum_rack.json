@@ -1,0 +1,53 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.drum_rack",
+  "name": "Drum Rack",
+  "category": "drum_rack",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "Container de 128 drum pads (slots MIDI 0..127), cada pad pode hospedar Simpler/Sampler/Operator/Drum Cell/Impulse. Pads roteiam para 16 chains (1-16) ou retornos A-D.",
+  "source": "curated (Cycle 7)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Macro 1", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true, "description": "Mapeável; default sem destino." },
+    { "index": 1,  "name": "Macro 2", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 2,  "name": "Macro 3", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 3,  "name": "Macro 4", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "Macro 5", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 5,  "name": "Macro 6", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "Macro 7", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 7,  "name": "Macro 8", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 8,  "name": "Voice Mode", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "0=Poly, 1=Mono per Pad." },
+    { "index": 9,  "name": "Choke", "min": 0, "max": 16, "default": 0, "unit": "group", "automatable": false, "description": "0=Off, 1..16=choke group." }
+  ],
+  "drum_pads": {
+    "count": 128,
+    "midi_range": [0, 127],
+    "default_visible_range": [36, 51],
+    "common_kit_layout": {
+      "36": "Kick",
+      "37": "Side Stick",
+      "38": "Snare",
+      "39": "Clap",
+      "40": "Snare Rim",
+      "41": "Low Tom",
+      "42": "Closed Hi-Hat",
+      "43": "Mid Tom",
+      "44": "Pedal Hi-Hat",
+      "45": "Hi Tom",
+      "46": "Open Hi-Hat",
+      "47": "Low-Mid Tom",
+      "48": "Hi-Mid Tom",
+      "49": "Crash 1",
+      "50": "Hi Tom 2",
+      "51": "Ride"
+    },
+    "chain_routing": {
+      "internal_chains": 16,
+      "return_chains": ["A", "B", "C", "D"]
+    }
+  },
+  "todo": [
+    "Phase 5: introspection de cada pad individual via knowledge separada."
+  ]
+}

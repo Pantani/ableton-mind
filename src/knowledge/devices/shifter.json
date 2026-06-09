@@ -1,0 +1,24 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.shifter",
+  "name": "Shifter",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "12.0",
+  "description": "Pitch shifter melhorado (Live 12+) — substitui Frequency Shifter para a maioria dos casos. Modes: Pitch / Ring Mod / Frequency Shift.",
+  "source": "curated (Cycle 12)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Pitch / Frequency / Ring." },
+    { "index": 1,  "name": "Pitch", "min": -24, "max": 24, "default": 0, "unit": "semitones", "automatable": true, "modulatable": true },
+    { "index": 2,  "name": "Fine Pitch", "min": -50, "max": 50, "default": 0, "unit": "cents", "automatable": true, "modulatable": true },
+    { "index": 3,  "name": "Spread", "min": 0, "max": 50, "default": 0, "unit": "cents", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "Window", "min": 0, "max": 100, "default": 50, "unit": "ms", "automatable": true },
+    { "index": 5,  "name": "Drift", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "Feedback", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 7,  "name": "MIDI", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false, "description": "Pitch controlado por MIDI." },
+    { "index": 8,  "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 9,  "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

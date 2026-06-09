@@ -1,0 +1,53 @@
+{
+  "$schema": "../recipe-schema.json",
+  "id": "chords/neo-soul-progressions",
+  "name": "Neo-Soul Progressions",
+  "category": "chords",
+  "version": "0.1",
+  "description": "Cria MIDI track com Rhodes-style preset e progressão ii-V-I com extensões (9, 11, 13) — vibe neo-soul. Aceita `instrument_path` override para Live 11 (Operator).",
+  "tags": ["neo-soul", "rhodes", "chords", "ii-V-I", "jazz"],
+  "inputs": {
+    "track_name": { "type": "string", "default": "Rhodes" },
+    "root": { "type": "int", "default": 60, "min": 48, "max": 72, "description": "Tonic MIDI (default C4)." },
+    "instrument_path_a": { "type": "string", "default": "instruments", "description": "Browser root." },
+    "instrument_path_b": { "type": "string", "default": "Drift", "description": "Live 12+: Drift. Live 11: use 'Operator'." },
+    "instrument_path_c": { "type": "string", "default": "Init", "description": "Preset name. 'Init' funciona em ambos." }
+  },
+  "steps": [
+    {
+      "op": "track.upsert",
+      "args": { "name": "{{track_name}}", "type": "midi" },
+      "let": "rhodes"
+    },
+    {
+      "op": "browser.load_item",
+      "args": { "path": ["{{instrument_path_a}}", "{{instrument_path_b}}", "{{instrument_path_c}}"] }
+    },
+    {
+      "op": "clip.create_midi",
+      "args": { "track_index": "{{rhodes.track.index}}", "clip_slot_index": 0, "length_beats": 16.0, "name": "ii-V-I" }
+    },
+    {
+      "op": "clip.add_notes",
+      "args": {
+        "track_index": "{{rhodes.track.index}}",
+        "clip_slot_index": 0,
+        "notes": [
+          { "pitch": 62, "start": 0, "duration": 4, "velocity": 80 },
+          { "pitch": 65, "start": 0, "duration": 4, "velocity": 78 },
+          { "pitch": 69, "start": 0, "duration": 4, "velocity": 76 },
+          { "pitch": 72, "start": 0, "duration": 4, "velocity": 74 },
+          { "pitch": 67, "start": 4, "duration": 4, "velocity": 82 },
+          { "pitch": 71, "start": 4, "duration": 4, "velocity": 80 },
+          { "pitch": 74, "start": 4, "duration": 4, "velocity": 78 },
+          { "pitch": 77, "start": 4, "duration": 4, "velocity": 76 },
+          { "pitch": 60, "start": 8, "duration": 8, "velocity": 80 },
+          { "pitch": 64, "start": 8, "duration": 8, "velocity": 78 },
+          { "pitch": 67, "start": 8, "duration": 8, "velocity": 76 },
+          { "pitch": 71, "start": 8, "duration": 8, "velocity": 74 },
+          { "pitch": 74, "start": 8, "duration": 8, "velocity": 72 }
+        ]
+      }
+    }
+  ]
+}

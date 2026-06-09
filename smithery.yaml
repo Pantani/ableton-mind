@@ -1,0 +1,61 @@
+# Smithery MCP listing — ableton-mind
+# https://smithery.ai
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      ABLETON_MIND_HOST:
+        type: string
+        description: Bridge host (default 127.0.0.1)
+        default: "127.0.0.1"
+      ABLETON_MIND_PORT:
+        type: string
+        description: Bridge TCP port (default 9876)
+        default: "9876"
+      ABLETON_MIND_LOG_LEVEL:
+        type: string
+        enum: [debug, info, warn, error]
+        default: info
+  commandFunction: |
+    (config) => ({
+      command: "node",
+      args: ["dist/index.js"],
+      env: {
+        ABLETON_MIND_HOST: config.ABLETON_MIND_HOST || "127.0.0.1",
+        ABLETON_MIND_PORT: config.ABLETON_MIND_PORT || "9876",
+        ABLETON_MIND_LOG_LEVEL: config.ABLETON_MIND_LOG_LEVEL || "info"
+      }
+    })
+
+build:
+  dockerfile: Dockerfile
+  dockerBuildPath: .
+
+metadata:
+  name: ableton-mind
+  description: Definitive MCP server for Ableton Live — full LOM coverage, embedded device knowledge base, declarative music recipes.
+  homepage: https://github.com/Pantani/ableton-mind
+  license: MIT
+  keywords:
+    - ableton
+    - ableton-live
+    - music
+    - production
+    - llm
+    - claude
+  tools:
+    count: 31
+    categories:
+      - transport
+      - track
+      - clip
+      - scene
+      - session
+      - browser
+      - device
+      - arrangement
+      - preview
+      - recipes
+      - push

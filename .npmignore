@@ -1,0 +1,63 @@
+# Arquivos ignorados pelo `npm publish`.
+# `files` em package.json já é whitelist primária — esta lista é defesa adicional.
+
+# Source maps + dev configs
+*.map
+.DS_Store
+.editorconfig
+.env*
+
+# Build artifacts não-distribuídos
+build/
+coverage/
+.tsbuildinfo
+
+# Test files
+tests/
+vitest.config.ts
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Source non-compiled
+src/
+
+# Dev tooling
+.github/
+.husky/
+biome.json
+tsconfig.json
+tsup.config.ts
+.dependency-cruiser.cjs
+
+# Live bridge — distribuído via scripts/install-remote-script.mjs após install
+live/
+
+# Workspace + ADRs (internal)
+_workspace/
+
+# Recipes — duplicadas no dist/? Recipes ficam em `recipes/` ao lado de `dist/`.
+# Comentado: queremos recipes na distribuição.
+# recipes/
+
+# Docs — README é o único arquivo distribuído por package.json::files
+docs/
+PLAN.md
+CLAUDE.md
+AGENTS.md
+CHANGELOG.md
+
+# Scripts dev
+scripts/build-dxt.mjs
+scripts/install-remote-script.mjs
+scripts/extract-device-schemas.mjs
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp

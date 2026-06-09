@@ -1,0 +1,39 @@
+{
+  "$schema": "../recipe-schema.json",
+  "id": "racks/parallel-comp",
+  "name": "Parallel Compression Rack",
+  "category": "racks",
+  "version": "0.1",
+  "description": "Compressor agressivo (10:1, threshold -30) com Dry/Wet 50% — NY-style parallel compression para drums/vocals.",
+  "tags": ["parallel", "compression", "drums", "vocals", "ny-style"],
+  "inputs": {
+    "track_index": { "type": "int", "default": 0 },
+    "wet_amount": { "type": "number", "default": 0.5, "min": 0, "max": 1, "description": "Dry/Wet mix do paralelo." }
+  },
+  "steps": [
+    {
+      "op": "browser.load_item",
+      "args": { "path": ["audio_effects", "Compressor", "Init"] }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Threshold", "value": -30 }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Ratio", "value": 10 }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Attack", "value": 0.1 }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Release", "value": 80 }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Dry/Wet", "value": "{{wet_amount}}" }
+    }
+  ]
+}

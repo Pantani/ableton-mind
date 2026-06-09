@@ -1,0 +1,25 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.glue_compressor",
+  "name": "Glue Compressor",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "9.0",
+  "description": "Bus compressor modelado no SSL Quad Bus. Ideal para mix bus, drum bus, mastering leve.",
+  "source": "curated (Cycle 9)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Threshold", "min": -36, "max": 0, "default": -10, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 1,  "name": "Ratio", "min": 0, "max": 5, "default": 1, "unit": "enum", "automatable": false, "description": "0=1.5:1, 1=2:1, 2=4:1, 3=10:1, 4=20:1, 5=∞." },
+    { "index": 2,  "name": "Attack", "min": 0, "max": 5, "default": 1, "unit": "enum", "automatable": false, "description": "0=0.01ms, 1=0.1ms, 2=0.3ms, 3=1ms, 4=3ms, 5=10ms, 6=30ms." },
+    { "index": 3,  "name": "Release", "min": 0, "max": 6, "default": 6, "unit": "enum", "automatable": false, "description": "0=0.1s, 1=0.2s, 2=0.4s, 3=0.6s, 4=0.8s, 5=1.2s, 6=Auto." },
+    { "index": 4,  "name": "Range", "min": -60, "max": 0, "default": -60, "unit": "dB", "automatable": true, "description": "Max gain reduction." },
+    { "index": 5,  "name": "Makeup", "min": -20, "max": 20, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 7,  "name": "Soft Clip", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
+    { "index": 8,  "name": "Peak Clip In", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 9,  "name": "Sidechain On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 10, "name": "Sidechain HP Freq", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false, "description": "Off / 60 / 90 / 120 / 150 Hz." }
+  ],
+  "todo": []
+}

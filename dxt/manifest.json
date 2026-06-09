@@ -1,0 +1,77 @@
+{
+  "dxt_version": "0.1",
+  "name": "ableton-mind",
+  "display_name": "Ableton Mind",
+  "version": "0.0.14",
+  "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
+  "long_description": "ableton-mind expõe o Live Object Model completo para LLMs (Claude, Cursor, etc.) com tool calls idempotentes, transações (undo unitário), verify loop integrado, knowledge base embutida de 50+ devices nativos do Live e recipes musicais declarativas (drums, basslines, racks). Diferente de wrappers MCP rasos, cobre ~100% do LOM (~180 tools planejadas) e foi desenhado para que o LLM nunca chute parâmetros — devices são sempre endereçados por nome via knowledge base.",
+  "author": {
+    "name": "ableton-mind contributors",
+    "url": "https://github.com/Pantani/ableton-mind"
+  },
+  "homepage": "https://github.com/Pantani/ableton-mind",
+  "documentation": "https://github.com/Pantani/ableton-mind/blob/main/README.md",
+  "support": "https://github.com/Pantani/ableton-mind/issues",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ableton",
+    "ableton-live",
+    "music",
+    "production",
+    "llm",
+    "claude"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "ABLETON_MIND_HOST": "${user_config.host}",
+        "ABLETON_MIND_PORT": "${user_config.port}",
+        "ABLETON_MIND_LOG_LEVEL": "${user_config.log_level}"
+      }
+    }
+  },
+  "user_config": {
+    "host": {
+      "type": "string",
+      "title": "Bridge host",
+      "description": "Endereço do Remote Script Python rodando dentro do Live.",
+      "default": "127.0.0.1",
+      "required": false
+    },
+    "port": {
+      "type": "string",
+      "title": "Bridge port",
+      "description": "Porta TCP do Remote Script. Default 9876.",
+      "default": "9876",
+      "required": false
+    },
+    "log_level": {
+      "type": "string",
+      "title": "Log level",
+      "description": "debug | info | warn | error.",
+      "default": "info",
+      "required": false
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32"],
+    "runtimes": {
+      "node": ">=20"
+    }
+  },
+  "tools": [
+    { "name": "play", "description": "Start or continue Ableton Live playback (idempotent)." },
+    { "name": "stop", "description": "Stop Ableton Live playback (idempotent)." },
+    { "name": "set_tempo", "description": "Set the global tempo in BPM (20–999)." },
+    { "name": "track_list", "description": "List all tracks (regular, return, master) in the Live session." },
+    { "name": "track_create", "description": "Create a new MIDI or audio track at an optional index." },
+    { "name": "create_midi_clip", "description": "Create an empty MIDI clip in a session clip slot." }
+  ],
+  "prompts": []
+}

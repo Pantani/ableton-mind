@@ -1,0 +1,30 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.drum_cell",
+  "name": "Drum Cell",
+  "category": "instrument",
+  "vendor": "Ableton",
+  "live_version_min": "12.0",
+  "description": "Sample player dedicado para drum hits dentro de Drum Rack pads. Tune/Volume/Pan/ADSR + saturation/transient shaping.",
+  "source": "curated (Cycle 8)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Volume", "min": -36, "max": 12, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 1,  "name": "Pan", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 2,  "name": "Tune", "min": -48, "max": 48, "default": 0, "unit": "semitones", "automatable": true, "modulatable": true },
+    { "index": 3,  "name": "Detune", "min": -50, "max": 50, "default": 0, "unit": "cents", "automatable": true },
+    { "index": 4,  "name": "Velocity Sensitivity", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": false },
+    { "index": 5,  "name": "Attack", "min": 0, "max": 1, "default": 0, "unit": "s", "automatable": true },
+    { "index": 6,  "name": "Decay", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
+    { "index": 7,  "name": "Sustain", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 8,  "name": "Release", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
+    { "index": 9,  "name": "Saturation", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 10, "name": "Transient Attack", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 11, "name": "Transient Sustain", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 12, "name": "Sample Start", "min": 0, "max": 1, "default": 0, "unit": "%", "automatable": true },
+    { "index": 13, "name": "Sample End", "min": 0, "max": 1, "default": 1, "unit": "%", "automatable": true },
+    { "index": 14, "name": "Reverse", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 15, "name": "Choke", "min": 0, "max": 16, "default": 0, "unit": "group", "automatable": false }
+  ],
+  "todo": []
+}

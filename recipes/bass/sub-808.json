@@ -1,0 +1,53 @@
+{
+  "$schema": "../recipe-schema.json",
+  "id": "bass/sub-808",
+  "name": "Sub 808",
+  "category": "bass",
+  "version": "0.1",
+  "description": "Bass 808 sub-frequency com Bass instrument (Live 12) — sine puro, glide longo, decay médio. Pattern 1-bar com root note.",
+  "tags": ["808", "sub", "trap", "drill", "hip-hop"],
+  "inputs": {
+    "track_name": { "type": "string", "default": "808" },
+    "root_pitch": { "type": "int", "default": 36, "min": 24, "max": 48, "description": "MIDI note do tonic." },
+    "glide": { "type": "number", "default": 0.15, "min": 0, "max": 1 },
+    "decay": { "type": "number", "default": 1.2, "min": 0.1, "max": 4 }
+  },
+  "steps": [
+    {
+      "op": "track.upsert",
+      "args": { "name": "{{track_name}}", "type": "midi" },
+      "let": "bass"
+    },
+    {
+      "op": "browser.load_item",
+      "args": { "path": ["instruments", "Bass", "Init"] }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{bass.track.index}}", "device_index": 0, "parameter_name": "Osc Type", "value": 3 }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{bass.track.index}}", "device_index": 0, "parameter_name": "Glide", "value": "{{glide}}" }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": "{{bass.track.index}}", "device_index": 0, "parameter_name": "Env Decay", "value": "{{decay}}" }
+    },
+    {
+      "op": "clip.create_midi",
+      "args": { "track_index": "{{bass.track.index}}", "clip_slot_index": 0, "length_beats": 4.0, "name": "808" }
+    },
+    {
+      "op": "clip.add_notes",
+      "args": {
+        "track_index": "{{bass.track.index}}",
+        "clip_slot_index": 0,
+        "notes": [
+          { "pitch": "{{root_pitch}}", "start": 0, "duration": 2, "velocity": 110 },
+          { "pitch": "{{root_pitch}}", "start": 2, "duration": 2, "velocity": 110 }
+        ]
+      }
+    }
+  ]
+}

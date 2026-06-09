@@ -1,0 +1,35 @@
+{
+  "$schema": "../recipe-schema.json",
+  "id": "mixing/master-bus",
+  "name": "Master Bus Chain",
+  "category": "mixing",
+  "version": "0.1",
+  "description": "Chain clássica de master bus: Glue Compressor (bus-glue) → EQ Eight (tweaks) → Limiter (true peak ceiling).",
+  "tags": ["master", "mixing", "mastering", "bus"],
+  "inputs": {
+    "limiter_ceiling": { "type": "number", "default": -0.3, "min": -6, "max": 0, "description": "True peak ceiling em dBFS." },
+    "glue_threshold": { "type": "number", "default": -10, "min": -36, "max": 0 }
+  },
+  "steps": [
+    {
+      "op": "browser.load_item",
+      "args": { "path": ["audio_effects", "Glue Compressor", "Init"] }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": -1, "device_index": 0, "parameter_name": "Threshold", "value": "{{glue_threshold}}" }
+    },
+    {
+      "op": "browser.load_item",
+      "args": { "path": ["audio_effects", "EQ Eight", "Init"] }
+    },
+    {
+      "op": "browser.load_item",
+      "args": { "path": ["audio_effects", "Limiter", "Init"] }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": { "track_index": -1, "device_index": 2, "parameter_name": "Ceiling", "value": "{{limiter_ceiling}}" }
+    }
+  ]
+}

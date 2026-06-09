@@ -1,0 +1,24 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.looper",
+  "name": "Looper",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "9.0",
+  "description": "Live performance looper. Record / Overdub / Play / Stop states com quantize, reverse e tempo control.",
+  "source": "curated (Cycle 12)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "State", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "0=Stop, 1=Record, 2=Play, 3=Overdub." },
+    { "index": 1, "name": "Tempo", "min": 20, "max": 999, "default": 120, "unit": "BPM", "automatable": false },
+    { "index": 2, "name": "Speed", "min": 0.25, "max": 4, "default": 1, "unit": "x", "automatable": true, "modulatable": true },
+    { "index": 3, "name": "Reverse", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
+    { "index": 4, "name": "Feedback", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 5, "name": "Quantize", "min": 0, "max": 4, "default": 0, "unit": "enum", "automatable": false, "description": "None / 8 bars / 4 / 2 / 1." },
+    { "index": 6, "name": "Beats Multiplication", "min": 0, "max": 4, "default": 0, "unit": "enum", "automatable": false },
+    { "index": 7, "name": "Tempo Control", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "None / Follow / Set & Follow." },
+    { "index": 8, "name": "Monitor", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 9, "name": "Input", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.roar",
+  "name": "Roar",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "12.0",
+  "description": "Saturator multi-stage (Live 12+) com 3 colored stages e routing flexível. Modes: Mid/Side, Parallel, Multiband, Feedback.",
+  "source": "curated (Cycle 11)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Mode", "min": 0, "max": 4, "default": 0, "unit": "enum", "automatable": false, "description": "0=Multiband, 1=Multistage, 2=Mid/Side, 3=Stereo, 4=Feedback." },
+    { "index": 1,  "name": "Stage 1 Type", "min": 0, "max": 12, "default": 0, "unit": "enum", "automatable": false, "description": "Soft / Hard / Sine Fold / Wavefold / Tube / Tape / Diode / Half-wave / etc." },
+    { "index": 2,  "name": "Stage 1 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 3,  "name": "Stage 1 Drive", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "Stage 1 Color", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 5,  "name": "Stage 2 Type", "min": 0, "max": 12, "default": 0, "unit": "enum", "automatable": false },
+    { "index": 6,  "name": "Stage 2 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 7,  "name": "Stage 2 Drive", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 8,  "name": "Stage 3 Type", "min": 0, "max": 12, "default": 0, "unit": "enum", "automatable": false },
+    { "index": 9,  "name": "Stage 3 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 10, "name": "Stage 3 Drive", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 11, "name": "Tone Bass", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 12, "name": "Tone Treble", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 13, "name": "Feedback Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 14, "name": "Feedback Tone", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 15, "name": "Compressor Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 16, "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 17, "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

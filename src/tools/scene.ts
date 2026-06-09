@@ -1,0 +1,52 @@
+/**
+ * Tools MCP do domínio Scene.
+ *
+ * `scene_fire` — dispara uma cena por index. Útil para arrangement-style
+ * playback no Session view (cena toca tudo na sua linha).
+ */
+
+import { z } from "zod";
+
+import { UNVERIFIABLE } from "../feedback/verify.js";
+import { defineTool } from "../server/define-tool.js";
+
+const inputSchema = z.object({
+  index: z.number().int().nonnegative(),
+});
+
+const outputSchema = z.object({
+  ok: z.literal(true),
+  verified: z.boolean(),
+  changed: z.literal(true),
+  index: z.number().int().nonnegative(),
+  name: z.string(),
+  diff: z
+    .object({
+      field: z.string(),
+      intent: z.unknown(),
+      actual: z.unknown(),
+      tolerance: z.number().optional(),
+    })
+    .nullable(),
+});
+
+const bridgeResultSchema = z.object({
+  changed: z.literal(true),
+  index: z.number().int().nonnegative(),
+  name: z.string(),
+});
+
+export const sceneFireTool = defineTool({
+  name: "scene_fire",
+  description:
+    "Fire a scene (triggers all clips on the scene's row). Returns the scene name. NOT strictly idempotent — re-trigger restarts clips. Marked UNVERIFIABLE (transport state oscilates async).",
+  input: inputSchema,
+  output: outputSchema,
+  handler: async (input, ctx) => {
+    const raw = await ctx.bridge.call("scene.fire", { index: input.index });
+    const parsed = bridgeResultSchema.parse(raw);
+    // scene.fire's effect (clips começam a tocar) é async — não dá pra verificar
+    // de forma síncrona. Marca como UNVERIFIABLE.
+    return { ok: true as const, verified: UNVERIFIABLE.ok, ...parsed, diff: UNVERIFIABLE.diff };
+  },
+});

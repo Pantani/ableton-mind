@@ -1,0 +1,29 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.beat_repeat",
+  "name": "Beat Repeat",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "Repete slices do áudio em sync ao tempo. Glitch / stutter effect.",
+  "source": "curated (Cycle 10)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Interval", "min": 0, "max": 11, "default": 6, "unit": "enum", "automatable": false, "description": "1/64 .. 4 bars." },
+    { "index": 1,  "name": "Offset", "min": 0, "max": 15, "default": 0, "unit": "16ths", "automatable": false },
+    { "index": 2,  "name": "Grid", "min": 0, "max": 11, "default": 6, "unit": "enum", "automatable": false },
+    { "index": 3,  "name": "Variation", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 4,  "name": "Variation Type", "min": 0, "max": 4, "default": 0, "unit": "enum", "automatable": false, "description": "Triplet / Note / Period / Quarter / Eighth." },
+    { "index": 5,  "name": "Chance", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "Gate", "min": 0, "max": 16, "default": 0, "unit": "16ths", "automatable": true },
+    { "index": 7,  "name": "Pitch", "min": -48, "max": 0, "default": 0, "unit": "semitones", "automatable": true, "modulatable": true },
+    { "index": 8,  "name": "Pitch Decay", "min": 0, "max": 24, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 9,  "name": "Filter On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
+    { "index": 10, "name": "Filter Freq", "min": 60, "max": 20000, "default": 1000, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 11, "name": "Filter Width", "min": 0.5, "max": 9, "default": 5, "unit": "octaves", "automatable": true },
+    { "index": 12, "name": "Volume", "min": -36, "max": 12, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 13, "name": "Decay", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 14, "name": "Mix Type", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Mix / Insert / Gate." }
+  ],
+  "todo": []
+}

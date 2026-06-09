@@ -1,0 +1,70 @@
+{
+  "name": "ableton-mind",
+  "version": "0.0.14",
+  "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "ableton-mind": "dist/index.js",
+    "ableton-mind-doctor": "dist/cli/doctor.js"
+  },
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src tests",
+    "lint:fix": "biome check --write src tests",
+    "format": "biome format --write src tests",
+    "deps:validate": "depcruise --config .dependency-cruiser.cjs src tests scripts",
+    "deps:graph": "depcruise --config .dependency-cruiser.cjs --output-type dot src | dot -T svg > docs/dependency-graph.svg",
+    "complexity": "eslint --config eslint.config.js \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{js,mjs,cjs,ts}\"",
+    "complexity:all": "eslint --config eslint.config.js --rule \"{\\\"complexity\\\":[\\\"warn\\\",1]}\" \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{js,mjs,cjs,ts}\"",
+    "complexity:py": "ruff check --select C901 --statistics live/AbletonMind",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "install:remote-script": "node scripts/install-remote-script.mjs",
+    "extract:devices": "node scripts/extract-device-schemas.mjs",
+    "build:dxt": "node scripts/build-dxt.mjs",
+    "build:dxt:check": "node scripts/build-dxt.mjs --check",
+    "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^20.14.10",
+    "dependency-cruiser": "^16.5.0",
+    "eslint": "^9.15.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.15.0",
+    "vitest": "^2.1.4"
+  },
+  "keywords": [
+    "mcp",
+    "ableton",
+    "ableton-live",
+    "music",
+    "llm",
+    "claude",
+    "model-context-protocol"
+  ]
+}

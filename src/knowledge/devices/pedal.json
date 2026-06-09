@@ -1,0 +1,23 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.pedal",
+  "name": "Pedal",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "10.0",
+  "description": "Emulação de pedais clássicos: Overdrive / Distortion / Fuzz, com EQ pre/post e sub-bass enhancement.",
+  "source": "curated (Cycle 10)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Type", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "0=Overdrive, 1=Distortion, 2=Fuzz." },
+    { "index": 1,  "name": "Gain", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 2,  "name": "Bass", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 3,  "name": "Mid", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "Mid Freq", "min": 100, "max": 4000, "default": 800, "unit": "Hz", "automatable": true },
+    { "index": 5,  "name": "Treble", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "Sub", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 7,  "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 8,  "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

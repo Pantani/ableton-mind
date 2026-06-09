@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    name: Build + publish + DXT + Docker
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # criar GitHub Release
+      packages: write   # push para ghcr.io
+      id-token: write   # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+
+      - name: Build .mcpb
+        run: npm run build:dxt
+
+      - name: npm publish (skip if pre-1.0 not tagged)
+        if: ${{ !contains(github.ref_name, '-') }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
+        run: |
+          if [[ "${{ github.ref_name }}" == v0.* ]]; then
+            echo "Pre-1.0 — skipping npm publish (manual on dispatch)."
+          else
+            npm publish --access public
+          fi
+
+      - name: Docker login (ghcr.io)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker build + push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/ableton-mind:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/ableton-mind:latest
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/*.mcpb
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}

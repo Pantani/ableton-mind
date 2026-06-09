@@ -1,0 +1,28 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.phaser_flanger",
+  "name": "Phaser-Flanger",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "11.0",
+  "description": "Unifica Phaser e Flanger num device (Live 11+). Modos: Phaser / Flanger / Doubler. Notch count e feedback.",
+  "source": "curated (Cycle 8)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "0=Phaser, 1=Flanger, 2=Doubler." },
+    { "index": 1,  "name": "Amount", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 2,  "name": "Feedback", "min": -1, "max": 1, "default": 0.3, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 3,  "name": "Center", "min": 30, "max": 18000, "default": 1000, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "Spread", "min": 0, "max": 100, "default": 50, "unit": "%", "automatable": true, "modulatable": true },
+    { "index": 5,  "name": "LFO Rate", "min": 0.01, "max": 30, "default": 0.5, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "LFO Amount", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 7,  "name": "LFO Sync", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 8,  "name": "LFO Shape", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "Sine / Triangle / Saw / Square." },
+    { "index": 9,  "name": "Stereo Mode", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "Stereo / M-S." },
+    { "index": 10, "name": "Notches", "min": 2, "max": 12, "default": 4, "unit": "count", "automatable": false, "description": "Phaser only." },
+    { "index": 11, "name": "Drive", "min": 0, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 12, "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 13, "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

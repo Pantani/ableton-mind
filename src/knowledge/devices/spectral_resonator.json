@@ -1,0 +1,25 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.spectral_resonator",
+  "name": "Spectral Resonator",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "11.0",
+  "description": "Resonator espectral via FFT. Cria harmonias / drones / texturas pitched a partir de qualquer áudio.",
+  "source": "curated (Cycle 12)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Frequency", "min": 30, "max": 22000, "default": 440, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 1,  "name": "Decay", "min": 0, "max": 60, "default": 5, "unit": "s", "automatable": true, "modulatable": true },
+    { "index": 2,  "name": "Decay Bias", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 3,  "name": "Inharmonics", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "MIDI", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false, "description": "Sidechain MIDI → frequência." },
+    { "index": 5,  "name": "Note", "min": 0, "max": 127, "default": 60, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "Stretch", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 7,  "name": "Mode", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "Spectral / Modal." },
+    { "index": 8,  "name": "Gate", "min": -96, "max": 0, "default": -96, "unit": "dB", "automatable": true },
+    { "index": 9,  "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 10, "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

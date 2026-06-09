@@ -1,0 +1,18 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.tuner",
+  "name": "Tuner",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "9.0",
+  "description": "Audio tuner com chromatic display, reference pitch ajustável, hold mode.",
+  "source": "curated (Cycle 8)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Reference Pitch", "min": 410, "max": 480, "default": 440, "unit": "Hz", "automatable": false, "description": "Frequência do A4." },
+    { "index": 1, "name": "Display Range", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "0=±100 cents, 1=±50 cents." },
+    { "index": 2, "name": "Hold", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 3, "name": "Histogram", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false }
+  ],
+  "todo": []
+}

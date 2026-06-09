@@ -1,0 +1,33 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.hybrid_reverb",
+  "name": "Hybrid Reverb",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "11.0",
+  "description": "Reverb que combina algorítmico (Room/Hall/Plate/Shimmer) com convolution (IR samples). Modes: Convolution / Algorithm / Serial / Parallel.",
+  "source": "curated (Cycle 9)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Mode", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "0=Convolution, 1=Algorithm, 2=Serial (Conv→Algo), 3=Parallel." },
+    { "index": 1,  "name": "Conv/Algo Mix", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true, "description": "Só ativo em Serial/Parallel." },
+    { "index": 2,  "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.3, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 3,  "name": "Output Gain", "min": -24, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "Predelay", "min": 0, "max": 250, "default": 0, "unit": "ms", "automatable": true, "modulatable": true },
+    { "index": 5,  "name": "Conv IR Category", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false, "description": "Halls / Rooms / Chambers / Plates / Springs / Special." },
+    { "index": 6,  "name": "Conv Decay", "min": 0.1, "max": 1, "default": 1, "unit": "linear", "automatable": true },
+    { "index": 7,  "name": "Conv Size", "min": 0.5, "max": 2, "default": 1, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 8,  "name": "Algo Type", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "Room / Hall / Plate / Shimmer." },
+    { "index": 9,  "name": "Algo Size", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 10, "name": "Algo Decay", "min": 0.1, "max": 60, "default": 2, "unit": "s", "automatable": true, "modulatable": true },
+    { "index": 11, "name": "Algo Diffusion", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 12, "name": "Algo Shimmer Mix", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 13, "name": "Algo Shimmer Pitch", "min": -12, "max": 12, "default": 12, "unit": "st", "automatable": false },
+    { "index": 14, "name": "Damping", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 15, "name": "LowCut Freq", "min": 20, "max": 1000, "default": 100, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 16, "name": "HighCut Freq", "min": 1000, "max": 22000, "default": 8000, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 17, "name": "Stereo Image", "min": 0, "max": 120, "default": 100, "unit": "°", "automatable": true },
+    { "index": 18, "name": "Freeze", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true, "modulatable": true, "description": "Congela tail." }
+  ],
+  "todo": []
+}
