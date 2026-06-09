@@ -9,31 +9,247 @@
   "source": "curated (Cycle 13)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Engine 1", "min": 0, "max": 16, "default": 0, "unit": "enum", "automatable": false, "description": "Saw / Square / Triangle / Sine / Wavetable / FM 2 / FM 3 / FM 4 / FM 6 / Pulse Train / etc." },
-    { "index": 1,  "name": "Engine 1 P1", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Engine 1 P2", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 3,  "name": "Engine 1 P3", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 4,  "name": "Engine 2", "min": 0, "max": 16, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 5,  "name": "Engine 2 P1", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 6,  "name": "Engine 2 P2", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Engine 2 P3", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Engine Mix", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 9,  "name": "Filter Type", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 10, "name": "Filter Freq", "min": 30, "max": 22000, "default": 22000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 11, "name": "Filter Reso", "min": 0, "max": 1.25, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 12, "name": "Filter Drive", "min": 0, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 13, "name": "Env Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 14, "name": "Env Decay", "min": 0.001, "max": 60, "default": 0.6, "unit": "s", "automatable": true },
-    { "index": 15, "name": "Env Sustain", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
-    { "index": 16, "name": "Env Release", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
-    { "index": 17, "name": "LFO 1 Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 18, "name": "LFO 1 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 19, "name": "LFO 2 Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 20, "name": "LFO 2 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 21, "name": "Volume", "min": -36, "max": 12, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 22, "name": "Voices", "min": 1, "max": 16, "default": 8, "unit": "voices", "automatable": false },
-    { "index": 23, "name": "Unison", "min": 1, "max": 8, "default": 1, "unit": "voices", "automatable": false },
-    { "index": 24, "name": "MPE Slide", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": false }
+    {
+      "index": 0,
+      "name": "Engine 1",
+      "min": 0,
+      "max": 16,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Saw / Square / Triangle / Sine / Wavetable / FM 2 / FM 3 / FM 4 / FM 6 / Pulse Train / etc."
+    },
+    {
+      "index": 1,
+      "name": "Engine 1 P1",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Engine 1 P2",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Engine 1 P3",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "Engine 2",
+      "min": 0,
+      "max": 16,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 5,
+      "name": "Engine 2 P1",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 6,
+      "name": "Engine 2 P2",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Engine 2 P3",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Engine Mix",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 9,
+      "name": "Filter Type",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 10,
+      "name": "Filter Freq",
+      "min": 30,
+      "max": 22000,
+      "default": 22000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 11,
+      "name": "Filter Reso",
+      "min": 0,
+      "max": 1.25,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 12,
+      "name": "Filter Drive",
+      "min": 0,
+      "max": 24,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 13,
+      "name": "Env Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 14,
+      "name": "Env Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.6,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 15,
+      "name": "Env Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 16,
+      "name": "Env Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.5,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 17,
+      "name": "LFO 1 Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 18,
+      "name": "LFO 1 Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 19,
+      "name": "LFO 2 Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 20,
+      "name": "LFO 2 Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 21,
+      "name": "Volume",
+      "min": -36,
+      "max": 12,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 22,
+      "name": "Voices",
+      "min": 1,
+      "max": 16,
+      "default": 8,
+      "unit": "voices",
+      "automatable": false
+    },
+    {
+      "index": 23,
+      "name": "Unison",
+      "min": 1,
+      "max": 8,
+      "default": 1,
+      "unit": "voices",
+      "automatable": false
+    },
+    {
+      "index": 24,
+      "name": "MPE Slide",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": false
+    }
   ],
   "todo": []
 }

@@ -43,9 +43,7 @@ export const vocalChainPrompt: PromptDefinition = {
               "",
               "4. **Send to reverb:** se tem Return track com reverb, use `track.set_volume` para abrir send adequado.",
               "",
-              "5. **Verify:** `track_get_info { index: " +
-                track_index +
-                " }` mostra volume_db + num_devices final. Compare antes/depois com `session_snapshot/diff`.",
+              `5. **Verify:** \`track_get_info { index: ${track_index} }\` mostra volume_db + num_devices final. Compare antes/depois com \`session_snapshot/diff\`.`,
             ].join("\n"),
           },
         },

@@ -65,7 +65,7 @@ export const genreTrackPrompt: PromptDefinition = {
               "",
               `1. **transport.set_tempo** to ${bpm} BPM.`,
               "",
-              "2. **Drums.** " + kitHint,
+              `2. **Drums.** ${kitHint}`,
               "",
               "3. **Bass.** Pick from `list_recipes { category: 'bass' }`. Apply with `apply_recipe`.",
               "   - For ${genre}, a typical choice: `bass/sub-808` (electronic) or `bass/reese` (D&B).",

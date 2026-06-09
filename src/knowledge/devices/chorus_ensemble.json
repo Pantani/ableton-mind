@@ -9,15 +9,95 @@
   "source": "curated (Cycle 12)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Classic / Ensemble / Vibrato." },
-    { "index": 1,  "name": "Rate", "min": 0.01, "max": 30, "default": 0.5, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Amount", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 3,  "name": "Feedback", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 4,  "name": "Width", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Warmth", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true },
-    { "index": 6,  "name": "HighPass", "min": 20, "max": 8000, "default": 50, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Mode",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Classic / Ensemble / Vibrato."
+    },
+    {
+      "index": 1,
+      "name": "Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 0.5,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Feedback",
+      "min": -1,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "Width",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Warmth",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 6,
+      "name": "HighPass",
+      "min": 20,
+      "max": 8000,
+      "default": 50,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Output",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Dry/Wet",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

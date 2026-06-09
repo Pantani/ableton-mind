@@ -9,43 +9,311 @@
   "source": "curated (Cycle 6)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Predelay", "min": 0.5, "max": 250, "default": 2.5, "unit": "ms", "automatable": true, "modulatable": true },
-    { "index": 1,  "name": "Room Size", "min": 0.22, "max": 500, "default": 100, "unit": "m²", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Decay Time", "min": 200, "max": 60000, "default": 1800, "unit": "ms", "automatable": true, "modulatable": true },
-    { "index": 3,  "name": "Stereo Image", "min": 0, "max": 120, "default": 100, "unit": "°", "automatable": true, "modulatable": true },
+    {
+      "index": 0,
+      "name": "Predelay",
+      "min": 0.5,
+      "max": 250,
+      "default": 2.5,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Room Size",
+      "min": 0.22,
+      "max": 500,
+      "default": 100,
+      "unit": "m²",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Decay Time",
+      "min": 200,
+      "max": 60000,
+      "default": 1800,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Stereo Image",
+      "min": 0,
+      "max": 120,
+      "default": 100,
+      "unit": "°",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 4,  "name": "In Filter On", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": true },
-    { "index": 5,  "name": "In LowCut On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 6,  "name": "In HighCut On", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": true },
-    { "index": 7,  "name": "In Filter Freq", "min": 20, "max": 22000, "default": 4000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "In Filter Width", "min": 0.5, "max": 9, "default": 2, "unit": "octaves", "automatable": true, "modulatable": true },
+    {
+      "index": 4,
+      "name": "In Filter On",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 5,
+      "name": "In LowCut On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 6,
+      "name": "In HighCut On",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 7,
+      "name": "In Filter Freq",
+      "min": 20,
+      "max": 22000,
+      "default": 4000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "In Filter Width",
+      "min": 0.5,
+      "max": 9,
+      "default": 2,
+      "unit": "octaves",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 9,  "name": "ER Spin On", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": false },
-    { "index": 10, "name": "ER Spin Rate", "min": 0.1, "max": 10, "default": 0.3, "unit": "Hz", "automatable": true },
-    { "index": 11, "name": "ER Spin Amount", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true },
-    { "index": 12, "name": "ER Shape", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 13, "name": "ER Level", "min": -70, "max": 6, "default": -3, "unit": "dB", "automatable": true, "modulatable": true },
+    {
+      "index": 9,
+      "name": "ER Spin On",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 10,
+      "name": "ER Spin Rate",
+      "min": 0.1,
+      "max": 10,
+      "default": 0.3,
+      "unit": "Hz",
+      "automatable": true
+    },
+    {
+      "index": 11,
+      "name": "ER Spin Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 12,
+      "name": "ER Shape",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 13,
+      "name": "ER Level",
+      "min": -70,
+      "max": 6,
+      "default": -3,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 14, "name": "Diffuse Level", "min": -70, "max": 6, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 15, "name": "Diffusion", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 16, "name": "Scale", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true, "description": "Density das reflexões." },
-    { "index": 17, "name": "Density", "min": 0.5, "max": 1, "default": 1, "unit": "linear", "automatable": true },
+    {
+      "index": 14,
+      "name": "Diffuse Level",
+      "min": -70,
+      "max": 6,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 15,
+      "name": "Diffusion",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 16,
+      "name": "Scale",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Density das reflexões."
+    },
+    {
+      "index": 17,
+      "name": "Density",
+      "min": 0.5,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
 
-    { "index": 18, "name": "HiFilter Type", "min": 0, "max": 1, "default": 1, "unit": "enum", "automatable": false, "description": "0=Bell, 1=Shelf." },
-    { "index": 19, "name": "HiFilter Freq", "min": 20, "max": 22000, "default": 6000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 20, "name": "HiShelf On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 21, "name": "HiShelf Gain", "min": -24, "max": 6, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 22, "name": "LowShelf On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 23, "name": "LowShelf Freq", "min": 20, "max": 15000, "default": 200, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 24, "name": "LowShelf Gain", "min": -24, "max": 6, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    {
+      "index": 18,
+      "name": "HiFilter Type",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=Bell, 1=Shelf."
+    },
+    {
+      "index": 19,
+      "name": "HiFilter Freq",
+      "min": 20,
+      "max": 22000,
+      "default": 6000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 20,
+      "name": "HiShelf On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 21,
+      "name": "HiShelf Gain",
+      "min": -24,
+      "max": 6,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 22,
+      "name": "LowShelf On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 23,
+      "name": "LowShelf Freq",
+      "min": 20,
+      "max": 15000,
+      "default": 200,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 24,
+      "name": "LowShelf Gain",
+      "min": -24,
+      "max": 6,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 25, "name": "Chorus On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 26, "name": "Chorus Rate", "min": 0.1, "max": 10, "default": 0.5, "unit": "Hz", "automatable": true },
-    { "index": 27, "name": "Chorus Amount", "min": 0, "max": 5, "default": 0.3, "unit": "ms", "automatable": true },
+    {
+      "index": 25,
+      "name": "Chorus On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 26,
+      "name": "Chorus Rate",
+      "min": 0.1,
+      "max": 10,
+      "default": 0.5,
+      "unit": "Hz",
+      "automatable": true
+    },
+    {
+      "index": 27,
+      "name": "Chorus Amount",
+      "min": 0,
+      "max": 5,
+      "default": 0.3,
+      "unit": "ms",
+      "automatable": true
+    },
 
-    { "index": 28, "name": "Quality", "min": 0, "max": 2, "default": 1, "unit": "enum", "automatable": false, "description": "0=Eco, 1=Mid, 2=High." },
-    { "index": 29, "name": "Reflect Level", "min": -70, "max": 6, "default": -3, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 30, "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.25, "unit": "linear", "automatable": true, "modulatable": true }
+    {
+      "index": 28,
+      "name": "Quality",
+      "min": 0,
+      "max": 2,
+      "default": 1,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=Eco, 1=Mid, 2=High."
+    },
+    {
+      "index": 29,
+      "name": "Reflect Level",
+      "min": -70,
+      "max": 6,
+      "default": -3,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 30,
+      "name": "Dry/Wet",
+      "min": 0,
+      "max": 1,
+      "default": 0.25,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

@@ -11,7 +11,7 @@
  * Não toca Live. Não usa rede real além do loopback.
  */
 
-import { type AddressInfo, createServer, type Server, type Socket } from "node:net";
+import { type AddressInfo, type Server, type Socket, createServer } from "node:net";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {

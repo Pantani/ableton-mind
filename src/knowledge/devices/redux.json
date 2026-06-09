@@ -9,15 +9,93 @@
   "source": "curated (Cycle 14)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0, "name": "Bit Depth", "min": 1, "max": 16, "default": 16, "unit": "bits", "automatable": true, "modulatable": true },
-    { "index": 1, "name": "Bit On", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": true },
-    { "index": 2, "name": "Bit Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Hard / Soft / Smooth." },
-    { "index": 3, "name": "Sample Rate", "min": 50, "max": 22050, "default": 22050, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 4, "name": "Down Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 5, "name": "Jitter", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 6, "name": "Pre Filter On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 7, "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 8, "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Bit Depth",
+      "min": 1,
+      "max": 16,
+      "default": 16,
+      "unit": "bits",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Bit On",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 2,
+      "name": "Bit Mode",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Hard / Soft / Smooth."
+    },
+    {
+      "index": 3,
+      "name": "Sample Rate",
+      "min": 50,
+      "max": 22050,
+      "default": 22050,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "Down Mode",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 5,
+      "name": "Jitter",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 6,
+      "name": "Pre Filter On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 7,
+      "name": "Output",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Dry/Wet",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

@@ -9,18 +9,120 @@
   "source": "curated (Cycle 17)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Shift 1", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true },
-    { "index": 1,  "name": "Velocity 1", "min": -120, "max": 120, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Shift 2", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true },
-    { "index": 3,  "name": "Velocity 2", "min": -120, "max": 120, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 4,  "name": "Shift 3", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true },
-    { "index": 5,  "name": "Velocity 3", "min": -120, "max": 120, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 6,  "name": "Shift 4", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true },
-    { "index": 7,  "name": "Velocity 4", "min": -120, "max": 120, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Shift 5", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true },
-    { "index": 9,  "name": "Velocity 5", "min": -120, "max": 120, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 10, "name": "Shift 6", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true },
-    { "index": 11, "name": "Velocity 6", "min": -120, "max": 120, "default": 0, "unit": "%", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Shift 1",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 1,
+      "name": "Velocity 1",
+      "min": -120,
+      "max": 120,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Shift 2",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 3,
+      "name": "Velocity 2",
+      "min": -120,
+      "max": 120,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "Shift 3",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 5,
+      "name": "Velocity 3",
+      "min": -120,
+      "max": 120,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 6,
+      "name": "Shift 4",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 7,
+      "name": "Velocity 4",
+      "min": -120,
+      "max": 120,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Shift 5",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 9,
+      "name": "Velocity 5",
+      "min": -120,
+      "max": 120,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 10,
+      "name": "Shift 6",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 11,
+      "name": "Velocity 6",
+      "min": -120,
+      "max": 120,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

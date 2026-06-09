@@ -9,17 +9,113 @@
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Mode", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "0=Shift, 1=Ring." },
-    { "index": 1,  "name": "Coarse", "min": -5000, "max": 5000, "default": 0, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Fine", "min": 0, "max": 100, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 3,  "name": "Drive On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 4,  "name": "Drive", "min": 0, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Wide", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false, "description": "Stereo split." },
-    { "index": 6,  "name": "Spread", "min": 0, "max": 50, "default": 0, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Polarity", "min": 0, "max": 1, "default": 1, "unit": "enum", "automatable": false, "description": "+ / - / Both." },
-    { "index": 8,  "name": "Phase", "min": 0, "max": 360, "default": 0, "unit": "°", "automatable": true },
-    { "index": 9,  "name": "Phase Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true },
-    { "index": 10, "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Mode",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=Shift, 1=Ring."
+    },
+    {
+      "index": 1,
+      "name": "Coarse",
+      "min": -5000,
+      "max": 5000,
+      "default": 0,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Fine",
+      "min": 0,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Drive On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 4,
+      "name": "Drive",
+      "min": 0,
+      "max": 24,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Wide",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false,
+      "description": "Stereo split."
+    },
+    {
+      "index": 6,
+      "name": "Spread",
+      "min": 0,
+      "max": 50,
+      "default": 0,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Polarity",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "enum",
+      "automatable": false,
+      "description": "+ / - / Both."
+    },
+    {
+      "index": 8,
+      "name": "Phase",
+      "min": 0,
+      "max": 360,
+      "default": 0,
+      "unit": "°",
+      "automatable": true
+    },
+    {
+      "index": 9,
+      "name": "Phase Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true
+    },
+    {
+      "index": 10,
+      "name": "Dry/Wet",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

@@ -9,12 +9,62 @@
   "source": "curated (Cycle 16)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0, "name": "Block Size", "min": 0, "max": 6, "default": 3, "unit": "enum", "automatable": false, "description": "256/512/1024/2048/4096/8192/16384." },
-    { "index": 1, "name": "Average", "min": 0, "max": 6, "default": 2, "unit": "enum", "automatable": false },
-    { "index": 2, "name": "Range Top", "min": -200, "max": 0, "default": 0, "unit": "dB", "automatable": true },
-    { "index": 3, "name": "Range Bottom", "min": -200, "max": 0, "default": -120, "unit": "dB", "automatable": true },
-    { "index": 4, "name": "Channel Mode", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "L+R / L / R / Stereo." },
-    { "index": 5, "name": "Refresh Rate", "min": 0, "max": 4, "default": 2, "unit": "enum", "automatable": false }
+    {
+      "index": 0,
+      "name": "Block Size",
+      "min": 0,
+      "max": 6,
+      "default": 3,
+      "unit": "enum",
+      "automatable": false,
+      "description": "256/512/1024/2048/4096/8192/16384."
+    },
+    {
+      "index": 1,
+      "name": "Average",
+      "min": 0,
+      "max": 6,
+      "default": 2,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 2,
+      "name": "Range Top",
+      "min": -200,
+      "max": 0,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true
+    },
+    {
+      "index": 3,
+      "name": "Range Bottom",
+      "min": -200,
+      "max": 0,
+      "default": -120,
+      "unit": "dB",
+      "automatable": true
+    },
+    {
+      "index": 4,
+      "name": "Channel Mode",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "L+R / L / R / Stereo."
+    },
+    {
+      "index": 5,
+      "name": "Refresh Rate",
+      "min": 0,
+      "max": 4,
+      "default": 2,
+      "unit": "enum",
+      "automatable": false
+    }
   ],
   "todo": []
 }

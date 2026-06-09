@@ -9,66 +9,484 @@
   "source": "curated (Cycle 9 — TD-024)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Volume", "min": -36, "max": 12, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 1,  "name": "Pan", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Transpose", "min": -48, "max": 48, "default": 0, "unit": "semitones", "automatable": true },
-    { "index": 3,  "name": "Detune", "min": -50, "max": 50, "default": 0, "unit": "cents", "automatable": true },
-    { "index": 4,  "name": "Voices", "min": 1, "max": 32, "default": 16, "unit": "voices", "automatable": false },
-    { "index": 5,  "name": "Mono", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 6,  "name": "Glide", "min": 0, "max": 1, "default": 0, "unit": "s", "automatable": true },
-    { "index": 7,  "name": "Spread", "min": 0, "max": 100, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Vol < Vel", "min": 0, "max": 1, "default": 0.35, "unit": "linear", "automatable": false },
-    { "index": 9,  "name": "Vol < Key", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": false },
-    { "index": 10, "name": "Filter On", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": true },
-    { "index": 11, "name": "Filter Type", "min": 0, "max": 8, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 12, "name": "Filter Slope", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 13, "name": "Filter Freq", "min": 30, "max": 22000, "default": 22000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 14, "name": "Filter Reso", "min": 0, "max": 1.25, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 15, "name": "Filter Drive", "min": 0, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 16, "name": "Filter Morph", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true },
-    { "index": 17, "name": "Filter < Vel", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": false },
-    { "index": 18, "name": "Filter < Key", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": false },
+    {
+      "index": 0,
+      "name": "Volume",
+      "min": -36,
+      "max": 12,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Pan",
+      "min": -1,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Transpose",
+      "min": -48,
+      "max": 48,
+      "default": 0,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 3,
+      "name": "Detune",
+      "min": -50,
+      "max": 50,
+      "default": 0,
+      "unit": "cents",
+      "automatable": true
+    },
+    {
+      "index": 4,
+      "name": "Voices",
+      "min": 1,
+      "max": 32,
+      "default": 16,
+      "unit": "voices",
+      "automatable": false
+    },
+    {
+      "index": 5,
+      "name": "Mono",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 6,
+      "name": "Glide",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 7,
+      "name": "Spread",
+      "min": 0,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Vol < Vel",
+      "min": 0,
+      "max": 1,
+      "default": 0.35,
+      "unit": "linear",
+      "automatable": false
+    },
+    {
+      "index": 9,
+      "name": "Vol < Key",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": false
+    },
+    {
+      "index": 10,
+      "name": "Filter On",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 11,
+      "name": "Filter Type",
+      "min": 0,
+      "max": 8,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 12,
+      "name": "Filter Slope",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 13,
+      "name": "Filter Freq",
+      "min": 30,
+      "max": 22000,
+      "default": 22000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 14,
+      "name": "Filter Reso",
+      "min": 0,
+      "max": 1.25,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 15,
+      "name": "Filter Drive",
+      "min": 0,
+      "max": 24,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 16,
+      "name": "Filter Morph",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 17,
+      "name": "Filter < Vel",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": false
+    },
+    {
+      "index": 18,
+      "name": "Filter < Key",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": false
+    },
 
-    { "index": 19, "name": "Amp Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 20, "name": "Amp Decay", "min": 0.001, "max": 60, "default": 0.6, "unit": "s", "automatable": true },
-    { "index": 21, "name": "Amp Sustain", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
-    { "index": 22, "name": "Amp Release", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
-    { "index": 23, "name": "Amp Loop Mode", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "0=Off, 1=Loop, 2=Loop with Release, 3=Trigger." },
-    { "index": 24, "name": "Amp < Vel", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": false },
+    {
+      "index": 19,
+      "name": "Amp Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 20,
+      "name": "Amp Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.6,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 21,
+      "name": "Amp Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 22,
+      "name": "Amp Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.5,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 23,
+      "name": "Amp Loop Mode",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=Off, 1=Loop, 2=Loop with Release, 3=Trigger."
+    },
+    {
+      "index": 24,
+      "name": "Amp < Vel",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": false
+    },
 
-    { "index": 25, "name": "Filter Env Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 26, "name": "Filter Env Decay", "min": 0.001, "max": 60, "default": 0.3, "unit": "s", "automatable": true },
-    { "index": 27, "name": "Filter Env Sustain", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
-    { "index": 28, "name": "Filter Env Release", "min": 0.001, "max": 60, "default": 0.3, "unit": "s", "automatable": true },
-    { "index": 29, "name": "Filter Env Amount", "min": -72, "max": 72, "default": 0, "unit": "st", "automatable": true, "modulatable": true },
+    {
+      "index": 25,
+      "name": "Filter Env Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 26,
+      "name": "Filter Env Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.3,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 27,
+      "name": "Filter Env Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 28,
+      "name": "Filter Env Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.3,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 29,
+      "name": "Filter Env Amount",
+      "min": -72,
+      "max": 72,
+      "default": 0,
+      "unit": "st",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 30, "name": "Pitch Env Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 31, "name": "Pitch Env Decay", "min": 0.001, "max": 60, "default": 0.3, "unit": "s", "automatable": true },
-    { "index": 32, "name": "Pitch Env Sustain", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
-    { "index": 33, "name": "Pitch Env Release", "min": 0.001, "max": 60, "default": 0.3, "unit": "s", "automatable": true },
-    { "index": 34, "name": "Pitch Env Amount", "min": -48, "max": 48, "default": 0, "unit": "st", "automatable": true, "modulatable": true },
+    {
+      "index": 30,
+      "name": "Pitch Env Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 31,
+      "name": "Pitch Env Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.3,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 32,
+      "name": "Pitch Env Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 33,
+      "name": "Pitch Env Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.3,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 34,
+      "name": "Pitch Env Amount",
+      "min": -48,
+      "max": 48,
+      "default": 0,
+      "unit": "st",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 35, "name": "LFO 1 Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 36, "name": "LFO 1 Sync", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 37, "name": "LFO 1 Shape", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 38, "name": "LFO 1 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 39, "name": "LFO 1 Retrigger", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    {
+      "index": 35,
+      "name": "LFO 1 Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 36,
+      "name": "LFO 1 Sync",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 37,
+      "name": "LFO 1 Shape",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 38,
+      "name": "LFO 1 Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 39,
+      "name": "LFO 1 Retrigger",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
 
-    { "index": 40, "name": "LFO 2 Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 41, "name": "LFO 2 Shape", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 42, "name": "LFO 2 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    {
+      "index": 40,
+      "name": "LFO 2 Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 41,
+      "name": "LFO 2 Shape",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 42,
+      "name": "LFO 2 Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 43, "name": "LFO 3 Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 44, "name": "LFO 3 Shape", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 45, "name": "LFO 3 Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    {
+      "index": 43,
+      "name": "LFO 3 Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 44,
+      "name": "LFO 3 Shape",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 45,
+      "name": "LFO 3 Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 46, "name": "Sample Selector < Vel", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": false },
-    { "index": 47, "name": "Sample Selector < Key", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": false },
-    { "index": 48, "name": "Pitch < Random", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true }
+    {
+      "index": 46,
+      "name": "Sample Selector < Vel",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": false
+    },
+    {
+      "index": 47,
+      "name": "Sample Selector < Key",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": false
+    },
+    {
+      "index": 48,
+      "name": "Pitch < Random",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true
+    }
   ],
   "modulation_matrix": {
     "slots": 8,
-    "sources": ["Env A", "Env P", "Env F", "LFO 1", "LFO 2", "LFO 3", "Key", "Velocity", "Random", "MIDI CC 1-128"],
+    "sources": [
+      "Env A",
+      "Env P",
+      "Env F",
+      "LFO 1",
+      "LFO 2",
+      "LFO 3",
+      "Key",
+      "Velocity",
+      "Random",
+      "MIDI CC 1-128"
+    ],
     "targets_hint": "Qualquer param marcado `modulatable: true`."
   },
   "todo": []

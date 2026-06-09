@@ -79,11 +79,7 @@ export function createServer(opts: CreateServerOptions): CreatedServer {
   return { server, context: ctx, registered, registeredPrompts, registeredResources };
 }
 
-function registerResource(
-  server: McpServer,
-  r: ResourceDefinition,
-  ctx: ToolContext,
-): void {
+function registerResource(server: McpServer, r: ResourceDefinition, ctx: ToolContext): void {
   server.resource(r.name, r.uri, { description: r.description, mimeType: r.mimeType }, async () => {
     const result = await r.read(ctx.bridge ?? null);
     return { contents: result.contents };

@@ -9,19 +9,132 @@
   "source": "curated (Cycle 15)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Left Gain", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 1,  "name": "Right Gain", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Channel Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Stereo / Left / Right / Swap." },
-    { "index": 3,  "name": "Mid Side", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 4,  "name": "Phase Invert L", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 5,  "name": "Phase Invert R", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 6,  "name": "Width", "min": 0, "max": 4, "default": 1, "unit": "linear", "automatable": true, "modulatable": true, "description": "0=mono, 1=normal, 4=ultra wide." },
-    { "index": 7,  "name": "Gain", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Balance", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 9,  "name": "Mute", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 10, "name": "DC Filter", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": false },
-    { "index": 11, "name": "Bass Mono", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true, "description": "Mono < freq abaixo." },
-    { "index": 12, "name": "Bass Mono Freq", "min": 20, "max": 2000, "default": 120, "unit": "Hz", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Left Gain",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Right Gain",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Channel Mode",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Stereo / Left / Right / Swap."
+    },
+    {
+      "index": 3,
+      "name": "Mid Side",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 4,
+      "name": "Phase Invert L",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 5,
+      "name": "Phase Invert R",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 6,
+      "name": "Width",
+      "min": 0,
+      "max": 4,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true,
+      "description": "0=mono, 1=normal, 4=ultra wide."
+    },
+    {
+      "index": 7,
+      "name": "Gain",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Balance",
+      "min": -1,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 9,
+      "name": "Mute",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 10,
+      "name": "DC Filter",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 11,
+      "name": "Bass Mono",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true,
+      "description": "Mono < freq abaixo."
+    },
+    {
+      "index": 12,
+      "name": "Bass Mono Freq",
+      "min": 20,
+      "max": 2000,
+      "default": 120,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

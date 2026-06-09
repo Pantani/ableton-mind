@@ -52,10 +52,7 @@ describe("createMidiClipTool", () => {
     });
     const ctx = createToolContext(bridge(call as BridgeClient["call"]));
     await expect(
-      createMidiClipTool.handler(
-        { track_index: 0, clip_slot_index: 0, length_beats: 4.0 },
-        ctx,
-      ),
+      createMidiClipTool.handler({ track_index: 0, clip_slot_index: 0, length_beats: 4.0 }, ctx),
     ).rejects.toMatchObject({
       name: "JsonRpcRemoteError",
       code: ABLETON_MIND_ERRORS.TYPE_MISMATCH,

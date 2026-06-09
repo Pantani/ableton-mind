@@ -9,16 +9,107 @@
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Macro 1", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true, "description": "Mapeável; default sem destino." },
-    { "index": 1,  "name": "Macro 2", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Macro 3", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 3,  "name": "Macro 4", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 4,  "name": "Macro 5", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Macro 6", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 6,  "name": "Macro 7", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Macro 8", "min": 0, "max": 127, "default": 64, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Voice Mode", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "0=Poly, 1=Mono per Pad." },
-    { "index": 9,  "name": "Choke", "min": 0, "max": 16, "default": 0, "unit": "group", "automatable": false, "description": "0=Off, 1..16=choke group." }
+    {
+      "index": 0,
+      "name": "Macro 1",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Mapeável; default sem destino."
+    },
+    {
+      "index": 1,
+      "name": "Macro 2",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Macro 3",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Macro 4",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "Macro 5",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Macro 6",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 6,
+      "name": "Macro 7",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Macro 8",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Voice Mode",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=Poly, 1=Mono per Pad."
+    },
+    {
+      "index": 9,
+      "name": "Choke",
+      "min": 0,
+      "max": 16,
+      "default": 0,
+      "unit": "group",
+      "automatable": false,
+      "description": "0=Off, 1..16=choke group."
+    }
   ],
   "drum_pads": {
     "count": 128,
@@ -47,7 +138,5 @@
       "return_chains": ["A", "B", "C", "D"]
     }
   },
-  "todo": [
-    "Phase 5: introspection de cada pad individual via knowledge separada."
-  ]
+  "todo": ["Phase 5: introspection de cada pad individual via knowledge separada."]
 }

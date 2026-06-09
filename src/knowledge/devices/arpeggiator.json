@@ -9,21 +9,150 @@
   "source": "curated (Cycle 16)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Style", "min": 0, "max": 17, "default": 0, "unit": "enum", "automatable": false, "description": "Up / Down / UpDown / DownUp / Up&Down / Down&Up / Converge / Diverge / Con&Diverge / Pinky Up / Pinky UpDown / Thumb Up / Thumb UpDown / Play Order / Chord Trigger / Random / Random Other / Random Once." },
-    { "index": 1,  "name": "Rate", "min": 0.1, "max": 1000, "default": 100, "unit": "ms", "automatable": true, "modulatable": true, "description": "Quando Sync=Off." },
-    { "index": 2,  "name": "Sync Rate", "min": 0, "max": 21, "default": 7, "unit": "enum", "automatable": false, "description": "1/64..2 bars + triplet/dotted." },
-    { "index": 3,  "name": "Sync", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": false },
-    { "index": 4,  "name": "Gate", "min": 1, "max": 200, "default": 50, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Hold", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 6,  "name": "Offset", "min": 0, "max": 16, "default": 0, "unit": "steps", "automatable": true },
-    { "index": 7,  "name": "Steps", "min": 0, "max": 16, "default": 0, "unit": "steps", "automatable": false },
-    { "index": 8,  "name": "Distance", "min": -48, "max": 48, "default": 12, "unit": "semitones", "automatable": true },
-    { "index": 9,  "name": "Retrigger Interval", "min": 0, "max": 21, "default": 0, "unit": "enum", "automatable": false, "description": "Off / sync values." },
-    { "index": 10, "name": "Velocity On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 11, "name": "Velocity Decay", "min": 0, "max": 100, "default": 50, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 12, "name": "Velocity Target", "min": 0, "max": 127, "default": 0, "unit": "MIDI", "automatable": true },
-    { "index": 13, "name": "Velocity Retrigger", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": false },
-    { "index": 14, "name": "Groove", "min": 0, "max": 100, "default": 0, "unit": "%", "automatable": true, "modulatable": true, "description": "Aplica groove pool global." }
+    {
+      "index": 0,
+      "name": "Style",
+      "min": 0,
+      "max": 17,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Up / Down / UpDown / DownUp / Up&Down / Down&Up / Converge / Diverge / Con&Diverge / Pinky Up / Pinky UpDown / Thumb Up / Thumb UpDown / Play Order / Chord Trigger / Random / Random Other / Random Once."
+    },
+    {
+      "index": 1,
+      "name": "Rate",
+      "min": 0.1,
+      "max": 1000,
+      "default": 100,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Quando Sync=Off."
+    },
+    {
+      "index": 2,
+      "name": "Sync Rate",
+      "min": 0,
+      "max": 21,
+      "default": 7,
+      "unit": "enum",
+      "automatable": false,
+      "description": "1/64..2 bars + triplet/dotted."
+    },
+    {
+      "index": 3,
+      "name": "Sync",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 4,
+      "name": "Gate",
+      "min": 1,
+      "max": 200,
+      "default": 50,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Hold",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 6,
+      "name": "Offset",
+      "min": 0,
+      "max": 16,
+      "default": 0,
+      "unit": "steps",
+      "automatable": true
+    },
+    {
+      "index": 7,
+      "name": "Steps",
+      "min": 0,
+      "max": 16,
+      "default": 0,
+      "unit": "steps",
+      "automatable": false
+    },
+    {
+      "index": 8,
+      "name": "Distance",
+      "min": -48,
+      "max": 48,
+      "default": 12,
+      "unit": "semitones",
+      "automatable": true
+    },
+    {
+      "index": 9,
+      "name": "Retrigger Interval",
+      "min": 0,
+      "max": 21,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Off / sync values."
+    },
+    {
+      "index": 10,
+      "name": "Velocity On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 11,
+      "name": "Velocity Decay",
+      "min": 0,
+      "max": 100,
+      "default": 50,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 12,
+      "name": "Velocity Target",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "unit": "MIDI",
+      "automatable": true
+    },
+    {
+      "index": 13,
+      "name": "Velocity Retrigger",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 14,
+      "name": "Groove",
+      "min": 0,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Aplica groove pool global."
+    }
   ],
   "todo": []
 }

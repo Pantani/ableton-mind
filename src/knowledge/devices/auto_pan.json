@@ -9,16 +9,102 @@
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Amount", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 1,  "name": "Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Sync", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 3,  "name": "Sync Rate", "min": 0, "max": 15, "default": 8, "unit": "enum", "automatable": false, "description": "1/32..1/1 + dotted/triplet." },
-    { "index": 4,  "name": "Shape", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Phase", "min": 0, "max": 360, "default": 180, "unit": "°", "automatable": true, "modulatable": true },
-    { "index": 6,  "name": "Offset", "min": 0, "max": 360, "default": 0, "unit": "°", "automatable": true },
-    { "index": 7,  "name": "Type", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Sine / Triangle / Sample & Hold." },
-    { "index": 8,  "name": "Width", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
-    { "index": 9,  "name": "Invert", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false }
+    {
+      "index": 0,
+      "name": "Amount",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Sync",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 3,
+      "name": "Sync Rate",
+      "min": 0,
+      "max": 15,
+      "default": 8,
+      "unit": "enum",
+      "automatable": false,
+      "description": "1/32..1/1 + dotted/triplet."
+    },
+    {
+      "index": 4,
+      "name": "Shape",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Phase",
+      "min": 0,
+      "max": 360,
+      "default": 180,
+      "unit": "°",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 6,
+      "name": "Offset",
+      "min": 0,
+      "max": 360,
+      "default": 0,
+      "unit": "°",
+      "automatable": true
+    },
+    {
+      "index": 7,
+      "name": "Type",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Sine / Triangle / Sample & Hold."
+    },
+    {
+      "index": 8,
+      "name": "Width",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 9,
+      "name": "Invert",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    }
   ],
   "todo": []
 }

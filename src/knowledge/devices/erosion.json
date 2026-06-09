@@ -9,10 +9,46 @@
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0, "name": "Frequency", "min": 0, "max": 20000, "default": 8000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 1, "name": "Width", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 2, "name": "Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 3, "name": "Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Noise / Wide Noise / Sine." }
+    {
+      "index": 0,
+      "name": "Frequency",
+      "min": 0,
+      "max": 20000,
+      "default": 8000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Width",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Mode",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Noise / Wide Noise / Sine."
+    }
   ],
   "todo": []
 }
