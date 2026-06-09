@@ -118,15 +118,29 @@ ADR-0002 shape EXATA. Verifica que TD-002 (indexing negativos) está corretament
 
 Verify loop PASS (after === intent). Listener inclui `track_index` ✅. Live state restaurado.
 
-## Bugs descobertos no smoke real
+## Bugs descobertos no smoke real — fechados em Cycle 22
 
-### TD-046 — `system.hello` retorna `version: "0.0.1"` hardcoded
+### TD-046 — `system.hello` retorna `version: "0.0.1"` hardcoded — ✅ FECHADO
 
-`live/AbletonMind/handlers/system.py` tem version literal. Deve ler de algum lugar (package version no `__init__.py` ou env var). **Trivial fix Cycle 22.**
+Fix: `_read_pkg_version()` lê `version` de `package.json` no module load. Cache em `BRIDGE_VERSION` constant.
 
-### TD-047 — `system.hello` retorna `live_version: "0.0.0"`
+**Verificação pós-fix (Live recarregado):**
+```
+→ system.hello
+← {"version": "0.0.21", ...}
+```
+✓ Confirmado live em 2026-06-09.
 
-Não consulta LiveAPI `Live.Application.get_application().get_major_version()`. Trivial. Phase 2 (Live 11 compat) precisa disso para version gating.
+### TD-047 — `system.hello` retorna `live_version: "0.0.0"` — ✅ FECHADO
+
+Fix: `_live_version()` tenta 3 paths: `get_major_version()/get_minor_version()/get_bugfix_version()` (Live 11+), `get_major_minor_patch_version()` (tupla), `get_version_string()` (fallback). Path 1 funcionou em Live 12.4.1.
+
+**Verificação pós-fix:**
+```
+→ system.hello
+← {"live_version": "12.4.1", ...}
+```
+✓ Confirmado live em 2026-06-09.
 
 ## TDs fechados / abertos
 
