@@ -267,7 +267,7 @@ export class TcpJsonRpcClient extends EventEmitter {
   }
 
   private processLine(line: string): void {
-    let msg;
+    let msg: ReturnType<typeof decodeIncoming>;
     try {
       msg = decodeIncoming(line);
     } catch (err) {

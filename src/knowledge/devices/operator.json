@@ -9,65 +9,517 @@
   "source": "curated (Cycle 6)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0, "name": "Algorithm", "min": 0, "max": 10, "default": 0, "unit": "enum", "automatable": false, "description": "0..10: roteamento das 4 operadores. Algo 0 = D→C→B→A (4-stack)." },
-    { "index": 1, "name": "Global Volume", "min": 0, "max": 1, "default": 0.7, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 2, "name": "Voices", "min": 1, "max": 16, "default": 8, "unit": "voices", "automatable": false },
-    { "index": 3, "name": "Mono", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 4, "name": "Glide", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
-    { "index": 5, "name": "Pitch Bend Range", "min": 0, "max": 48, "default": 5, "unit": "semitones", "automatable": false },
-    { "index": 6, "name": "Time", "min": 0.5, "max": 2, "default": 1, "unit": "x", "automatable": true, "description": "Scale dos times de envelope (todos)." },
-    { "index": 7, "name": "Tone", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true, "description": "Brilho geral; alias para velocity→fixed-end." },
+    {
+      "index": 0,
+      "name": "Algorithm",
+      "min": 0,
+      "max": 10,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0..10: roteamento das 4 operadores. Algo 0 = D→C→B→A (4-stack)."
+    },
+    {
+      "index": 1,
+      "name": "Global Volume",
+      "min": 0,
+      "max": 1,
+      "default": 0.7,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Voices",
+      "min": 1,
+      "max": 16,
+      "default": 8,
+      "unit": "voices",
+      "automatable": false
+    },
+    {
+      "index": 3,
+      "name": "Mono",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 4,
+      "name": "Glide",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 5,
+      "name": "Pitch Bend Range",
+      "min": 0,
+      "max": 48,
+      "default": 5,
+      "unit": "semitones",
+      "automatable": false
+    },
+    {
+      "index": 6,
+      "name": "Time",
+      "min": 0.5,
+      "max": 2,
+      "default": 1,
+      "unit": "x",
+      "automatable": true,
+      "description": "Scale dos times de envelope (todos)."
+    },
+    {
+      "index": 7,
+      "name": "Tone",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Brilho geral; alias para velocity→fixed-end."
+    },
 
-    { "index": 8,  "name": "A Coarse", "min": 0.0625, "max": 32, "default": 1, "unit": "ratio", "automatable": true, "modulatable": true, "description": "Multiplicador de pitch do op A." },
-    { "index": 9,  "name": "A Fine", "min": 0, "max": 1000, "default": 0, "unit": "cents", "automatable": true, "modulatable": true },
-    { "index": 10, "name": "A Level", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 11, "name": "A Wave", "min": 0, "max": 22, "default": 0, "unit": "enum", "automatable": false, "description": "Sine, Saw, Square, Triangle, Noise, Wt1..." },
-    { "index": 12, "name": "A Feedback", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 13, "name": "A Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 14, "name": "A Decay", "min": 0.001, "max": 60, "default": 0.6, "unit": "s", "automatable": true },
-    { "index": 15, "name": "A Sustain", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
-    { "index": 16, "name": "A Release", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
+    {
+      "index": 8,
+      "name": "A Coarse",
+      "min": 0.0625,
+      "max": 32,
+      "default": 1,
+      "unit": "ratio",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Multiplicador de pitch do op A."
+    },
+    {
+      "index": 9,
+      "name": "A Fine",
+      "min": 0,
+      "max": 1000,
+      "default": 0,
+      "unit": "cents",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 10,
+      "name": "A Level",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 11,
+      "name": "A Wave",
+      "min": 0,
+      "max": 22,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Sine, Saw, Square, Triangle, Noise, Wt1..."
+    },
+    {
+      "index": 12,
+      "name": "A Feedback",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 13,
+      "name": "A Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 14,
+      "name": "A Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.6,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 15,
+      "name": "A Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 16,
+      "name": "A Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.5,
+      "unit": "s",
+      "automatable": true
+    },
 
-    { "index": 17, "name": "B Coarse", "min": 0.0625, "max": 32, "default": 1, "unit": "ratio", "automatable": true, "modulatable": true },
-    { "index": 18, "name": "B Fine", "min": 0, "max": 1000, "default": 0, "unit": "cents", "automatable": true, "modulatable": true },
-    { "index": 19, "name": "B Level", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true, "description": "Default 0 → modulator silencioso por padrão." },
-    { "index": 20, "name": "B Wave", "min": 0, "max": 22, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 21, "name": "B Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 22, "name": "B Decay", "min": 0.001, "max": 60, "default": 0.6, "unit": "s", "automatable": true },
-    { "index": 23, "name": "B Sustain", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
-    { "index": 24, "name": "B Release", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
+    {
+      "index": 17,
+      "name": "B Coarse",
+      "min": 0.0625,
+      "max": 32,
+      "default": 1,
+      "unit": "ratio",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 18,
+      "name": "B Fine",
+      "min": 0,
+      "max": 1000,
+      "default": 0,
+      "unit": "cents",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 19,
+      "name": "B Level",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Default 0 → modulator silencioso por padrão."
+    },
+    {
+      "index": 20,
+      "name": "B Wave",
+      "min": 0,
+      "max": 22,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 21,
+      "name": "B Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 22,
+      "name": "B Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.6,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 23,
+      "name": "B Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 24,
+      "name": "B Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.5,
+      "unit": "s",
+      "automatable": true
+    },
 
-    { "index": 25, "name": "C Coarse", "min": 0.0625, "max": 32, "default": 1, "unit": "ratio", "automatable": true, "modulatable": true },
-    { "index": 26, "name": "C Fine", "min": 0, "max": 1000, "default": 0, "unit": "cents", "automatable": true, "modulatable": true },
-    { "index": 27, "name": "C Level", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 28, "name": "C Wave", "min": 0, "max": 22, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 29, "name": "C Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 30, "name": "C Decay", "min": 0.001, "max": 60, "default": 0.6, "unit": "s", "automatable": true },
-    { "index": 31, "name": "C Sustain", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
-    { "index": 32, "name": "C Release", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
+    {
+      "index": 25,
+      "name": "C Coarse",
+      "min": 0.0625,
+      "max": 32,
+      "default": 1,
+      "unit": "ratio",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 26,
+      "name": "C Fine",
+      "min": 0,
+      "max": 1000,
+      "default": 0,
+      "unit": "cents",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 27,
+      "name": "C Level",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 28,
+      "name": "C Wave",
+      "min": 0,
+      "max": 22,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 29,
+      "name": "C Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 30,
+      "name": "C Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.6,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 31,
+      "name": "C Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 32,
+      "name": "C Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.5,
+      "unit": "s",
+      "automatable": true
+    },
 
-    { "index": 33, "name": "D Coarse", "min": 0.0625, "max": 32, "default": 1, "unit": "ratio", "automatable": true, "modulatable": true },
-    { "index": 34, "name": "D Fine", "min": 0, "max": 1000, "default": 0, "unit": "cents", "automatable": true, "modulatable": true },
-    { "index": 35, "name": "D Level", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 36, "name": "D Wave", "min": 0, "max": 22, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 37, "name": "D Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 38, "name": "D Decay", "min": 0.001, "max": 60, "default": 0.6, "unit": "s", "automatable": true },
-    { "index": 39, "name": "D Sustain", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
-    { "index": 40, "name": "D Release", "min": 0.001, "max": 60, "default": 0.5, "unit": "s", "automatable": true },
+    {
+      "index": 33,
+      "name": "D Coarse",
+      "min": 0.0625,
+      "max": 32,
+      "default": 1,
+      "unit": "ratio",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 34,
+      "name": "D Fine",
+      "min": 0,
+      "max": 1000,
+      "default": 0,
+      "unit": "cents",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 35,
+      "name": "D Level",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 36,
+      "name": "D Wave",
+      "min": 0,
+      "max": 22,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 37,
+      "name": "D Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 38,
+      "name": "D Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.6,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 39,
+      "name": "D Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 40,
+      "name": "D Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.5,
+      "unit": "s",
+      "automatable": true
+    },
 
-    { "index": 41, "name": "Filter On", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": true },
-    { "index": 42, "name": "Filter Type", "min": 0, "max": 4, "default": 0, "unit": "enum", "automatable": false, "description": "0=LP24, 1=LP12, 2=BP, 3=HP, 4=Notch." },
-    { "index": 43, "name": "Filter Freq", "min": 30, "max": 22000, "default": 22000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 44, "name": "Filter Res", "min": 0, "max": 1.25, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 45, "name": "Filter Drive", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    {
+      "index": 41,
+      "name": "Filter On",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 42,
+      "name": "Filter Type",
+      "min": 0,
+      "max": 4,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=LP24, 1=LP12, 2=BP, 3=HP, 4=Notch."
+    },
+    {
+      "index": 43,
+      "name": "Filter Freq",
+      "min": 30,
+      "max": 22000,
+      "default": 22000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 44,
+      "name": "Filter Res",
+      "min": 0,
+      "max": 1.25,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 45,
+      "name": "Filter Drive",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
 
-    { "index": 46, "name": "LFO Rate", "min": 0.01, "max": 32, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 47, "name": "LFO Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 48, "name": "LFO Shape", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false, "description": "Sine, Triangle, Saw Down, Square, Random, S&H." },
-    { "index": 49, "name": "LFO Dest A", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 50, "name": "LFO Dest B", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 51, "name": "LFO Dest C", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 52, "name": "LFO Dest D", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false }
+    {
+      "index": 46,
+      "name": "LFO Rate",
+      "min": 0.01,
+      "max": 32,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 47,
+      "name": "LFO Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 48,
+      "name": "LFO Shape",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Sine, Triangle, Saw Down, Square, Random, S&H."
+    },
+    {
+      "index": 49,
+      "name": "LFO Dest A",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 50,
+      "name": "LFO Dest B",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 51,
+      "name": "LFO Dest C",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 52,
+      "name": "LFO Dest D",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    }
   ],
   "todo": []
 }

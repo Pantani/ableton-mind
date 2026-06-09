@@ -9,25 +9,187 @@
   "source": "curated (Cycle 9)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Osc Type", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "Saw / Square / Triangle / Sine." },
-    { "index": 1,  "name": "Octave", "min": -2, "max": 2, "default": 0, "unit": "octaves", "automatable": false },
-    { "index": 2,  "name": "Sub Octave", "min": -2, "max": 0, "default": -1, "unit": "octaves", "automatable": false },
-    { "index": 3,  "name": "Sub Level", "min": 0, "max": 1, "default": 0.3, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 4,  "name": "PWM", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Filter Type", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "LP24 / LP12 / BP / HP." },
-    { "index": 6,  "name": "Filter Freq", "min": 30, "max": 22000, "default": 1000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Filter Reso", "min": 0, "max": 1.25, "default": 0.3, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Filter Env Amt", "min": -72, "max": 72, "default": 24, "unit": "st", "automatable": true, "modulatable": true },
-    { "index": 9,  "name": "Filter Vel Amt", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": false },
-    { "index": 10, "name": "Env Attack", "min": 0, "max": 60, "default": 0.001, "unit": "s", "automatable": true },
-    { "index": 11, "name": "Env Decay", "min": 0.001, "max": 60, "default": 0.3, "unit": "s", "automatable": true },
-    { "index": 12, "name": "Env Sustain", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true },
-    { "index": 13, "name": "Env Release", "min": 0.001, "max": 60, "default": 0.2, "unit": "s", "automatable": true },
-    { "index": 14, "name": "Drive", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 15, "name": "Drive Type", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Tube / Tape / Fuzz." },
-    { "index": 16, "name": "Glide", "min": 0, "max": 1, "default": 0.1, "unit": "s", "automatable": true },
-    { "index": 17, "name": "Accent", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true },
-    { "index": 18, "name": "Volume", "min": -36, "max": 12, "default": 0, "unit": "dB", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Osc Type",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Saw / Square / Triangle / Sine."
+    },
+    {
+      "index": 1,
+      "name": "Octave",
+      "min": -2,
+      "max": 2,
+      "default": 0,
+      "unit": "octaves",
+      "automatable": false
+    },
+    {
+      "index": 2,
+      "name": "Sub Octave",
+      "min": -2,
+      "max": 0,
+      "default": -1,
+      "unit": "octaves",
+      "automatable": false
+    },
+    {
+      "index": 3,
+      "name": "Sub Level",
+      "min": 0,
+      "max": 1,
+      "default": 0.3,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "PWM",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Filter Type",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "LP24 / LP12 / BP / HP."
+    },
+    {
+      "index": 6,
+      "name": "Filter Freq",
+      "min": 30,
+      "max": 22000,
+      "default": 1000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Filter Reso",
+      "min": 0,
+      "max": 1.25,
+      "default": 0.3,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Filter Env Amt",
+      "min": -72,
+      "max": 72,
+      "default": 24,
+      "unit": "st",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 9,
+      "name": "Filter Vel Amt",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": false
+    },
+    {
+      "index": 10,
+      "name": "Env Attack",
+      "min": 0,
+      "max": 60,
+      "default": 0.001,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 11,
+      "name": "Env Decay",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.3,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 12,
+      "name": "Env Sustain",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 13,
+      "name": "Env Release",
+      "min": 0.001,
+      "max": 60,
+      "default": 0.2,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 14,
+      "name": "Drive",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 15,
+      "name": "Drive Type",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Tube / Tape / Fuzz."
+    },
+    {
+      "index": 16,
+      "name": "Glide",
+      "min": 0,
+      "max": 1,
+      "default": 0.1,
+      "unit": "s",
+      "automatable": true
+    },
+    {
+      "index": 17,
+      "name": "Accent",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 18,
+      "name": "Volume",
+      "min": -36,
+      "max": 12,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

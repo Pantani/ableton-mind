@@ -45,10 +45,7 @@ export const jsonRpcErrorResponseSchema = z.object({
 });
 
 /** Response union — discriminada por presença de `result` vs `error`. */
-export const jsonRpcResponseSchema = z.union([
-  jsonRpcSuccessSchema,
-  jsonRpcErrorResponseSchema,
-]);
+export const jsonRpcResponseSchema = z.union([jsonRpcSuccessSchema, jsonRpcErrorResponseSchema]);
 export type JsonRpcResponse = z.infer<typeof jsonRpcResponseSchema>;
 
 /** Notification: sem `id`, server → client. */
@@ -108,7 +105,7 @@ export class JsonRpcRemoteError extends Error {
 
 /** Erro do transport (timeout, socket fechou, parse falhou). */
 export class JsonRpcTransportError extends Error {
-  public readonly cause?: unknown;
+  public override readonly cause?: unknown;
 
   constructor(message: string, cause?: unknown) {
     super(message);
@@ -139,7 +136,7 @@ export function decodeIncoming(line: string): JsonRpcIncoming {
 
 /** Discriminator: é response (tem id e result|error)? */
 export function isResponse(msg: JsonRpcIncoming): msg is JsonRpcResponse {
-  return "id" in msg && (("result" in msg) || ("error" in msg));
+  return "id" in msg && ("result" in msg || "error" in msg);
 }
 
 /** Discriminator: é notification (sem id, só method)? */

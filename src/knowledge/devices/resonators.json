@@ -9,22 +9,165 @@
   "source": "curated (Cycle 16)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Note", "min": 0, "max": 127, "default": 36, "unit": "MIDI", "automatable": true, "modulatable": true },
-    { "index": 1,  "name": "Fine", "min": -50, "max": 50, "default": 0, "unit": "cents", "automatable": true },
-    { "index": 2,  "name": "Decay I", "min": 5, "max": 500, "default": 200, "unit": "ms", "automatable": true, "modulatable": true },
-    { "index": 3,  "name": "Color I", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 4,  "name": "Gain I", "min": -36, "max": 12, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Pitch II", "min": -24, "max": 24, "default": 7, "unit": "semitones", "automatable": true, "modulatable": true },
-    { "index": 6,  "name": "Pitch III", "min": -24, "max": 24, "default": 12, "unit": "semitones", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Pitch IV", "min": -24, "max": 24, "default": 19, "unit": "semitones", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Pitch V", "min": -24, "max": 24, "default": 24, "unit": "semitones", "automatable": true, "modulatable": true },
-    { "index": 9,  "name": "Decay II", "min": 5, "max": 500, "default": 200, "unit": "ms", "automatable": true, "modulatable": true },
-    { "index": 10, "name": "Decay III", "min": 5, "max": 500, "default": 200, "unit": "ms", "automatable": true, "modulatable": true },
-    { "index": 11, "name": "Decay IV", "min": 5, "max": 500, "default": 200, "unit": "ms", "automatable": true, "modulatable": true },
-    { "index": 12, "name": "Decay V", "min": 5, "max": 500, "default": 200, "unit": "ms", "automatable": true, "modulatable": true },
-    { "index": 13, "name": "Input Mode", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "Original / MIDI." },
-    { "index": 14, "name": "Width", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 15, "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Note",
+      "min": 0,
+      "max": 127,
+      "default": 36,
+      "unit": "MIDI",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Fine",
+      "min": -50,
+      "max": 50,
+      "default": 0,
+      "unit": "cents",
+      "automatable": true
+    },
+    {
+      "index": 2,
+      "name": "Decay I",
+      "min": 5,
+      "max": 500,
+      "default": 200,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Color I",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "Gain I",
+      "min": -36,
+      "max": 12,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Pitch II",
+      "min": -24,
+      "max": 24,
+      "default": 7,
+      "unit": "semitones",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 6,
+      "name": "Pitch III",
+      "min": -24,
+      "max": 24,
+      "default": 12,
+      "unit": "semitones",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Pitch IV",
+      "min": -24,
+      "max": 24,
+      "default": 19,
+      "unit": "semitones",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Pitch V",
+      "min": -24,
+      "max": 24,
+      "default": 24,
+      "unit": "semitones",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 9,
+      "name": "Decay II",
+      "min": 5,
+      "max": 500,
+      "default": 200,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 10,
+      "name": "Decay III",
+      "min": 5,
+      "max": 500,
+      "default": 200,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 11,
+      "name": "Decay IV",
+      "min": 5,
+      "max": 500,
+      "default": 200,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 12,
+      "name": "Decay V",
+      "min": 5,
+      "max": 500,
+      "default": 200,
+      "unit": "ms",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 13,
+      "name": "Input Mode",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Original / MIDI."
+    },
+    {
+      "index": 14,
+      "name": "Width",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 15,
+      "name": "Dry/Wet",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

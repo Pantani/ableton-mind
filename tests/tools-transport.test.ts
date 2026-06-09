@@ -25,7 +25,7 @@ describe("playTool", () => {
     const ctx = createToolContext(bridge(call as BridgeClient["call"]));
     const result = await playTool.handler({}, ctx);
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       ok: true,
       verified: true,
       changed: true,
@@ -104,7 +104,7 @@ describe("setTempoTool", () => {
     });
     const ctx = createToolContext(bridge(call as BridgeClient["call"]));
     const r = await setTempoTool.handler({ bpm: 140 }, ctx);
-    expect(r).toEqual({ ok: true, verified: true, changed: true, before: 120, after: 140 });
+    expect(r).toMatchObject({ ok: true, verified: true, changed: true, before: 120, after: 140 });
   });
 
   it("input schema rejects out-of-range bpm", () => {

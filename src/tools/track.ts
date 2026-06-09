@@ -13,7 +13,7 @@
 
 import { z } from "zod";
 
-import { UNVERIFIABLE, verifyField } from "../feedback/verify.js";
+import { verifyField } from "../feedback/verify.js";
 import { defineTool } from "../server/define-tool.js";
 
 // ----- shared shapes ---------------------------------------------------------

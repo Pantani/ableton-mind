@@ -9,22 +9,162 @@
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Filter Type", "min": 0, "max": 4, "default": 0, "unit": "enum", "automatable": false, "description": "0=LP, 1=HP, 2=BP, 3=Notch, 4=Morph." },
-    { "index": 1,  "name": "Slope", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "0=12dB, 1=24dB." },
-    { "index": 2,  "name": "Circuit", "min": 0, "max": 3, "default": 0, "unit": "enum", "automatable": false, "description": "Clean / OSR / MS2 / SMP." },
-    { "index": 3,  "name": "Frequency", "min": 20, "max": 22000, "default": 22000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 4,  "name": "Resonance", "min": 0, "max": 1.25, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Drive", "min": 0, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 6,  "name": "Morph", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Env Amount", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Env Attack", "min": 0.1, "max": 1000, "default": 1, "unit": "ms", "automatable": true },
-    { "index": 9,  "name": "Env Release", "min": 1, "max": 3000, "default": 100, "unit": "ms", "automatable": true },
-    { "index": 10, "name": "LFO On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
-    { "index": 11, "name": "LFO Amount", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 12, "name": "LFO Rate", "min": 0.01, "max": 30, "default": 1, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 13, "name": "LFO Shape", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false, "description": "Sine/Triangle/Saw Up/Saw Down/Square/Random." },
-    { "index": 14, "name": "LFO Sync", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 15, "name": "Output Gain", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Filter Type",
+      "min": 0,
+      "max": 4,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=LP, 1=HP, 2=BP, 3=Notch, 4=Morph."
+    },
+    {
+      "index": 1,
+      "name": "Slope",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=12dB, 1=24dB."
+    },
+    {
+      "index": 2,
+      "name": "Circuit",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Clean / OSR / MS2 / SMP."
+    },
+    {
+      "index": 3,
+      "name": "Frequency",
+      "min": 20,
+      "max": 22000,
+      "default": 22000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 4,
+      "name": "Resonance",
+      "min": 0,
+      "max": 1.25,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Drive",
+      "min": 0,
+      "max": 24,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 6,
+      "name": "Morph",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Env Amount",
+      "min": -100,
+      "max": 100,
+      "default": 0,
+      "unit": "%",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Env Attack",
+      "min": 0.1,
+      "max": 1000,
+      "default": 1,
+      "unit": "ms",
+      "automatable": true
+    },
+    {
+      "index": 9,
+      "name": "Env Release",
+      "min": 1,
+      "max": 3000,
+      "default": 100,
+      "unit": "ms",
+      "automatable": true
+    },
+    {
+      "index": 10,
+      "name": "LFO On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true
+    },
+    {
+      "index": 11,
+      "name": "LFO Amount",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 12,
+      "name": "LFO Rate",
+      "min": 0.01,
+      "max": 30,
+      "default": 1,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 13,
+      "name": "LFO Shape",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Sine/Triangle/Saw Up/Saw Down/Square/Random."
+    },
+    {
+      "index": 14,
+      "name": "LFO Sync",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 15,
+      "name": "Output Gain",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

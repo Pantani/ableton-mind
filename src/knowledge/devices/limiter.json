@@ -9,12 +9,65 @@
   "source": "curated (Cycle 9)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0, "name": "Gain", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true, "description": "Input gain antes do limiter." },
-    { "index": 1, "name": "Ceiling", "min": -36, "max": 0, "default": -0.3, "unit": "dB", "automatable": true, "description": "Brickwall ceiling. Default -0.3 dBFS (true peak headroom)." },
-    { "index": 2, "name": "Release", "min": 0, "max": 1, "default": 0.5, "unit": "enum", "automatable": false, "description": "0=Auto, ou time fixo entre 0.5 e 1 segundo." },
-    { "index": 3, "name": "Auto Release", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": false },
-    { "index": 4, "name": "Lookahead", "min": 0, "max": 2, "default": 1, "unit": "enum", "automatable": false, "description": "0=1.5ms, 1=3ms, 2=6ms." },
-    { "index": 5, "name": "Stereo Link", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": false }
+    {
+      "index": 0,
+      "name": "Gain",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true,
+      "description": "Input gain antes do limiter."
+    },
+    {
+      "index": 1,
+      "name": "Ceiling",
+      "min": -36,
+      "max": 0,
+      "default": -0.3,
+      "unit": "dB",
+      "automatable": true,
+      "description": "Brickwall ceiling. Default -0.3 dBFS (true peak headroom)."
+    },
+    {
+      "index": 2,
+      "name": "Release",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=Auto, ou time fixo entre 0.5 e 1 segundo."
+    },
+    {
+      "index": 3,
+      "name": "Auto Release",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 4,
+      "name": "Lookahead",
+      "min": 0,
+      "max": 2,
+      "default": 1,
+      "unit": "enum",
+      "automatable": false,
+      "description": "0=1.5ms, 1=3ms, 2=6ms."
+    },
+    {
+      "index": 5,
+      "name": "Stereo Link",
+      "min": 0,
+      "max": 1,
+      "default": 1,
+      "unit": "bool",
+      "automatable": false
+    }
   ],
   "todo": []
 }

@@ -47,7 +47,7 @@ from AbletonMind.schemas import (
     TrackUpsertInput,
 )
 
-from .._fakes.live_api import FakeApplication, FakeCtrl, FakeScene, FakeSong, FakeTrack
+from ._fakes.live_api import FakeApplication, FakeCtrl, FakeScene, FakeSong, FakeTrack
 
 
 # ---------- helpers ----------------------------------------------------------

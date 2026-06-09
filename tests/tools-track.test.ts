@@ -39,9 +39,7 @@ const SAMPLE_LIST_RESULT = {
       arm: true,
     },
   ],
-  return_tracks: [
-    { index: 0, name: "Reverb", color_index: 3, mute: false, solo: false },
-  ],
+  return_tracks: [{ index: 0, name: "Reverb", color_index: 3, mute: false, solo: false }],
   master_track: { name: "Master", color_index: 0 },
   total: 4,
 };
@@ -67,10 +65,7 @@ describe("trackListTool", () => {
       return { ...SAMPLE_LIST_RESULT, return_tracks: [], master_track: null, total: 2 };
     });
     const ctx = createToolContext(bridge(call as BridgeClient["call"]));
-    const r = await trackListTool.handler(
-      { include_master: false, include_returns: false },
-      ctx,
-    );
+    const r = await trackListTool.handler({ include_master: false, include_returns: false }, ctx);
     expect(r.master_track).toBeNull();
     expect(r.return_tracks).toEqual([]);
   });
@@ -102,10 +97,7 @@ describe("trackCreateTool", () => {
       };
     });
     const ctx = createToolContext(bridge(call as BridgeClient["call"]));
-    const r = await trackCreateTool.handler(
-      { type: "audio", index: 1, name: "Lead Vox" },
-      ctx,
-    );
+    const r = await trackCreateTool.handler({ type: "audio", index: 1, name: "Lead Vox" }, ctx);
     expect(r.track.name).toBe("Lead Vox");
   });
 

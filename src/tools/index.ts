@@ -78,7 +78,10 @@ export {
   trackUpsertTool,
 };
 
-export const allTools: ToolDefinition[] = [
+// Concrete tools are ToolDefinition<ZodObject<...>, ZodObject<...>>; we erase
+// the per-tool generics to the default ToolDefinition[] for the registry. The
+// cast goes through `unknown` because the generic position is invariant.
+export const allTools = [
   // transport
   playTool,
   stopTool,
@@ -123,4 +126,4 @@ export const allTools: ToolDefinition[] = [
   pushSetPadColorTool,
   pushSetButtonLedTool,
   pushSetModeTool,
-];
+] as unknown as ToolDefinition[];

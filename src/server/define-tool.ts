@@ -48,9 +48,8 @@ export interface ToolDefinition<
  * Identidade. Existe só para dar autocomplete + checagem de tipos no
  * call site sem perder a inferência de `TInput` / `TOutput`.
  */
-export function defineTool<
-  TInput extends z.ZodTypeAny,
-  TOutput extends z.ZodTypeAny,
->(def: ToolDefinition<TInput, TOutput>): ToolDefinition<TInput, TOutput> {
+export function defineTool<TInput extends z.ZodTypeAny, TOutput extends z.ZodTypeAny>(
+  def: ToolDefinition<TInput, TOutput>,
+): ToolDefinition<TInput, TOutput> {
   return def;
 }

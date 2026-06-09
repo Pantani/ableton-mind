@@ -9,19 +9,130 @@
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Threshold", "min": -60, "max": 0, "default": -30, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 1,  "name": "Return", "min": 0, "max": 24, "default": 3, "unit": "dB", "automatable": true },
-    { "index": 2,  "name": "Attack", "min": 0.01, "max": 100, "default": 0.1, "unit": "ms", "automatable": true },
-    { "index": 3,  "name": "Hold", "min": 0, "max": 1000, "default": 10, "unit": "ms", "automatable": true },
-    { "index": 4,  "name": "Release", "min": 1, "max": 5000, "default": 250, "unit": "ms", "automatable": true },
-    { "index": 5,  "name": "Floor", "min": -96, "max": 0, "default": -36, "unit": "dB", "automatable": true, "description": "Floor da redução; -96 = mute prático." },
-    { "index": 6,  "name": "Lookahead", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Off / 1ms / 10ms." },
-    { "index": 7,  "name": "Flip", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false, "description": "0=Gate, 1=Duck." },
-    { "index": 8,  "name": "Sidechain On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 9,  "name": "Sidechain Gain", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 10, "name": "EQ On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
-    { "index": 11, "name": "EQ Frequency", "min": 30, "max": 22000, "default": 1000, "unit": "Hz", "automatable": true, "modulatable": true },
-    { "index": 12, "name": "EQ Q", "min": 0.5, "max": 8, "default": 1, "unit": "Q", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Threshold",
+      "min": -60,
+      "max": 0,
+      "default": -30,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 1,
+      "name": "Return",
+      "min": 0,
+      "max": 24,
+      "default": 3,
+      "unit": "dB",
+      "automatable": true
+    },
+    {
+      "index": 2,
+      "name": "Attack",
+      "min": 0.01,
+      "max": 100,
+      "default": 0.1,
+      "unit": "ms",
+      "automatable": true
+    },
+    {
+      "index": 3,
+      "name": "Hold",
+      "min": 0,
+      "max": 1000,
+      "default": 10,
+      "unit": "ms",
+      "automatable": true
+    },
+    {
+      "index": 4,
+      "name": "Release",
+      "min": 1,
+      "max": 5000,
+      "default": 250,
+      "unit": "ms",
+      "automatable": true
+    },
+    {
+      "index": 5,
+      "name": "Floor",
+      "min": -96,
+      "max": 0,
+      "default": -36,
+      "unit": "dB",
+      "automatable": true,
+      "description": "Floor da redução; -96 = mute prático."
+    },
+    {
+      "index": 6,
+      "name": "Lookahead",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Off / 1ms / 10ms."
+    },
+    {
+      "index": 7,
+      "name": "Flip",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false,
+      "description": "0=Gate, 1=Duck."
+    },
+    {
+      "index": 8,
+      "name": "Sidechain On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 9,
+      "name": "Sidechain Gain",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 10,
+      "name": "EQ On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": false
+    },
+    {
+      "index": 11,
+      "name": "EQ Frequency",
+      "min": 30,
+      "max": 22000,
+      "default": 1000,
+      "unit": "Hz",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 12,
+      "name": "EQ Q",
+      "min": 0.5,
+      "max": 8,
+      "default": 1,
+      "unit": "Q",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }

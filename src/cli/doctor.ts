@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * ableton-mind doctor — diagnostico de instalação.
  *
@@ -46,7 +45,7 @@ function fmt(check: Check): string {
 }
 
 async function checkNode(): Promise<Check> {
-  const major = Number.parseInt(process.versions.node.split(".")[0], 10);
+  const major = Number.parseInt(process.versions.node.split(".")[0] ?? "0", 10);
   return {
     name: "Node.js >= 20",
     ok: major >= 20,
@@ -214,8 +213,11 @@ async function checkRecipes(): Promise<Check> {
   }
 }
 
+// biome-ignore lint/suspicious/noConsoleLog: doctor is a CLI tool — stdout IS the output channel.
+const out = (msg: string): void => console.log(msg);
+
 async function main(): Promise<void> {
-  console.log(`\n${DIM}ableton-mind doctor${RESET}\n`);
+  out(`\n${DIM}ableton-mind doctor${RESET}\n`);
   const checks: Check[] = [
     await checkNode(),
     await checkRemoteScript(),
@@ -226,12 +228,12 @@ async function main(): Promise<void> {
     await checkMcpPrimitives(),
   ];
   for (const c of checks) {
-    console.log(fmt(c));
+    out(fmt(c));
   }
   const failed = checks.filter((c) => !c.ok).length;
-  console.log(
-    `\n${failed === 0 ? GREEN + "✓ tudo ok" : RED + `✗ ${failed} check${failed > 1 ? "s" : ""} falharam`}${RESET}\n`,
-  );
+  const summary =
+    failed === 0 ? `${GREEN}✓ tudo ok` : `${RED}✗ ${failed} check${failed > 1 ? "s" : ""} falharam`;
+  out(`\n${summary}${RESET}\n`);
   process.exit(failed === 0 ? 0 : 1);
 }
 

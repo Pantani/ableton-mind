@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Pantani/ableton-mind",
+  "title": "ableton-mind — Ableton Live MCP server",
+  "description": "Definitive MCP server for Ableton Live — full LOM coverage, embedded device knowledge base, and declarative music recipes.",
+  "version": "0.0.21",
+  "repository": {
+    "url": "https://github.com/Pantani/ableton-mind",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "ableton-mind",
+      "version": "0.0.21",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

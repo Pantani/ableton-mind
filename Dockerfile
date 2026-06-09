@@ -19,9 +19,10 @@ WORKDIR /app
 COPY package.json package-lock.json* tsup.config.ts tsconfig.json ./
 RUN npm install --no-audit --no-fund
 
-# Copy source + recipes + knowledge.
+# Copy source + recipes + knowledge + scripts (build:postbuild copies assets).
 COPY src ./src
 COPY recipes ./recipes
+COPY scripts ./scripts
 
 RUN npm run build
 

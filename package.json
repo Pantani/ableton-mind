@@ -3,7 +3,19 @@
   "version": "0.0.21",
   "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
   "license": "MIT",
+  "homepage": "https://pantani.github.io/ableton-mind/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pantani/ableton-mind.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Pantani/ableton-mind/issues"
+  },
+  "author": "Pantani",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=20"
   },
@@ -20,11 +32,16 @@
   },
   "files": [
     "dist",
+    "recipes",
+    "src/knowledge/devices",
+    "src/knowledge/scales.json",
     "README.md",
-    "LICENSE"
+    "README.en.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && node scripts/copy-assets.mjs",
     "dev": "tsup --watch",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
@@ -42,9 +59,14 @@
     "extract:devices": "node scripts/extract-device-schemas.mjs",
     "build:dxt": "node scripts/build-dxt.mjs",
     "build:dxt:check": "node scripts/build-dxt.mjs --check",
+    "build:mcpb": "node scripts/build-dxt.mjs",
+    "lint:py": "uvx ruff check live/AbletonMind",
+    "lint:py:fix": "uvx ruff check live/AbletonMind --fix-only",
+    "test:bridge": "cd live && python -m unittest discover -s AbletonMind/tests -v",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
+    "version": "node scripts/sync-manifest-version.mjs && git add dxt/manifest.json server.json safeskill.manifest.json",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "dependencies": {

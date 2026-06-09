@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+coverage
+.git
+*.log
+.DS_Store
+tests
+.idea
+.vscode
+_workspace
+docs/.vitepress/cache
+docs/.vitepress/dist

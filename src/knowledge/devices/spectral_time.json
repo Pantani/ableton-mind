@@ -9,15 +9,94 @@
   "source": "curated (Cycle 12)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Freezer Mode", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "Freeze / Smear." },
-    { "index": 1,  "name": "Freeze On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true, "modulatable": true },
-    { "index": 2,  "name": "Time", "min": 0, "max": 60, "default": 5, "unit": "s", "automatable": true, "modulatable": true },
-    { "index": 3,  "name": "Tilt", "min": -1, "max": 1, "default": 0, "unit": "linear", "automatable": true },
-    { "index": 4,  "name": "Damping", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 5,  "name": "Sample Rate", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false },
-    { "index": 6,  "name": "Spray", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
-    { "index": 7,  "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
-    { "index": 8,  "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true }
+    {
+      "index": 0,
+      "name": "Freezer Mode",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false,
+      "description": "Freeze / Smear."
+    },
+    {
+      "index": 1,
+      "name": "Freeze On",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "bool",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 2,
+      "name": "Time",
+      "min": 0,
+      "max": 60,
+      "default": 5,
+      "unit": "s",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 3,
+      "name": "Tilt",
+      "min": -1,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true
+    },
+    {
+      "index": 4,
+      "name": "Damping",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 5,
+      "name": "Sample Rate",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "unit": "enum",
+      "automatable": false
+    },
+    {
+      "index": 6,
+      "name": "Spray",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 7,
+      "name": "Output",
+      "min": -36,
+      "max": 36,
+      "default": 0,
+      "unit": "dB",
+      "automatable": true,
+      "modulatable": true
+    },
+    {
+      "index": 8,
+      "name": "Dry/Wet",
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "unit": "linear",
+      "automatable": true,
+      "modulatable": true
+    }
   ],
   "todo": []
 }
