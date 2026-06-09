@@ -39,3 +39,7 @@ __pycache__/
 
 # Local-only workspace state (kept under git only when curated)
 _workspace/cache/
+
+# VitePress docs site
+docs/.vitepress/cache/
+docs/.vitepress/dist/

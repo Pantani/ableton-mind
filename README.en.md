@@ -6,6 +6,8 @@ Definitive MCP (Model Context Protocol) server for **Ableton Live**. Exposes the
 
 Português: [README.md](README.md).
 
+📚 **Full documentation:** [pantani.github.io/ableton-mind/en/](https://pantani.github.io/ableton-mind/en/)
+
 ## Architecture (3 layers)
 
 ```

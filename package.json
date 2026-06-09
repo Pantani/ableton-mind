@@ -42,6 +42,9 @@
     "extract:devices": "node scripts/extract-device-schemas.mjs",
     "build:dxt": "node scripts/build-dxt.mjs",
     "build:dxt:check": "node scripts/build-dxt.mjs --check",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
@@ -56,6 +59,7 @@
     "tsup": "^8.3.5",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.15.0",
+    "vitepress": "^1.6.4",
     "vitest": "^2.1.4"
   },
   "keywords": [

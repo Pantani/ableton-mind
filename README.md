@@ -4,6 +4,8 @@ Servidor MCP (Model Context Protocol) para Ableton Live. Expõe o **Live Object 
 
 > Status: **Phase 0 — Spike** em construção. API instável. Não use em produção.
 
+📚 **Documentação completa:** [pantani.github.io/ableton-mind](https://pantani.github.io/ableton-mind/)
+
 ## Arquitetura (3 camadas)
 
 ```
