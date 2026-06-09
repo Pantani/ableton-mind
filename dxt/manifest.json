@@ -2,7 +2,7 @@
   "dxt_version": "0.1",
   "name": "ableton-mind",
   "display_name": "Ableton Mind",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
   "long_description": "ableton-mind expõe o Live Object Model completo para LLMs (Claude, Cursor, etc.) com tool calls idempotentes, transações (undo unitário), verify loop integrado, knowledge base embutida de 50+ devices nativos do Live e recipes musicais declarativas (drums, basslines, racks). Diferente de wrappers MCP rasos, cobre ~100% do LOM (~180 tools planejadas) e foi desenhado para que o LLM nunca chute parâmetros — devices são sempre endereçados por nome via knowledge base.",
   "author": {

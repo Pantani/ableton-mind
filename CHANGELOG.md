@@ -9,6 +9,16 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 - Smoke test real contra Live (TD-004) — gate de release.
 - Validação final de Push 2/3 sysex em hardware (TD-030).
 
+## [0.0.21] — 2026-06-09 (Cycle 22) — Smoke-discovered fixes
+
+### Fixed
+- **TD-046** ✅ `system.hello` agora retorna `version` lido de `package.json` no module load (não mais hardcoded `"0.0.1"`). Cache em `BRIDGE_VERSION`. Fallback `"0.0.0+unknown"` se package.json não estiver empacotado.
+- **TD-047** ✅ `_live_version()` agora tenta 3 paths Live API:
+  1. `Application.get_major_version() / get_minor_version() / get_bugfix_version()` (Live 11+).
+  2. `Application.get_major_minor_patch_version()` (tupla, builds antigas).
+  3. `Application.get_version_string()` (fallback raro).
+  Devolve `"0.0.0"` apenas se todos falharem (ex: ambiente sem `Live` module).
+
 ## [0.0.20] — 2026-06-09 (Cycle 20) — Wire smoke + Doctor 7
 
 ### Added
