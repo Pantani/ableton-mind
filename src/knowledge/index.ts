@@ -135,6 +135,11 @@ const KNOWN_DEVICES = [
   "filter_delay",
   "grain_delay",
   "utility",
+  "arpeggiator",
+  "spectrum",
+  "resonators",
+  "external_audio_effect",
+  "channel_eq",
 ];
 
 export async function loadAllDevices(): Promise<DeviceSchema[]> {

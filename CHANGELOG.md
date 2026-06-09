@@ -9,6 +9,19 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 - Smoke test real contra Live (TD-004) — gate de release.
 - Validação final de Push 2/3 sysex em hardware (TD-030).
 
+## [0.0.16] — 2026-06-09 (Cycle 16) 🎯 **Knowledge 100% PLAN.md §5**
+
+### Added
+- Knowledge: **50 devices** (+5: Arpeggiator (MIDI), Spectrum (analyzer), Resonators, External Audio Effect, Channel EQ Live 12). **100% PLAN.md §5 target achieved.**
+- Recipes: **14 recipes** (+`mixing/bass-glue` Channel EQ → Saturator Tape → Glue Comp, +`drums/lofi-kit` Drum Bus + Vinyl Distortion + Redux 12-bit + boom-bap 90 BPM).
+
+### Changed
+- TD-042 ✅ Re-anotação `unit: "curve"` em params não-lineares de devices antigos:
+  - Drum Buss: Drive, Crunch, Compression, Boom.
+  - Pedal: Gain.
+  - Roar: Stage 1/2/3 Amount, Feedback Amount, Compressor Amount.
+- Saturator Drive ganha description aclarando dependência de Type.
+
 ## [0.0.15] — 2026-06-09 (Cycle 15)
 
 ### Added

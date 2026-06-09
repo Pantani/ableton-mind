@@ -9,7 +9,7 @@
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [
-    { "index": 0,  "name": "Drive", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 0,  "name": "Drive", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true, "description": "Drive em dB. Curva audível depende do Type." },
     { "index": 1,  "name": "Type", "min": 0, "max": 5, "default": 0, "unit": "enum", "automatable": false, "description": "Analog Clip / Soft Sine / Medium Curve / Hard Curve / Sinoid Fold / Digital Clip." },
     { "index": 2,  "name": "Color On", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
     { "index": 3,  "name": "Base", "min": 50, "max": 5000, "default": 100, "unit": "Hz", "automatable": true, "modulatable": true },

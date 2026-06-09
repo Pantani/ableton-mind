@@ -1,0 +1,21 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.external_audio_effect",
+  "name": "External Audio Effect",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "9.0",
+  "description": "Routing helper que envia audio para hardware/outboard via Output Routing e recebe de volta via Input Routing. Compensação de latência incluída.",
+  "source": "curated (Cycle 16)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Gain Send", "min": -70, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 1, "name": "Gain Return", "min": -70, "max": 24, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 2, "name": "Invert Phase", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
+    { "index": 3, "name": "Hardware Latency", "min": 0, "max": 1000, "default": 0, "unit": "ms", "automatable": false, "description": "Compensação manual em sample/ms." },
+    { "index": 4, "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": [
+    "Adicionar campos de Input/Output routing — não automatável mas relevante para conexão real (string enum populado pelo Live runtime)."
+  ]
+}
