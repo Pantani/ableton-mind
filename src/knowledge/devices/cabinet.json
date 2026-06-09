@@ -1,0 +1,20 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.cabinet",
+  "name": "Cabinet",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "9.0",
+  "description": "Guitar cabinet IR simulator. Pareado com Amp para tom de guitarra/bass.",
+  "source": "curated (Cycle 15)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Speaker", "min": 0, "max": 4, "default": 0, "unit": "enum", "automatable": false, "description": "1×12 Combo / 2×12 Combo / 4×10 Combo / 4×12 Stack / 8×12 Stack." },
+    { "index": 1, "name": "Mic Type", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Dynamic / Condenser / Ribbon." },
+    { "index": 2, "name": "Mic Pos", "min": 0, "max": 1, "default": 0, "unit": "enum", "automatable": false, "description": "Near (cone) / Far (room)." },
+    { "index": 3, "name": "Dual Mic", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": true },
+    { "index": 4, "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 5, "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

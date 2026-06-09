@@ -9,6 +9,13 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 - Smoke test real contra Live (TD-004) — gate de release.
 - Validação final de Push 2/3 sysex em hardware (TD-030).
 
+## [0.0.15] — 2026-06-09 (Cycle 15)
+
+### Added
+- TD-041 ✅ `src/knowledge/README.md` — convenção de `unit` documentada (linear vs curve + 16 unit types canônicos + processo de adicionar device).
+- Knowledge: **45 devices** (+5: Cabinet, Dynamic Tube, Filter Delay, Grain Delay, Utility). **90% PLAN.md §5 target.**
+- Recipes: **12 recipes** (+`drums/jungle-break` — Amen-style 170 BPM, +`bass/reese` — Operator detuned saws + Chorus-Ensemble).
+
 ## [0.0.14] — 2026-06-09 (Cycle 14, RC prep)
 
 ### Added

@@ -1,72 +1,48 @@
 # PROGRESS — ableton-mind
 
-**Estado:** Phases 1-7 fechadas em código. Knowledge 80%. Recipes 10. Versão 0.0.14. **Pronto para v0.1.0-rc.1 condicionado a smoke real (TD-004).**
+**Estado:** Phases 1-7 ✅. Knowledge **90%**. Recipes 12 (7/7 categorias). Versão 0.0.15. **Pronto para v0.1.0-rc.1 condicionado a smoke real.**
 **Última atualização:** 2026-06-09
 
 ## Fases
 - **Phase 0:** código completo. Smoke pendente (TD-004) — **gate v0.1.0-rc.1**.
-- **Phase 1 — ahujasid:** ✅ 22/22+.
-- **Phase 2 — Listeners:** ✅ 7 eventos.
-- **Phase 3 — Knowledge:** **40/50+ devices (80%)** 🎯.
-- **Phase 4 — Automation:** ✅.
-- **Phase 5 — Preview/verify:** ✅.
-- **Phase 6 — Push:** ✅.
-- **Phase 7 — Distribuição:** ✅ Doctor (6 checks) + Docker + Smithery + CI/Release workflows + CHANGELOG + ADR-0009 + validation tests.
-- **Recipes (Trilha C):** 10 recipes em 7/7 categorias.
+- **Phase 1-7:** todas ✅.
+- **Phase 3 — Knowledge:** **45/50+ devices (90%)** 🎯.
+- **Recipes:** 12 em 7/7 categorias.
 - **Verify loop:** 23/23.
 
 ## Ciclos
 
 | # | Status |
 |---|---|
-| 1-13 | PASS-WITH-WARNINGS (13) |
-| 14 | PASS-WITH-WARNINGS |
+| 1-14 | PASS-WITH-WARNINGS (14) |
+| 15 | PASS-WITH-WARNINGS |
 
-Detalhe Cycle 14: [qa/cycle-14-report.md](qa/cycle-14-report.md).
+Detalhe Cycle 15: [qa/cycle-15-report.md](qa/cycle-15-report.md).
 
-## Cycle 14 — entregas
+## Cycle 15 — entregas
 
-**Tech debt fechado:** TD-038 (workflow tests), TD-039 (version sync check), TD-040 (CI secrets docs).
+**Tech debt fechado:** TD-041 (knowledge units convention).
 
-**Doctor CLI:** 6º check (version sync pkg ↔ DXT), implementado com graceful skip em ambiente sem manifest.
+**Knowledge — 45 devices (90%):**
+- `src/knowledge/README.md` — 16 unit types canônicos + `linear` vs `curve` doc + processo de curadoria.
+- +5 devices: Cabinet, Dynamic Tube, Filter Delay, Grain Delay, Utility.
 
-**Tests:** `tests/distribution-validation.test.ts` — 14+ casos cobrindo pkg/dxt sync, CHANGELOG, GitHub workflows, Dockerfile, smithery.yaml, .npmignore, README/docs presence.
+**Recipes — 12:**
+- +`drums/jungle-break` (Amen-style 170 BPM).
+- +`bass/reese` (Operator detuned + Chorus-Ensemble).
 
-**Docs:** `docs/distribution.md §5b` — secrets do release workflow + dry-run local.
-
-**Knowledge — 40 devices (80%) 🎯:**
-- +2: Drum Buss, Redux.
-
-**Recipes — 10:**
-- +`chords/lofi-jazz` — Operator + Redux + Vinyl Distortion + Cmaj7→Am7→Fmaj7→G7.
-
-**Versão:** 0.0.14 (sync pkg + manifest + CHANGELOG).
-
-## Decisões abertas
-Nenhuma.
+**Versão:** 0.0.15 (pkg + manifest + CHANGELOG sync).
 
 ## Tech debt aberto
 
-[tech-debt.md](tech-debt.md). **Apenas 4 itens** — 1 ⚠medium (TD-004 bloqueio release), 3 baixos.
+[tech-debt.md](tech-debt.md). **4 itens** — 1 ⚠medium (TD-004 bloqueio release), 3 baixos.
 
-## Próximo — Cycle 15 (Release)
+## Próximo — Cycle 16
 
-**Pré-condição CRÍTICA: TD-004 smoke real PASS.**
-
-Procedimento release:
-```bash
-git checkout -b release/0.1.0-rc.1
-# bump package.json + dxt/manifest.json para 0.1.0-rc.1
-# atualizar CHANGELOG
-git tag v0.1.0-rc.1
-git push origin v0.1.0-rc.1
-```
-
-Release workflow dispara: build → test → docker push ghcr.io + GitHub Release com `.mcpb`.
-
-Adicionalmente:
-- TD-041 (knowledge docs ambíguas).
-- +5 devices (rumo a 45/50).
+- **TD-004 smoke real** (BLOQUEIO).
+- TD-042 re-anotação curve.
+- Tag `v0.1.0-rc.1` (após smoke).
+- +5 devices → **meta 50/50 = 100%**.
 - +2 recipes.
 
-Disparar com "continuar" ou "começar Cycle 15".
+Disparar com "continuar".

@@ -130,6 +130,11 @@ const KNOWN_DEVICES = [
   "vinyl_distortion",
   "drum_buss",
   "redux",
+  "cabinet",
+  "dynamic_tube",
+  "filter_delay",
+  "grain_delay",
+  "utility",
 ];
 
 export async function loadAllDevices(): Promise<DeviceSchema[]> {

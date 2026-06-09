@@ -1,6 +1,6 @@
 {
   "name": "ableton-mind",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
   "license": "MIT",
   "type": "module",

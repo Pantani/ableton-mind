@@ -1,0 +1,22 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.grain_delay",
+  "name": "Grain Delay",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "Granular delay + pitch + spray. Sound design / texture warping.",
+  "source": "curated (Cycle 15)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Frequency", "min": 0.01, "max": 150, "default": 30, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 1, "name": "Pitch", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true, "modulatable": true },
+    { "index": 2, "name": "Spray", "min": 0, "max": 500, "default": 50, "unit": "ms", "automatable": true, "modulatable": true },
+    { "index": 3, "name": "Random Pitch", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 4, "name": "Feedback", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 5, "name": "Time", "min": 0, "max": 16, "default": 6, "unit": "enum", "automatable": false, "description": "1/32..2 bars sync." },
+    { "index": 6, "name": "Sync", "min": 0, "max": 1, "default": 1, "unit": "bool", "automatable": false },
+    { "index": 7, "name": "Dry/Wet", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

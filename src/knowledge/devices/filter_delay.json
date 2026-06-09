@@ -1,0 +1,29 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.filter_delay",
+  "name": "Filter Delay",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "3 delay lines (L / L+R / R) com filter por linha. Útil para dub e creative routing.",
+  "source": "curated (Cycle 15)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Input L", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true },
+    { "index": 1,  "name": "Input L+R", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 2,  "name": "Input R", "min": 0, "max": 1, "default": 0, "unit": "linear", "automatable": true },
+    { "index": 3,  "name": "L Time", "min": 1, "max": 5000, "default": 250, "unit": "ms", "automatable": true, "modulatable": true },
+    { "index": 4,  "name": "L Sync", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 5,  "name": "L Feedback", "min": 0, "max": 1, "default": 0.4, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 6,  "name": "M Time", "min": 1, "max": 5000, "default": 250, "unit": "ms", "automatable": true, "modulatable": true },
+    { "index": 7,  "name": "M Feedback", "min": 0, "max": 1, "default": 0.4, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 8,  "name": "R Time", "min": 1, "max": 5000, "default": 250, "unit": "ms", "automatable": true, "modulatable": true },
+    { "index": 9,  "name": "R Feedback", "min": 0, "max": 1, "default": 0.4, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 10, "name": "L Filter Freq", "min": 60, "max": 19999, "default": 1000, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 11, "name": "L Filter Width", "min": 0.5, "max": 9, "default": 5, "unit": "octaves", "automatable": true },
+    { "index": 12, "name": "M Filter Freq", "min": 60, "max": 19999, "default": 1000, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 13, "name": "R Filter Freq", "min": 60, "max": 19999, "default": 1000, "unit": "Hz", "automatable": true, "modulatable": true },
+    { "index": 14, "name": "Dry", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}

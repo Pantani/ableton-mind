@@ -1,0 +1,23 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.dynamic_tube",
+  "name": "Dynamic Tube",
+  "category": "audio_effect",
+  "vendor": "Ableton",
+  "live_version_min": "9.0",
+  "description": "Tube saturation modelado em 3 tipos (A/B/C — cool, gentle, aggressive). Bias + Envelope controls.",
+  "source": "curated (Cycle 15)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Tone", "min": 0, "max": 1, "default": 0.5, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 1, "name": "Drive", "min": 0, "max": 1, "default": 0, "unit": "curve", "automatable": true, "modulatable": true, "description": "Não-linear. 0.5 ≠ metade do drive máximo." },
+    { "index": 2, "name": "Bias", "min": 0, "max": 1, "default": 0, "unit": "curve", "automatable": true, "modulatable": true },
+    { "index": 3, "name": "Envelope", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": true, "modulatable": true },
+    { "index": 4, "name": "Attack", "min": 0.01, "max": 1000, "default": 1, "unit": "ms", "automatable": true },
+    { "index": 5, "name": "Release", "min": 1, "max": 5000, "default": 100, "unit": "ms", "automatable": true },
+    { "index": 6, "name": "Tube Type", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "A=Cool / B=Gentle / C=Aggressive." },
+    { "index": 7, "name": "Output", "min": -36, "max": 36, "default": 0, "unit": "dB", "automatable": true, "modulatable": true },
+    { "index": 8, "name": "Dry/Wet", "min": 0, "max": 1, "default": 1, "unit": "linear", "automatable": true, "modulatable": true }
+  ],
+  "todo": []
+}
