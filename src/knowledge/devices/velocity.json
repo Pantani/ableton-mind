@@ -1,0 +1,23 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.velocity",
+  "name": "Velocity",
+  "category": "midi_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "MIDI effect: remap velocity das notas via curve + random + fix mode.",
+  "source": "curated (Cycle 17)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Drive", "min": -64, "max": 64, "default": 0, "unit": "linear", "automatable": true, "modulatable": true },
+    { "index": 1, "name": "Compand", "min": -64, "max": 64, "default": 0, "unit": "linear", "automatable": true, "modulatable": true, "description": "Compressão/expansão da curva." },
+    { "index": 2, "name": "Random", "min": 0, "max": 127, "default": 0, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 3, "name": "Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Velo / Fix / Comp." },
+    { "index": 4, "name": "Lowest", "min": 0, "max": 127, "default": 0, "unit": "MIDI", "automatable": true },
+    { "index": 5, "name": "Highest", "min": 0, "max": 127, "default": 127, "unit": "MIDI", "automatable": true },
+    { "index": 6, "name": "Out Hi", "min": 0, "max": 127, "default": 127, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 7, "name": "Out Low", "min": 0, "max": 127, "default": 0, "unit": "MIDI", "automatable": true, "modulatable": true },
+    { "index": 8, "name": "Range", "min": 0, "max": 127, "default": 127, "unit": "MIDI", "automatable": true }
+  ],
+  "todo": []
+}

@@ -140,6 +140,11 @@ const KNOWN_DEVICES = [
   "resonators",
   "external_audio_effect",
   "channel_eq",
+  "chord",
+  "note_length",
+  "random",
+  "scale",
+  "velocity",
 ];
 
 export async function loadAllDevices(): Promise<DeviceSchema[]> {

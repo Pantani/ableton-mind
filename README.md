@@ -104,12 +104,17 @@ Veja [`PLAN.md §12`](PLAN.md) e [`_workspace/PROGRESS.md`](_workspace/PROGRESS.
 
 | Phase | Status | Escopo |
 |---|---|---|
-| 0 — Spike | em andamento | scaffold + tool `play` ponta a ponta |
-| 1 — Paridade `ahujasid` | pendente | ~20 tools básicas |
-| 2 — Paridade `AbletonOSC` | pendente | listeners + cobertura ampla |
-| 3 — Knowledge base | pendente | 50+ devices schema |
-| 4 — Recipes | pendente | drums, bass, arranjos |
-| 5+ | pendente | preview, distribuição, EN docs |
+| 0 — Spike | ✅ código | smoke real pendente (TD-004) |
+| 1 — Paridade `ahujasid` | ✅ 22/22 | tools mapeadas |
+| 2 — Listeners → MCP notifications | ✅ | 7 eventos ativos |
+| 3 — Knowledge base | ✅ **55/50+ devices** | 100%+ alvo PLAN §5 |
+| 4 — Automation envelopes | ✅ | linear / hold |
+| 5 — Preview/verify | ✅ snapshot+diff | bounce mode planejado |
+| 6 — Push 1/2/3 | ✅ pad/button/mode | sysex MIDI |
+| 7 — Distribuição | ✅ | DXT/Docker/Smithery/CI prontos |
+| 8 — Long tail | pendente | release v0.1.0+ |
+
+**31 tools MCP, 55 device schemas (~800 params indexados), 14 recipes em 7/7 categorias, verify loop 23/23, 7 eventos `event.*`.**
 
 ## Licença
 

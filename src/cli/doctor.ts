@@ -20,7 +20,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadAllDevices } from "../knowledge/index.js";
+import { allPrompts } from "../prompts/index.js";
 import { listRecipes } from "../recipes/index.js";
+import { allResources } from "../resources/index.js";
+import { allTools } from "../tools/index.js";
 
 interface Check {
   name: string;
@@ -176,6 +179,23 @@ async function checkVersionSync(): Promise<Check> {
   }
 }
 
+/**
+ * Doctor 7º check (Cycle 20): MCP primitives surface. Catches regressions tipo
+ * "registry de tools quebrou import e voltou 0".
+ */
+async function checkMcpPrimitives(): Promise<Check> {
+  const tools = allTools.length;
+  const prompts = allPrompts.length;
+  const resources = allResources.length;
+  const ok = tools >= 30 && prompts >= 5 && resources >= 3;
+  return {
+    name: "MCP primitives",
+    ok,
+    detail: `${tools} tools / ${prompts} prompts / ${resources} resources`,
+    hint: "Esperado: ≥30 tools, ≥5 prompts, ≥3 resources. Cheque imports em src/tools/index.ts, src/prompts/index.ts, src/resources/index.ts.",
+  };
+}
+
 async function checkRecipes(): Promise<Check> {
   try {
     const recipes = await listRecipes();
@@ -203,6 +223,7 @@ async function main(): Promise<void> {
     await checkKnowledge(),
     await checkRecipes(),
     await checkVersionSync(),
+    await checkMcpPrimitives(),
   ];
   for (const c of checks) {
     console.log(fmt(c));

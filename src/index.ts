@@ -19,6 +19,7 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { TcpJsonRpcClient, performHandshake } from "./live-client/index.js";
+import { allPrompts } from "./prompts/index.js";
 import { createBridgeClient } from "./server/context.js";
 import { createServer } from "./server/index.js";
 import { attachNotificationForwarder, createMcpNotifier } from "./server/notifications.js";
@@ -51,12 +52,16 @@ async function main(): Promise<void> {
   }
 
   const bridge = createBridgeClient(client);
-  const { server, registered } = createServer({
+  const { server, registered, registeredPrompts, registeredResources } = createServer({
     bridge,
     tools: allTools,
+    prompts: allPrompts,
+    resources: allResources,
     name: "ableton-mind",
-    version: "0.0.1",
+    version: "0.0.19",
   });
+  logger.info("prompts registered", { count: registeredPrompts.length });
+  logger.info("resources registered", { count: registeredResources.length });
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

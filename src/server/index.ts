@@ -13,6 +13,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { z } from "zod";
 
+import type { PromptDefinition } from "../prompts/index.js";
+import type { ResourceDefinition } from "../resources/index.js";
 import { logger } from "../utils/logger.js";
 import type { BridgeClient, ToolContext } from "./context.js";
 import { createToolContext } from "./context.js";
@@ -21,6 +23,8 @@ import type { ToolDefinition } from "./define-tool.js";
 export interface CreateServerOptions {
   bridge: BridgeClient;
   tools: ToolDefinition[];
+  prompts?: PromptDefinition[];
+  resources?: ResourceDefinition[];
   name?: string;
   version?: string;
 }
@@ -29,6 +33,8 @@ export interface CreatedServer {
   server: McpServer;
   context: ToolContext;
   registered: string[];
+  registeredPrompts: string[];
+  registeredResources: string[];
 }
 
 /**
@@ -53,8 +59,40 @@ export function createServer(opts: CreateServerOptions): CreatedServer {
     registered.push(tool.name);
   }
 
-  logger.info("server ready", { tools: registered });
-  return { server, context: ctx, registered };
+  const registeredPrompts: string[] = [];
+  for (const p of opts.prompts ?? []) {
+    registerPrompt(server, p);
+    registeredPrompts.push(p.name);
+  }
+
+  logger.info("server ready", { tools: registered, prompts: registeredPrompts });
+  return { server, context: ctx, registered, registeredPrompts };
+}
+
+function registerPrompt(server: McpServer, p: PromptDefinition): void {
+  const shape = extractShape(p.argsSchema);
+  server.prompt(p.name, p.description, shape, async (args: Record<string, unknown>) => {
+    try {
+      const result = p.handler(args as Record<string, string | undefined>);
+      return {
+        messages: result.messages.map((m) => ({
+          role: m.role,
+          content: { type: "text" as const, text: m.content.text },
+        })),
+      };
+    } catch (err) {
+      const message = (err as Error).message ?? String(err);
+      logger.error("prompt handler failed", { prompt: p.name, error: message });
+      return {
+        messages: [
+          {
+            role: "user" as const,
+            content: { type: "text" as const, text: `Prompt ${p.name} failed: ${message}` },
+          },
+        ],
+      };
+    }
+  });
 }
 
 function registerTool(server: McpServer, tool: ToolDefinition, ctx: ToolContext): void {

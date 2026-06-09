@@ -1,0 +1,19 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.random",
+  "name": "Random",
+  "category": "midi_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "MIDI effect: aleatoriza pitch das notas dentro de range configurável.",
+  "source": "curated (Cycle 17)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Chance", "min": 0, "max": 100, "default": 50, "unit": "%", "automatable": true, "modulatable": true, "description": "Probabilidade da aleatorização ser aplicada." },
+    { "index": 1, "name": "Choices", "min": 1, "max": 24, "default": 12, "unit": "count", "automatable": true, "modulatable": true, "description": "Número de pitches possíveis." },
+    { "index": 2, "name": "Scale", "min": 1, "max": 24, "default": 1, "unit": "semitones", "automatable": true, "modulatable": true, "description": "Step entre choices." },
+    { "index": 3, "name": "Sign", "min": 0, "max": 2, "default": 1, "unit": "enum", "automatable": false, "description": "0=Add, 1=Bi, 2=Sub." },
+    { "index": 4, "name": "Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Random / Alternate / Walk." }
+  ],
+  "todo": []
+}

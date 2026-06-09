@@ -1,0 +1,21 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.note_length",
+  "name": "Note Length",
+  "category": "midi_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "MIDI effect: ajusta duração das notas ou converte note-off em on-off triggers.",
+  "source": "curated (Cycle 17)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0, "name": "Length", "min": 0, "max": 10000, "default": 100, "unit": "ms", "automatable": true, "modulatable": true },
+    { "index": 1, "name": "Sync", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 2, "name": "Sync Rate", "min": 0, "max": 21, "default": 7, "unit": "enum", "automatable": false, "description": "1/64..2 bars + triplet/dotted." },
+    { "index": 3, "name": "Gate", "min": 1, "max": 200, "default": 100, "unit": "%", "automatable": true, "modulatable": true },
+    { "index": 4, "name": "On/Off Balance", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": true, "description": "Trigger on note-on (-) ou note-off (+)." },
+    { "index": 5, "name": "Decay Time", "min": 1, "max": 30000, "default": 1000, "unit": "ms", "automatable": true },
+    { "index": 6, "name": "Decay Key Track", "min": -100, "max": 100, "default": 0, "unit": "%", "automatable": true }
+  ],
+  "todo": []
+}

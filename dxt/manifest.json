@@ -2,7 +2,7 @@
   "dxt_version": "0.1",
   "name": "ableton-mind",
   "display_name": "Ableton Mind",
-  "version": "0.0.16",
+  "version": "0.0.20",
   "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
   "long_description": "ableton-mind expõe o Live Object Model completo para LLMs (Claude, Cursor, etc.) com tool calls idempotentes, transações (undo unitário), verify loop integrado, knowledge base embutida de 50+ devices nativos do Live e recipes musicais declarativas (drums, basslines, racks). Diferente de wrappers MCP rasos, cobre ~100% do LOM (~180 tools planejadas) e foi desenhado para que o LLM nunca chute parâmetros — devices são sempre endereçados por nome via knowledge base.",
   "author": {
@@ -73,5 +73,16 @@
     { "name": "track_create", "description": "Create a new MIDI or audio track at an optional index." },
     { "name": "create_midi_clip", "description": "Create an empty MIDI clip in a session clip slot." }
   ],
-  "prompts": []
+  "prompts": [
+    { "name": "create_genre_track", "description": "Compose a full track in a specified genre using kit + bassline + chords + arrangement recipes." },
+    { "name": "build_mix_chain", "description": "Build a mixing chain for a specific source (drums/bass/vocal/master)." },
+    { "name": "build_arrangement", "description": "Lay out a song arrangement (intro/build/drop/break/outro) using session scenes." },
+    { "name": "sound_design_session", "description": "Explore a synth's parameter space to find a sound (lead/pad/bass/etc)." },
+    { "name": "process_vocal_take", "description": "Process a recorded vocal take with a complete chain." }
+  ],
+  "resources": [
+    { "uri": "live://session/state", "name": "session_state", "description": "Deep snapshot of the current Live session.", "mimeType": "application/json" },
+    { "uri": "live://knowledge/devices", "name": "knowledge_devices", "description": "Index of 55 embedded device schemas.", "mimeType": "application/json" },
+    { "uri": "live://recipes/index", "name": "recipes_index", "description": "Index of 14 embedded music recipes.", "mimeType": "application/json" }
+  ]
 }

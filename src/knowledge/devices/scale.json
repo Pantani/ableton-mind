@@ -1,0 +1,22 @@
+{
+  "$schema": "../device-schema.json",
+  "id": "ableton.scale",
+  "name": "Scale",
+  "category": "midi_effect",
+  "vendor": "Ableton",
+  "live_version_min": "8.0",
+  "description": "MIDI effect: força notas a caírem numa escala definida. 12-cell grid configura cada pitch class.",
+  "source": "curated (Cycle 17)",
+  "completeness": "complete",
+  "parameters": [
+    { "index": 0,  "name": "Base", "min": 0, "max": 11, "default": 0, "unit": "MIDI", "automatable": true, "modulatable": true, "description": "Tonic (C=0, C#=1, ...)." },
+    { "index": 1,  "name": "Transpose", "min": -36, "max": 36, "default": 0, "unit": "semitones", "automatable": true },
+    { "index": 2,  "name": "Range Lower", "min": 0, "max": 127, "default": 0, "unit": "MIDI", "automatable": true },
+    { "index": 3,  "name": "Range Upper", "min": 0, "max": 127, "default": 127, "unit": "MIDI", "automatable": true },
+    { "index": 4,  "name": "Fold", "min": 0, "max": 1, "default": 0, "unit": "bool", "automatable": false },
+    { "index": 5,  "name": "Out of Range Mode", "min": 0, "max": 2, "default": 0, "unit": "enum", "automatable": false, "description": "Lowest / Nearest / Block." }
+  ],
+  "todo": [
+    "Os 12 cells (pitch class → out class) da grid são editáveis no UI mas não expostos como params individuais. Phase 8 pode expor via LOM (`scale_map`)."
+  ]
+}

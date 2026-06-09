@@ -26,8 +26,10 @@ import {
 } from "./clip.js";
 import { deviceGetParametersTool, deviceSetParameterTool } from "./device.js";
 import { renderPreviewTool, sessionDiffTool, sessionSnapshotTool } from "./preview.js";
+import { listPromptsTool } from "./prompts.js";
 import { pushSetButtonLedTool, pushSetModeTool, pushSetPadColorTool } from "./push.js";
 import { applyRecipeTool, listRecipesTool } from "./recipe.js";
+import { listResourcesTool } from "./resources.js";
 import { sceneFireTool } from "./scene.js";
 import { sessionGetInfoTool } from "./session.js";
 import {
@@ -44,6 +46,8 @@ export {
   applyRecipeTool,
   arrangementAddAutomationPointTool,
   listRecipesTool,
+  listPromptsTool,
+  listResourcesTool,
   pushSetButtonLedTool,
   pushSetModeTool,
   pushSetPadColorTool,
@@ -113,6 +117,8 @@ export const allTools: ToolDefinition[] = [
   // Recipes (Trilha C)
   listRecipesTool,
   applyRecipeTool,
+  // Prompts discovery
+  listPromptsTool,
   // Phase 6 — Push
   pushSetPadColorTool,
   pushSetButtonLedTool,

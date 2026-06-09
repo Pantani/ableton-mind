@@ -9,6 +9,53 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 - Smoke test real contra Live (TD-004) — gate de release.
 - Validação final de Push 2/3 sysex em hardware (TD-030).
 
+## [0.0.20] — 2026-06-09 (Cycle 20) — Wire smoke + Doctor 7
+
+### Added
+- TD-045 ✅ DXT manifest ganha `resources: [...]` array (3 entradas: session_state, knowledge_devices, recipes_index). Speculative — MCPB v0.2 deve aceitar; clientes mais antigos ignoram silently.
+- **`live/AbletonMind/__main__.py`** — CLI entrypoint para rodar bridge headless: `python -m AbletonMind --port <p>`. Útil para smoke tests, validação manual e CI Python jobs.
+- **`tests/wire-smoke.test.ts`** — opt-in via `RUN_WIRE_SMOKE=1`. Spawns bridge subprocess, conecta TS client over real TCP, exercises handshake + system.ping + track.list (espera -32000 sem Live). **Real wire-level test** — catches bugs that mocks miss (NDJSON framing, JSON-RPC envelope, dispatcher threading).
+- Doctor CLI **7º check** `checkMcpPrimitives()` — conta tools/prompts/resources, falha se algum import quebrar (regressão detection).
+
+### Changed
+- Doctor CLI agora tem 7 checks (era 6).
+
+## [0.0.19] — 2026-06-09 (Cycle 19) — MCP Resources subsystem 🎯 **3/3 primitivas MCP**
+
+### Added
+- **ADR-0011** — MCP Resources shape (`live://<scope>/<path>` URI namespace).
+- **`src/resources/`** — registry + 3 seed resources:
+  - `live://session/state` — deep snapshot do Live via bridge.
+  - `live://knowledge/devices` — índice estático dos 55 devices (id, category, parameter_count).
+  - `live://recipes/index` — índice das 14 recipes (id, step_count, input_count).
+- **Server bootstrap** — `registerResource()` wira `server.resource(name, uri, metadata, readHandler)` do SDK 1.x.
+- **Tool MCP** `list_resources` — fallback discovery.
+- **TD-044** ✅ `tests/prompts.test.ts` — 16+ casos cobrindo registry + 5 handlers + listPromptsTool.
+- **`tests/resources.test.ts`** — 10+ casos cobrindo 3 resources + listResourcesTool + erro handling.
+- **Total tools MCP: 33** (era 32, +`list_resources`).
+- **3/3 primitivas MCP entregues**: Tools (33) + Prompts (5) + Resources (3).
+
+## [0.0.18] — 2026-06-09 (Cycle 18) — MCP Prompts subsystem
+
+### Added
+- **ADR-0010** — MCP Prompts shape.
+- **`src/prompts/`** — registry + 5 seed prompts:
+  - `create_genre_track` (techno/tech-house/dnb/jungle/lofi/hiphop/trap/neo-soul/ambient → tempo + recipe chain).
+  - `build_mix_chain` (drums/bass/vocal/master → recipe + manual tweaks).
+  - `build_arrangement` (intro-build-drop-break-outro / aaba / verse-chorus / minimal).
+  - `sound_design_session` (synth + target → starting params + tweak loop).
+  - `process_vocal_take` (style-aware vocal chain).
+- **Server bootstrap** — `registerPrompt()` em `src/server/index.ts` wira ao `McpServer.prompt(name, desc, shape, handler)` do SDK 1.x.
+- **Tool MCP** `list_prompts` — fallback discovery quando cliente MCP não expõe prompts nativamente.
+- **DXT manifest** — `prompts: [...]` populado para Claude Desktop listar.
+- **Total tools MCP: 32** (era 31, +`list_prompts`).
+
+## [0.0.17] — 2026-06-09 (Cycle 17)
+
+### Added
+- TD-043 ✅ 5 MIDI effects restantes: Chord (6 shift+velocity slots), Note Length, Random, Scale, Velocity. **Knowledge: 55 devices** — 110% alvo PLAN.md §5.
+- README PT-BR atualizado refletindo status real das phases + métricas (31 tools, 55 devices, ~800 params, 14 recipes, verify 23/23, 7 eventos).
+
 ## [0.0.16] — 2026-06-09 (Cycle 16) 🎯 **Knowledge 100% PLAN.md §5**
 
 ### Added
