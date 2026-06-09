@@ -59,8 +59,9 @@ jobs:
       fail-fast: false
       matrix:
         # Live 11 = Py 3.7. Live 12 = Py 3.11. Live 12.1+ = Py 3.11+.
+        # setup-python no longer offers 3.7 on ubuntu-24.04, so pin that leg to 22.04.
         include:
-          - { os: ubuntu-latest, python: "3.7" }
+          - { os: ubuntu-22.04, python: "3.7" }
           - { os: ubuntu-latest, python: "3.11" }
           - { os: macos-latest, python: "3.11" }
     steps:
@@ -71,8 +72,11 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Run bridge unittests
-        working-directory: live
-        run: python -m unittest discover -s AbletonMind/tests -v
+        # Run from repo root with PYTHONPATH=. so test files that do
+        # `from live.AbletonMind...` resolve cleanly.
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python -m unittest discover -s live/AbletonMind/tests -t . -v
 
   docker:
     name: Docker build
