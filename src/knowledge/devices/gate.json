@@ -63,7 +63,7 @@
       "default": -36,
       "unit": "dB",
       "automatable": true,
-      "description": "Floor da redução; -96 = mute prático."
+      "description": "Reduction floor; -96 = practical mute."
     },
     {
       "index": 6,

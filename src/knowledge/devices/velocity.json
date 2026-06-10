@@ -28,7 +28,7 @@
       "unit": "linear",
       "automatable": true,
       "modulatable": true,
-      "description": "Compressão/expansão da curva."
+      "description": "Curve compression/expansion."
     },
     {
       "index": 2,

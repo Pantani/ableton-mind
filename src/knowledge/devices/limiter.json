@@ -18,7 +18,7 @@
       "unit": "dB",
       "automatable": true,
       "modulatable": true,
-      "description": "Input gain antes do limiter."
+      "description": "Input gain before the limiter."
     },
     {
       "index": 1,

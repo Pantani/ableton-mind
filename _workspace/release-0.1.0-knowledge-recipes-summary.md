@@ -51,7 +51,7 @@ No recipe files changed.
 ## Blockers
 
 - No knowledge/recipe blocker remains after the loader fix.
-- Out-of-scope observation: the compiled doctor currently reports `Version sync (pkg ↔ DXT)` as `skip (package.json não encontrado)` while still returning OK. This is not caused by knowledge/recipe loading and was not changed by this track.
+- Out-of-scope observation: the compiled doctor currently reports `Version sync (pkg ↔ DXT)` as `skip (package.json not found)` while still returning OK. This is not caused by knowledge/recipe loading and was not changed by this track.
 
 ## Concurrent State
 

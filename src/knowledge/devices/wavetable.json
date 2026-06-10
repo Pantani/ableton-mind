@@ -5,7 +5,7 @@
   "category": "instrument",
   "vendor": "Ableton",
   "live_version_min": "10.0",
-  "description": "Dual-oscillator wavetable synthesizer com sub-oscillator, dois filtros, três envelopes, dois LFOs, modulation matrix e MPE per-note expression.",
+  "description": "Dual-oscillator wavetable synthesizer with sub-oscillator, two filters, three envelopes, two LFOs, modulation matrix, and MPE per-note expression.",
   "source": "curated (Cycle 5)",
   "completeness": "complete",
   "parameters": [
@@ -18,7 +18,7 @@
       "unit": "%",
       "automatable": true,
       "modulatable": true,
-      "description": "Posição na wavetable do Osc 1."
+      "description": "Osc 1 wavetable position."
     },
     {
       "index": 1,
@@ -148,7 +148,7 @@
       "unit": "linear",
       "automatable": true,
       "modulatable": true,
-      "description": "Default 0 → Osc 2 começa mute."
+      "description": "Default 0 means Osc 2 starts muted."
     },
     {
       "index": 14,
@@ -266,7 +266,7 @@
       "default": 0.5,
       "unit": "linear",
       "automatable": true,
-      "description": "Só ativo quando Type=Morph."
+      "description": "Only active when Type=Morph."
     },
     {
       "index": 26,
