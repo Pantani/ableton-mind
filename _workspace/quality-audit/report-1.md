@@ -7,15 +7,15 @@
 
 **Fix Wave 1 update:** the immediate code issues from the audit have been addressed: runtime version metadata, CLI help/version routing, DXT tool parity, release/prepublish gates, doctor symlink/version detection and the TS complexity gate are now covered by tests and passing locally.
 
-**Live smoke update:** Ableton Live is open and activated. Read-only bridge smoke passed against Live `12.4.1`: `system.hello`, `system.ping`, `track.list`, `session.get_info`, `session.snapshot` and MCP server bootstrap all succeeded with bridge/package `0.1.0`. The installed Remote Script symlink still points at another checkout, so `ableton-mind-doctor` intentionally remains red on install-target consistency.
+**Live smoke update:** Ableton Live is open and activated. Read-only bridge smoke passed against Live `12.4.1`: `system.hello`, `system.ping`, `track.list`, `session.get_info`, `session.snapshot` and MCP server bootstrap all succeeded with bridge/package `0.1.0`. The Remote Script symlink has been reinstalled to this checkout and `ableton-mind-doctor` is now fully green.
 
 The repo has a strong baseline: typecheck, lint, Vitest, Python bridge tests, docs build, dependency boundaries, package dry-run, MCPB build, Docker build and runtime dependency audit all pass after `npm ci`.
 
-The release should not proceed yet without an explicit waiver or fix for install-target provenance. The active Live bridge now reports `0.1.0`, but the installed Remote Script symlink still points at another checkout, so the runtime can drift again after reload.
+The release should not proceed yet without a final Live reload smoke for the browser handler. The active Live bridge now reports `0.1.0`, and install-target provenance is fixed; however, the currently running Live process still returns `browser.get_categories.available=false` until the Control Surface is reloaded and executes the current checkout code.
 
 Top quality risks:
 
-1. Installed Remote Script symlink target remains inconsistent until reinstall/reload, despite the active bridge passing read-only smoke.
+1. Browser category runtime fix needs a final Control Surface reload smoke.
 2. Automation payload validation remains too permissive.
 3. Unverifiable operations still overstate verification confidence.
 4. Some release/install/Push/recipe tests remain missing.
@@ -40,7 +40,7 @@ Top quality risks:
 | Runtime npm audit | PASS |
 | Full npm audit | PASS |
 | Docker build | PASS |
-| Doctor | FAILS CORRECTLY on install-target mismatch |
+| Doctor | PASS |
 | Live/Push hardware | BLOCKED / not run for mutation |
 
 ## Findings By Severity
@@ -48,11 +48,11 @@ Top quality risks:
 ### BLOCKER: Live smoke/install target consistency
 
 - Owner: runtime-release-auditor, python-bridge-engineer, distribution-docs-engineer.
-- Evidence: package/manifests are `0.1.0`; current read-only smoke reports bridge `0.1.0`; `install-remote-script --check` still points installed Remote Script at `/Users/pantani/Desktop/projects/art/ableton-mind/live/AbletonMind`, not this worktree.
-- Risk: release can be approved while install-target provenance remains ambiguous.
-- Suggested fix: reinstall/reactivate Remote Script from the current checkout, restart Live, and make doctor compare bridge version/path against current package/source.
-- Verification: `node dist/index.js` logs bridge version `0.1.0`; `node dist/cli/doctor.js` warns/fails on mismatch.
-- Status: read-only Live smoke passed; install-target consistency remains open until current checkout symlink is installed and doctor is fully green.
+- Evidence: package/manifests are `0.1.0`; current read-only smoke reports bridge `0.1.0`; Remote Script symlink now points at `/Users/pantani/.codex/worktrees/4656/ableton-mind/live/AbletonMind`.
+- Risk: fixed; doctor now detects and rejects install-target mismatch.
+- Suggested fix: complete.
+- Verification: `node dist/cli/doctor.js` is fully green.
+- Status: fixed in Fix Wave 3.
 
 ### MAJOR: `npm run complexity` fails in local LLM/copilot
 
@@ -135,6 +135,15 @@ Top quality risks:
 - Verification: Python/TS tests for remote bind rejection, token requirement and oversized frames.
 - Status: fixed in Fix Wave 2 for loopback default, remote opt-in, max frame and pending request limits. Token auth remains deferred unless remote hosting becomes a supported default path.
 
+### MAJOR: Browser category runtime access fails in Live
+
+- Owner: python-bridge-engineer, usability-flow-auditor.
+- Evidence: read-only Live smoke returned `browser.get_categories.available=false` with reason `browser unavailable (headless/no app)` while Live was open.
+- Risk: browser discovery and browser-driven loading flows are unavailable even when Live is running.
+- Suggested fix: support `ControlSurface.application()` and fallback to `Live.Application.get_application()`.
+- Verification: Python regression tests for both access paths; final Live smoke after Control Surface reload should return `available=true`.
+- Status: code fixed in Fix Wave 3; final Live smoke pending Control Surface reload.
+
 ### MAJOR: Automation payload validation is too permissive
 
 - Owner: python-bridge-engineer.
@@ -206,11 +215,10 @@ Top quality risks:
 
 ## Recommended Fix Order
 
-1. Repoint/reinstall the Remote Script from this checkout, reload/reactivate in Live, and get doctor fully green.
-2. Fix `browser.get_categories` Live runtime access; current Live smoke returns unavailable while Live is open.
-3. Harden automation payload validation with finite/range/count checks.
-4. Model unverifiable operations explicitly instead of returning `verified: true`.
-5. Add the remaining high-value tests: installer, Push Python, invalid recipe JSON and package-script edge cases.
-6. Decide Docker lockfile/source-map/package policy.
-7. Update stale Remote Script README and PT docs examples.
-8. Re-enable skipped tests where practical.
+1. Reload/reactivate AbletonMind Control Surface in Live and repeat read-only browser smoke.
+2. Harden automation payload validation with finite/range/count checks.
+3. Model unverifiable operations explicitly instead of returning `verified: true`.
+4. Add the remaining high-value tests: installer, Push Python, invalid recipe JSON and package-script edge cases.
+5. Decide Docker lockfile/source-map/package policy.
+6. Update stale Remote Script README and PT docs examples.
+7. Re-enable skipped tests where practical.

@@ -152,6 +152,7 @@ export class TcpJsonRpcClient extends EventEmitter {
   private state: TcpClientState = "disconnected";
   private reconnectAttempt = 0;
   private reconnectTimer: NodeJS.Timeout | null = null;
+  private suppressNextCloseDisconnect = false;
 
   private readonly pending = new Map<JsonRpcId, PendingRequest>();
 
@@ -284,6 +285,10 @@ export class TcpJsonRpcClient extends EventEmitter {
     });
     sock.on("close", (hadError) => {
       logger.warn("socket closed", { hadError });
+      if (this.suppressNextCloseDisconnect) {
+        this.suppressNextCloseDisconnect = false;
+        return;
+      }
       this.handleDisconnect();
     });
   }
@@ -385,6 +390,7 @@ export class TcpJsonRpcClient extends EventEmitter {
       this.emit("disconnect");
     }
     this.emitError(reason);
+    this.suppressNextCloseDisconnect = true;
     sock?.destroy();
     if (this.autoReconnect) this.scheduleReconnect();
   }

@@ -64,13 +64,27 @@ class BrowserGetCategoriesHandler(Handler):
         return {"categories": out, "available": True}
 
 
-def _browser(ctrl):
-    """Returns `application.browser` or None."""
+def _application(ctrl):
+    """Returns the Live Application object from ControlSurface or global Live API."""
     app = getattr(ctrl, "application", None)
     if callable(app):
         app = app()
     if app is None:
         app = getattr(ctrl, "_application", None)
+    if app is not None:
+        return app
+
+    try:  # pragma: no cover - real Live only
+        import Live  # type: ignore
+
+        return Live.Application.get_application()
+    except Exception:
+        return None
+
+
+def _browser(ctrl):
+    """Returns `application.browser` or None."""
+    app = _application(ctrl)
     return getattr(app, "browser", None) if app is not None else None
 
 

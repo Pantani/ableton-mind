@@ -9,6 +9,7 @@ Cobre:
   Cycle 4:
     - track.get_info, scene.fire, clip.set_loop
 """
+import sys
 import unittest
 
 from ..errors import RpcError
@@ -314,6 +315,33 @@ class TestBrowserGetCategories(unittest.TestCase):
         ctrl = MethodApplicationCtrl(song, FakeApplication())
         h = BrowserGetCategoriesHandler(ctrl)
         r = h.execute(BrowserGetCategoriesInput())
+        self.assertTrue(r["available"])
+        keys = {c["key"] for c in r["categories"]}
+        self.assertIn("instruments", keys)
+        self.assertIn("audio_effects", keys)
+
+    def test_lists_categories_from_live_application_fallback(self):
+        class FakeLiveApplication:
+            @staticmethod
+            def get_application():
+                return FakeApplication()
+
+        class FakeLive:
+            Application = FakeLiveApplication
+
+        previous = sys.modules.get("Live")
+        sys.modules["Live"] = FakeLive
+        try:
+            song = _seed_song()
+            ctrl = FakeCtrl(song)
+            h = BrowserGetCategoriesHandler(ctrl)
+            r = h.execute(BrowserGetCategoriesInput())
+        finally:
+            if previous is None:
+                del sys.modules["Live"]
+            else:
+                sys.modules["Live"] = previous
+
         self.assertTrue(r["available"])
         keys = {c["key"] for c in r["categories"]}
         self.assertIn("instruments", keys)

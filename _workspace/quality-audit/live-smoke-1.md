@@ -36,6 +36,24 @@ Read-only Live smoke passed. The previous stale-bridge version mismatch is resol
 
 ## Still Open
 
-- Install-target consistency: symlink still points at another checkout, so doctor remains intentionally red.
-- Browser runtime access: `browser.get_categories` cannot find `application.browser` in the active Live runtime path.
+- Browser runtime access: code fixed locally, but `browser.get_categories` still returns unavailable in the currently loaded Live process until AbletonMind Control Surface is reloaded.
 - Mutation smoke was not run; it requires explicit permission because it can alter the open Live set.
+
+## Fix Wave 3 Retest
+
+- `node scripts/install-remote-script.mjs --force`
+  - Repointed installed Remote Script symlink to `/Users/pantani/.codex/worktrees/4656/ableton-mind/live/AbletonMind`.
+- `node dist/cli/doctor.js`
+  - PASS: all checks green, including install-target consistency and bridge/package version.
+- Local browser regression tests:
+  - Added coverage for `ControlSurface.application()` method access.
+  - Added fallback coverage for `Live.Application.get_application()`.
+  - `npm run test:bridge`: 106 passed / 2 skipped.
+- Corrected read-only JSON-RPC smoke against already-loaded Live process:
+  - `system.hello`: bridge `ableton-mind/python`, version `0.1.0`, Live `12.4.1`, Python `3.11.6`, protocol `0.1`.
+  - `system.ping`: `pong=true`.
+  - `track.list`: total `7`, regular `4`, returns `2`.
+  - `session.get_info`: tempo `120`, playing `false`, tracks `4`, returns `2`, master present.
+  - `browser.get_categories`: still `available=false`, reason `browser unavailable (headless/no app)`.
+
+The remaining browser validation requires toggling Live Preferences -> Link/Tempo/MIDI -> Control Surface from AbletonMind to None and back to AbletonMind so the Python Remote Script reloads from the current symlink.

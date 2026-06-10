@@ -37,7 +37,7 @@ import queue
 import socket
 import threading
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from .errors import (
     INTERNAL_ERROR,
@@ -195,7 +195,7 @@ class BridgeServer:
         except socket.timeout:
             return None
 
-    def _process_client_buffer(self, client: socket.socket, buffer: bytes) -> tuple[bytes, bool]:
+    def _process_client_buffer(self, client: socket.socket, buffer: bytes) -> Tuple[bytes, bool]:
         while b"\n" in buffer:
             line, buffer = buffer.split(b"\n", 1)
             if len(line) > self.max_frame_bytes:

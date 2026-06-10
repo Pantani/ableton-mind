@@ -45,6 +45,15 @@ describe("package.json + dxt/manifest.json version sync (ADR-0009)", () => {
 });
 
 describe("DXT manifest tool metadata", () => {
+  it("uses current MCPB manifest_version schema key", () => {
+    const dxt = JSON.parse(read("dxt/manifest.json")) as {
+      manifest_version?: string;
+      dxt_version?: string;
+    };
+    expect(dxt.manifest_version).toBe("0.4");
+    expect(dxt.dxt_version).toBeUndefined();
+  });
+
   it("lists the same tool names as the runtime registry", () => {
     const dxt = JSON.parse(read("dxt/manifest.json")) as { tools?: Array<{ name: string }> };
     const manifestTools = (dxt.tools ?? []).map((tool) => tool.name).sort();
