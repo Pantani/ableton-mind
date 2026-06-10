@@ -3,6 +3,8 @@
 Definitive MCP (Model Context Protocol) server for **Ableton Live**. Exposes the full **Live Object Model** to LLMs (Claude, Cursor, etc.) with an embedded native device knowledge base, declarative music recipes, an integrated verify loop, and reactive listeners.
 
 > Status: **alpha / v0.1.0 release-ready** — core smoke passed against Ableton Live 12.4.1 on macOS and package validation is green. Public npm/GitHub/MCP registry releases still require the final manual publish gate. API unstable. Don't use in production yet.
+>
+> Phase 8 status: slice 1 delivers read-only Max for Live/plug-in introspection and Link/remote status discovery. Deeper M4L control, VST3 sidecars, remote DAW integration and mobile companion work remain pending.
 
 📚 **Full documentation:** [pantani.github.io/ableton-mind/](https://pantani.github.io/ableton-mind/)
 
@@ -22,7 +24,7 @@ Full spec in [`PLAN.md`](PLAN.md). Frozen contracts in [`_workspace/contracts/`]
 
 | Capability | ahujasid/ableton-mcp | AbletonOSC + MCP wrapper | **ableton-mind** |
 |---|---|---|---|
-| MCP tools | 22 | ~30 | **33** |
+| MCP tools | 22 | ~30 | **36** |
 | LOM coverage | ~10% | ~95% | **~100%** |
 | Knowledge base | none | none | **55 devices, scales, drum kits** |
 | Recipes | none | none | **14 across 7 categories** |
@@ -136,7 +138,7 @@ See [`PLAN.md §12`](PLAN.md) and [`_workspace/PROGRESS.md`](_workspace/PROGRESS
 | 5 — Preview/verify | ✅ snapshot+diff (bounce planned) |
 | 6 — Push | ✅ pad/button/mode LEDs |
 | 7 — Distribution | ✅ DXT/Docker/Smithery/CI/release ready |
-| 8 — Long tail | 🔵 resources delivered; M4L/VST3/Live Link pending |
+| 8 — Long tail | 🔵 slice 1 delivered: read-only M4L/plug-in introspection + Link/remote status discovery; deeper M4L/VST3/remote DAW/mobile work pending |
 
 ## License
 

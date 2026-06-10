@@ -1,0 +1,134 @@
+{
+  "$schema": "./discovery-schema.json",
+  "version": "1.0.0",
+  "source": "curated (Cycle 24 Phase 8 slice 1) from Ableton Live 12 manual/help references",
+  "references": [
+    {
+      "title": "Working with Instruments and Effects",
+      "url": "https://www.ableton.com/en/manual/working-with-instruments-and-effects/"
+    },
+    {
+      "title": "Max for Live",
+      "url": "https://www.ableton.com/en/manual/max-for-live/"
+    },
+    {
+      "title": "Synchronizing with Link, Tempo Follower, and MIDI",
+      "url": "https://www.ableton.com/en/manual/synchronizing-with-link-tempo-follower-and-midi/"
+    }
+  ],
+  "plugin_formats": [
+    {
+      "id": "ableton_native",
+      "label": "Ableton native",
+      "platform": "all",
+      "device_kind": "native",
+      "description": "Built-in Live device or rack; use device schemas when available."
+    },
+    {
+      "id": "max_for_live",
+      "label": "Max for Live",
+      "platform": "all",
+      "device_kind": "max_for_live",
+      "description": "AMXD-backed Live device; inspect patcher metadata read-only in Phase 8 slice 1."
+    },
+    {
+      "id": "vst2",
+      "label": "VST2",
+      "platform": "all",
+      "device_kind": "third_party",
+      "description": "Third-party VST2 plug-in; Live exposes configured automatable parameters."
+    },
+    {
+      "id": "vst3",
+      "label": "VST3",
+      "platform": "all",
+      "device_kind": "third_party",
+      "description": "Third-party VST3 plug-in; expanded sidecar parameter coverage is future work."
+    },
+    {
+      "id": "audio_unit_v2",
+      "label": "Audio Units 2",
+      "platform": "macos",
+      "device_kind": "third_party",
+      "description": "macOS Audio Unit plug-in format supported by Live."
+    },
+    {
+      "id": "audio_unit_v3",
+      "label": "Audio Units 3",
+      "platform": "macos",
+      "device_kind": "third_party",
+      "description": "macOS Audio Unit v3 plug-in format supported by recent Live versions."
+    },
+    {
+      "id": "unknown",
+      "label": "Unknown",
+      "platform": "unknown",
+      "device_kind": "unknown",
+      "description": "Runtime did not expose enough metadata to classify the device format."
+    }
+  ],
+  "m4l_capabilities": [
+    {
+      "id": "patcher_metadata",
+      "label": "Patcher metadata",
+      "phase8_slice1": "read_only",
+      "description": "Name, path, device class, frozen state, or similar patcher identity when exposed."
+    },
+    {
+      "id": "exposed_parameters",
+      "label": "Exposed parameters",
+      "phase8_slice1": "read_only",
+      "description": "Parameters visible to Live automation and normal device parameter reads."
+    },
+    {
+      "id": "live_api_paths",
+      "label": "Live API paths",
+      "phase8_slice1": "read_only",
+      "description": "Canonical Live API object paths that the runtime can safely report."
+    },
+    {
+      "id": "dependencies",
+      "label": "Dependencies",
+      "phase8_slice1": "read_only",
+      "description": "External files or patch dependencies when the runtime exposes them safely."
+    }
+  ],
+  "link_status_fields": [
+    {
+      "id": "available",
+      "label": "Available",
+      "availability": "runtime_reported",
+      "description": "Whether the current Live runtime exposes Link status to the bridge."
+    },
+    {
+      "id": "enabled",
+      "label": "Enabled",
+      "availability": "runtime_reported",
+      "description": "Whether Link is enabled in Live when that property is exposed."
+    },
+    {
+      "id": "num_peers",
+      "label": "Peer count",
+      "availability": "runtime_reported",
+      "description": "Number of Link peers reported by Live, if exposed."
+    },
+    {
+      "id": "start_stop_sync",
+      "label": "Start/Stop Sync",
+      "availability": "runtime_reported",
+      "description": "Whether Link start/stop sync is enabled, if exposed."
+    },
+    {
+      "id": "link_audio",
+      "label": "Link Audio",
+      "availability": "runtime_reported",
+      "description": "Whether Link Audio status is exposed by the current Live runtime."
+    },
+    {
+      "id": "reason",
+      "label": "Reason",
+      "availability": "runtime_reported",
+      "description": "Human-readable unsupported or unavailable reason from the bridge."
+    }
+  ]
+}

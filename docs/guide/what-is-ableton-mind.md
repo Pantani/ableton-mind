@@ -27,6 +27,8 @@ Most AI music workflows stop at advice. `ableton-mind` is designed around three 
 
 The code has passed a real Ableton Live 12.4.1 smoke test for core transport/session/track operations, and the `0.1.0` package validation gates are green. Public npm and `.mcpb` release channels are not published yet, so use the source install or local bundle path until the final manual publish gate runs.
 
+Phase 8 slice 1 delivers read-only Max for Live/plug-in introspection and Link/remote status discovery. It does not mean broad M4L control, VST3 sidecars, remote DAW integration or mobile companion support are available yet.
+
 ## Next steps
 
 1. [Install from source](./installation).
