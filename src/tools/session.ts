@@ -1,8 +1,8 @@
 /**
- * Tools MCP do domínio Session.
+ * MCP tools for the Session domain.
  *
- * `session_get_info` — read-only snapshot do estado top-level. LLM usa para
- * se orientar antes de mutar.
+ * `session_get_info` — read-only snapshot of top-level state. The LLM uses it
+ * to orient itself before mutating.
  */
 
 import { z } from "zod";

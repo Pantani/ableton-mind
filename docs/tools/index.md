@@ -1,46 +1,35 @@
-# Tools — 21 domínios LOM
+# Tools — 21 LOM domains
 
-`ableton-mind` planeja **~180 tools** cobrindo os 21 domínios do Live Object Model. Cada tool é **idempotente**, **transacional**, **reversível**, **schema-aware**, e retorna `{ ok, verified, diff }`.
+`ableton-mind` targets **~180 tools** across the 21 Live Object Model domains. Each tool is **idempotent**, **transactional**, **reversible**, **schema-aware**, and returns `{ ok, verified, diff }`.
 
-> Spec completa: [PLAN.md §4](https://github.com/Pantani/ableton-mind/blob/main/PLAN.md).
+> Full spec: [PLAN.md §4](https://github.com/Pantani/ableton-mind/blob/main/PLAN.md).
 
-## Domínios
+## Domains
 
-| # | Domínio | Cobertura | Exemplo |
-|---|---|---|---|
-| 1 | `transport` | play, stop, tempo, metronome, loop, position | `play`, `set_tempo` |
-| 2 | `track` | criar, deletar, renomear, mover, group, freeze | `track_list`, `track_create` |
-| 3 | `clip` | MIDI/audio, notes, warp, loop, quantize | `create_midi_clip` |
-| 4 | `scene` | criar, capturar, disparar, color | `scene_fire` |
-| 5 | `device` | inserir, remover, mover, preset, params | `device_set_param` |
-| 6 | `rack` | macro mapping, chains, zones | `rack_set_macro` |
-| 7 | `automation` | envelopes, breakpoints, modos | `automation_write` |
-| 8 | `modulation` | LFOs, MaxForLive modulators | `modulation_route` |
-| 9 | `browser` | navegar packs, drag-in samples/presets | `browser_load` |
-| 10 | `arrangement` | inserir, duplicar, time selection, render | `arrangement_insert_clip` |
-| 11 | `recording` | arm, count-in, overdub, take lanes | `recording_arm` |
-| 12 | `mixer` | volume, pan, sends, EQ8, comp | `mixer_set_volume` |
-| 13 | `view` | selecionar track/clip/device, follow, detail | `view_select_clip` |
-| 14 | `session` | clip slots, follow actions, legato | `session_trigger` |
-| 15 | `groove` | groove pool, apply, commit | `groove_apply` |
-| 16 | `midi` | input/output map, channels, CC | `midi_route` |
-| 17 | `push` | pad, button, mode, color (1/2/3) | `push_set_pad` |
-| 18 | `introspection` | song state, snapshots, diffs | `state_snapshot` |
-| 19 | `tuning` | scales, tuning systems, microtonal | `tuning_apply` |
-| 20 | `cue` | cue points, locators, tempo events | `cue_add` |
-| 21 | `live_set` | save, load, new, metadata | `live_set_info` |
+| # | Domain | Example |
+|---|---|---|
+| 1 | `transport` | `play`, `set_tempo` |
+| 2 | `track` | `track_list`, `track_create` |
+| 3 | `clip` | `create_midi_clip` |
+| 4 | `scene` | `scene_fire` |
+| 5 | `device` | `device_set_param` |
+| 6 | `rack` | `rack_set_macro` |
+| 7 | `automation` | `automation_write` |
+| 8 | `modulation` | `modulation_route` |
+| 9 | `browser` | `browser_load` |
+| 10 | `arrangement` | `arrangement_insert_clip` |
+| 11 | `recording` | `recording_arm` |
+| 12 | `mixer` | `mixer_set_volume` |
+| 13 | `view` | `view_select_clip` |
+| 14 | `session` | `session_trigger` |
+| 15 | `groove` | `groove_apply` |
+| 16 | `midi` | `midi_route` |
+| 17 | `push` | `push_set_pad` |
+| 18 | `introspection` | `state_snapshot` |
+| 19 | `tuning` | `tuning_apply` |
+| 20 | `cue` | `cue_add` |
+| 21 | `live_set` | `live_set_info` |
 
-## Cobertura atual (Cycle 22)
+## Current coverage (Cycle 22)
 
-**31 tools** implementadas no servidor — cobrindo transport, track, clip, device, automation, push e introspection. Lista canônica em `_workspace/contracts/tool-registry.json`.
-
-## Como uma tool é declarada
-
-Cada tool tem:
-
-- **Zod schema** de input/output.
-- **Verify step** — re-lê o LOM e diffa.
-- **Undo step** — `Song.begin_undo_step()` / `end_undo_step()`.
-- **Knowledge ref** — quando age sobre device, valida params via `src/knowledge/devices/`.
-
-Detalhes de design em [Arquitetura](../architecture).
+**31 tools** implemented — transport, track, clip, device, automation, push, introspection. Canonical list in `_workspace/contracts/tool-registry.json`.

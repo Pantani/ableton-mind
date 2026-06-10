@@ -2,27 +2,27 @@
 /**
  * build-dxt.mjs
  *
- * Empacota o ableton-mind num `.mcpb` (MCP Bundle) para Claude Desktop one-click install.
+ * Packages ableton-mind into a `.mcpb` (MCP Bundle) for one-click install in Claude Desktop.
  *
- * Estrutura do .mcpb (zip):
+ * `.mcpb` (zip) structure:
  *   manifest.json                ← dxt/manifest.json
- *   dist/                        ← saída do tsup
+ *   dist/                        ← tsup output
  *   src/knowledge/               ← devices, scales (embedded)
  *   README.md
  *   LICENSE
  *
- * Uso:
- *   node scripts/build-dxt.mjs                    # gera build/ableton-mind-<ver>.mcpb
- *   node scripts/build-dxt.mjs --out path/x.mcpb  # path custom
- *   node scripts/build-dxt.mjs --check            # só valida pré-requisitos
+ * Usage:
+ *   node scripts/build-dxt.mjs                    # produces build/ableton-mind-<ver>.mcpb
+ *   node scripts/build-dxt.mjs --out path/x.mcpb  # custom path
+ *   node scripts/build-dxt.mjs --check            # only validates prerequisites
  *
- * Pré-requisitos:
- *   - `npm run build` rodado (existe `dist/index.js`).
- *   - `dxt/manifest.json` existe.
+ * Prerequisites:
+ *   - `npm run build` ran (so `dist/index.js` exists).
+ *   - `dxt/manifest.json` exists.
  *   - `node --version` >= 20.
  *
- * Implementação: usa `node:zlib` + walker simples para gerar ZIP central directory
- * conforme APPNOTE.TXT (PKZIP). Sem deps externas — o pacote npm fica leve.
+ * Implementation: uses `node:zlib` + a simple walker to generate the ZIP central
+ * directory per APPNOTE.TXT (PKZIP). No external deps — keeps the npm package lean.
  */
 
 import { createHash } from "node:crypto";
@@ -83,10 +83,10 @@ async function walkFiles(dir, baseRel = "") {
 }
 
 // --- Minimal ZIP writer (deflate-raw, no encryption, no zip64) ----------------
-// Conforme PKZIP APPNOTE.TXT.
+// Follows PKZIP APPNOTE.TXT.
 
 function crc32(buf) {
-  // Tabela CRC32 cacheada.
+  // Cached CRC32 table.
   if (!crc32._table) {
     const table = new Uint32Array(256);
     for (let n = 0; n < 256; n++) {
@@ -102,7 +102,7 @@ function crc32(buf) {
 }
 
 function dosTime(date = new Date(2026, 5, 9, 12, 0, 0)) {
-  // Z deterministic (sem Date.now() — workflows reproducible)
+  // Deterministic timestamp (no Date.now(); workflows stay reproducible).
   const seconds = Math.floor(date.getSeconds() / 2);
   const time = (date.getHours() << 11) | (date.getMinutes() << 5) | seconds;
   const dateVal = ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
@@ -195,13 +195,13 @@ async function gatherEntries() {
     }
   }
 
-  // manifest na raiz do .mcpb
+  // Manifest at the .mcpb root.
   await add("manifest.json", path.join(REPO_ROOT, "dxt", "manifest.json"));
 
-  // dist (saída do tsup)
+  // dist (tsup output).
   await addDir(path.join(REPO_ROOT, "dist"), "dist");
 
-  // knowledge embedded (JSONs estáticos)
+  // Embedded knowledge (static JSON files).
   await addDir(path.join(REPO_ROOT, "src", "knowledge"), "knowledge");
 
   // README + LICENSE
@@ -215,7 +215,7 @@ async function main() {
   const { manifest } = await loadManifest();
   const pkg = await loadPackageJson();
   if (manifest.version !== pkg.version) {
-    console.warn(`⚠ versão manifest (${manifest.version}) != package.json (${pkg.version})`);
+    console.warn(`⚠ manifest version (${manifest.version}) != package.json (${pkg.version})`);
   }
 
   const distIndex = path.join(REPO_ROOT, "dist", "index.js");
@@ -223,19 +223,19 @@ async function main() {
 
   console.log(`name:     ${manifest.name}`);
   console.log(`version:  ${manifest.version}`);
-  console.log(`dist/:    ${hasDist ? "✓" : "✗ FALTA — rode `npm run build`"}`);
+  console.log(`dist/:    ${hasDist ? "✓" : "✗ MISSING — run `npm run build`"}`);
   console.log(`manifest: dxt/manifest.json`);
 
   if (!hasDist) {
     if (CHECK_ONLY) {
       process.exit(1);
     }
-    console.error("\n✗ dist/index.js não encontrado. Rode `npm run build` antes.");
+    console.error("\n✗ dist/index.js not found. Run `npm run build` first.");
     process.exit(1);
   }
 
   if (CHECK_ONLY) {
-    console.log("\n✓ pré-requisitos OK.");
+    console.log("\n✓ prerequisites OK.");
     return;
   }
 
@@ -254,7 +254,7 @@ async function main() {
   console.log(`  entries: ${entries.length}`);
   console.log(`  size:    ${(stat.size / 1024).toFixed(1)} KB`);
   console.log(`  sha256:  ${hash}…`);
-  console.log(`\nInstale arrastando para o Claude Desktop ou via 'mcpb install ${outPath}'.`);
+  console.log(`\nInstall by dragging into Claude Desktop or with 'mcpb install ${outPath}'.`);
 }
 
 main().catch((err) => {

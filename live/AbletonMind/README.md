@@ -1,17 +1,17 @@
 # AbletonMind — Remote Script (Phase 0)
 
-Servidor TCP NDJSON JSON-RPC 2.0 que roda dentro do Ableton Live como
-`Control Surface`. Expoe a Live API para o servidor MCP em TypeScript.
+NDJSON JSON-RPC 2.0 TCP server that runs inside Ableton Live as a
+`Control Surface`. It exposes the Live API to the TypeScript MCP server.
 
-- Porta default: `127.0.0.1:9876` (override via `ABLETON_MIND_HOST` /
+- Default port: `127.0.0.1:9876` (override via `ABLETON_MIND_HOST` /
   `ABLETON_MIND_PORT`).
-- Stdlib only — sem dependências pip.
-- Live 12 / Python 3.11 prioritário (Phase 0). Compat Live 11 / Python 3.7
-  fica para Phase 1.
+- Stdlib only; no pip dependencies.
+- Live 12 / Python 3.11 is the Phase 0 priority. Live 11 / Python 3.7
+  compatibility stays for Phase 1.
 
-## Instalação
+## Installation
 
-Copie a pasta `live/AbletonMind/` para o diretório de Remote Scripts do Live:
+Copy the `live/AbletonMind/` folder to Live's Remote Scripts directory:
 
 ### macOS
 
@@ -19,7 +19,7 @@ Copie a pasta `live/AbletonMind/` para o diretório de Remote Scripts do Live:
 ~/Music/Ableton/User Library/Remote Scripts/AbletonMind/
 ```
 
-Exemplo (a partir da raiz do repo):
+Example from the repo root:
 
 ```bash
 ln -s "$(pwd)/live/AbletonMind" \
@@ -40,43 +40,43 @@ New-Item -ItemType Junction `
   -Target "$(Resolve-Path .\live\AbletonMind)"
 ```
 
-## Ativação no Live
+## Activation in Live
 
-1. Live → Settings (ou Preferences) → **Link, Tempo & MIDI**.
-2. Em **Control Surface**, escolha `AbletonMind`.
-3. Deixe Input / Output como `None`.
-4. O Log.txt do Live deve mostrar `AbletonMind started on 127.0.0.1:9876`.
+1. Live -> Settings (or Preferences) -> **Link, Tempo & MIDI**.
+2. Under **Control Surface**, choose `AbletonMind`.
+3. Leave Input / Output as `None`.
+4. Live's Log.txt should show `AbletonMind started on 127.0.0.1:9876`.
 
-Locais do `Log.txt`:
+`Log.txt` locations:
 
 - macOS: `~/Library/Preferences/Ableton/Live <version>/Log.txt`
 - Windows: `%USERPROFILE%\AppData\Roaming\Ableton\Live <version>\Preferences\Log.txt`
 
-## Métodos Phase 0
+## Phase 0 Methods
 
-| Método | Idempotente? | Transacional? |
+| Method | Idempotent? | Transactional? |
 |---|---|---|
-| `system.hello` | n/a | não |
-| `system.ping` | n/a | não |
-| `transport.play` | sim | não |
-| `transport.stop` | sim | não |
-| `transport.set_tempo` | sim | não |
-| `track.list` | n/a (read-only) | não |
-| `clip.create_midi` | sim (rejeita slot ocupado) | sim |
+| `system.hello` | n/a | no |
+| `system.ping` | n/a | no |
+| `transport.play` | yes | no |
+| `transport.stop` | yes | no |
+| `transport.set_tempo` | yes | no |
+| `track.list` | n/a (read-only) | no |
+| `clip.create_midi` | yes (rejects occupied slot) | yes |
 
-Veja `_workspace/contracts/phase0-methods.md` para schema completo dos params
-e returns.
+See `_workspace/contracts/phase0-methods.md` for the full params and return
+schema.
 
-## Testes offline
+## Offline Tests
 
 ```bash
 cd <repo root>
 python -m unittest discover -s live/AbletonMind/tests -t .
 ```
 
-Os fakes da LiveAPI ficam em `live/AbletonMind/tests/_fakes/live_api.py`.
-Nenhum teste depende do Live aberto.
+The LiveAPI fakes live in `live/AbletonMind/tests/_fakes/live_api.py`.
+No test depends on Live being open.
 
-## Smoke contra Live real
+## Smoke Against Real Live
 
-Não roda neste ciclo — fica para o Ciclo 2 (smoke do architect + qa-integration).
+Not run in this cycle; left for Cycle 2 (architect + qa-integration smoke).

@@ -1,43 +1,43 @@
-# ADR 0003 — Formato canônico de MIDI note
+# ADR 0003 — Canonical MIDI note format
 
-**Data:** 2026-06-09
-**Status:** Aceito
-**Autor:** architect
+**Date:** 2026-06-09
+**Status:** Accepted
+**Author:** architect
 
-## Contexto
+## Context
 
-`clip.add_notes` precisa receber notas do LLM e converter para chamadas LiveAPI. Live 11+ tem `Live.Clip.Clip.add_new_notes(specification: NoteSpecification)` aceitando `{pitch, start_time, duration, velocity, mute}` (e per-note expression em Live 12 via API separada).
+`clip.add_notes` needs to receive notes from the LLM and convert them to LiveAPI calls. Live 11+ has `Live.Clip.Clip.add_new_notes(specification: NoteSpecification)` accepting `{pitch, start_time, duration, velocity, mute}` (and per-note expression in Live 12 via a separate API).
 
-## Decisão
+## Decision
 
-Formato JSON canônico de uma nota MIDI:
+Canonical JSON format for a MIDI note:
 
 ```ts
 {
   pitch: number;     // 0..127, integer (Middle C = 60, A4 = 69)
-  start: number;     // beats from clip start (0 = primeiro beat)
+  start: number;     // beats from clip start (0 = first beat)
   duration: number;  // beats; > 0
   velocity?: number; // 0..127 integer; default 100
   mute?: boolean;    // default false
 }
 ```
 
-Array de notas é o `notes: NoteSpec[]` do request.
+The notes array is the `notes: NoteSpec[]` of the request.
 
-## Por quê
+## Why
 
-- `pitch`/`velocity` 0..127 (não MIDI hex, não nome de nota) — único formato sem ambiguidade enharmônica.
-- `start`/`duration` em beats (não ticks, não segundos) — alinha com clip length e tempo.
-- `mute` exposto porque LLMs querem ghost notes para drum patterns.
+- `pitch`/`velocity` 0..127 (not MIDI hex, not note name) — the only format without enharmonic ambiguity.
+- `start`/`duration` in beats (not ticks, not seconds) — aligns with clip length and tempo.
+- `mute` exposed because LLMs want ghost notes for drum patterns.
 
 ## Out of scope (Phase 4)
 
-- Per-note CC (MPE) — Live 12 expõe; adiamos.
-- Probability — Live 11+ adiciona; adiamos.
-- Release velocity — raro; adiamos.
+- Per-note CC (MPE) — Live 12 exposes it; deferred.
+- Probability — Live 11+ adds it; deferred.
+- Release velocity — rare; deferred.
 
-## Como aplicar
+## How to apply
 
-- `bridge/handlers/clip.py::add_notes` itera, valida 0<=pitch<=127, 0<=velocity<=127, duration>0, e chama `clip.add_new_notes`.
-- TS tool `clip_add_notes` define Zod schema 1:1.
-- Knowledge base eventualmente expõe helper `pitch_from_name("C4")` para LLMs que mandam nome — fora do escopo deste Cycle.
+- `bridge/handlers/clip.py::add_notes` iterates, validates 0<=pitch<=127, 0<=velocity<=127, duration>0, and calls `clip.add_new_notes`.
+- TS tool `clip_add_notes` defines a 1:1 Zod schema.
+- The knowledge base will eventually expose a `pitch_from_name("C4")` helper for LLMs that send names — outside this Cycle's scope.

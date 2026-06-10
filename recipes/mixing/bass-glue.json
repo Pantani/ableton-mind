@@ -4,22 +4,118 @@
   "name": "Bass Glue Chain",
   "category": "mixing",
   "version": "0.1",
-  "description": "Chain para bass track: Channel EQ (HP @ 30 Hz) → Saturator (Tape Type) → Glue Compressor (2:1). Adiciona harmonics e cola o sub.",
-  "tags": ["bass", "mixing", "glue", "low-end", "saturator"],
+  "description": "Chain for bass track: Channel EQ (HP @ 30 Hz) -> Saturator (Tape Type) -> Glue Compressor (2:1). Adds harmonics and glues the sub.",
+  "tags": [
+    "bass",
+    "mixing",
+    "glue",
+    "low-end",
+    "saturator"
+  ],
   "inputs": {
-    "track_index": { "type": "int", "default": 0 },
-    "hp_freq": { "type": "number", "default": 30, "min": 20, "max": 100, "description": "HighPass para limpar sub-bass." },
-    "drive_db": { "type": "number", "default": 6, "min": 0, "max": 24, "description": "Saturator Drive em dB." }
+    "track_index": {
+      "type": "int",
+      "default": 0
+    },
+    "hp_freq": {
+      "type": "number",
+      "default": 30,
+      "min": 20,
+      "max": 100,
+      "description": "High-pass frequency for cleaning sub-bass."
+    },
+    "drive_db": {
+      "type": "number",
+      "default": 6,
+      "min": 0,
+      "max": 24,
+      "description": "Saturator Drive em dB."
+    }
   },
   "steps": [
-    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Channel EQ", "Init"] } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "HighPass On", "value": 1 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "HighPass Freq", "value": "{{hp_freq}}" } },
-    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Saturator", "Init"] } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{track_index}}", "device_index": 1, "parameter_name": "Type", "value": 4 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{track_index}}", "device_index": 1, "parameter_name": "Drive", "value": "{{drive_db}}" } },
-    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Glue Compressor", "Init"] } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{track_index}}", "device_index": 2, "parameter_name": "Threshold", "value": -15 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{track_index}}", "device_index": 2, "parameter_name": "Ratio", "value": 1 } }
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "audio_effects",
+          "Channel EQ",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "HighPass On",
+        "value": 1
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "HighPass Freq",
+        "value": "{{hp_freq}}"
+      }
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "audio_effects",
+          "Saturator",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 1,
+        "parameter_name": "Type",
+        "value": 4
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 1,
+        "parameter_name": "Drive",
+        "value": "{{drive_db}}"
+      }
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "audio_effects",
+          "Glue Compressor",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 2,
+        "parameter_name": "Threshold",
+        "value": -15
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 2,
+        "parameter_name": "Ratio",
+        "value": 1
+      }
+    }
   ]
 }

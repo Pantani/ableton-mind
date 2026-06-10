@@ -1,24 +1,24 @@
 /**
- * Contexto injetado em todo handler de tool/resource/prompt.
+ * Context injected into every tool/resource/prompt handler.
  *
- * Mantém:
- * - `bridge.call(method, params)` — wrapper sobre o TcpJsonRpcClient.
- * - `logger` — logger estruturado em stderr.
+ * Holds:
+ * - `bridge.call(method, params)` — wrapper around the TcpJsonRpcClient.
+ * - `logger` — structured logger writing to stderr.
  *
- * Phase 1+ adiciona aqui `knowledge`, `verify`, helpers de transação.
+ * Phase 1+ adds `knowledge`, `verify`, transaction helpers here.
  */
 
 import type { TcpJsonRpcClient } from "../live-client/tcp-client.js";
 import { logger } from "../utils/logger.js";
 
 /**
- * Wrapper minimalista sobre o client TCP. Existe para que tools NÃO toquem
- * direto no socket e para facilitar mock em testes.
+ * Minimal wrapper around the TCP client. Exists so that tools DON'T touch
+ * the socket directly and to make mocking easier in tests.
  */
 export interface BridgeClient {
   /**
-   * Faz uma chamada JSON-RPC e devolve `result` cru.
-   * Erros do bridge são `JsonRpcRemoteError`; erros de transport são
+   * Performs a JSON-RPC call and returns the raw `result`.
+   * Errors from the bridge are `JsonRpcRemoteError`; transport errors are
    * `JsonRpcTransportError`.
    */
   call<TResult = unknown>(method: string, params?: unknown, timeoutMs?: number): Promise<TResult>;
@@ -30,9 +30,9 @@ export interface ToolContext {
 }
 
 /**
- * Adapter: converte um `TcpJsonRpcClient` no `BridgeClient` do contexto.
- * Mantemos a interface enxuta para o handler de tool não conhecer EventEmitter,
- * estado de conexão etc. — isso é responsabilidade do server bootstrap.
+ * Adapter: converts a `TcpJsonRpcClient` into the context's `BridgeClient`.
+ * We keep the interface lean so the tool handler doesn't need to know about
+ * EventEmitter, connection state, etc. — that's the server bootstrap's responsibility.
  */
 export function createBridgeClient(tcp: TcpJsonRpcClient): BridgeClient {
   return {

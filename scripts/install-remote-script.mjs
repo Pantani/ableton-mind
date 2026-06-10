@@ -2,20 +2,19 @@
 /**
  * install-remote-script.mjs
  *
- * Cria um symlink de `live/AbletonMind/` para o diretório de Remote Scripts do
- * Ableton Live no User Library. Modo dev: edita aqui, Live carrega de lá.
+ * Creates a symlink from `live/AbletonMind/` to Ableton Live's Remote Scripts
+ * directory in the User Library. Dev mode: edit here, Live loads from there.
  *
  *   macOS:   ~/Music/Ableton/User Library/Remote Scripts/AbletonMind
  *   Windows: %USERPROFILE%/Documents/Ableton/User Library/Remote Scripts/AbletonMind
  *
- * Uso:
- *   node scripts/install-remote-script.mjs           # cria/atualiza symlink
- *   node scripts/install-remote-script.mjs --copy    # copia ao invés de symlink (CI, snapshot)
- *   node scripts/install-remote-script.mjs --check   # só reporta o estado, não muta
+ * Usage:
+ *   node scripts/install-remote-script.mjs           # create/update symlink
+ *   node scripts/install-remote-script.mjs --copy    # copy instead of symlink (CI, snapshot)
+ *   node scripts/install-remote-script.mjs --check   # only report status, do not mutate
  *
- * O script não toca em outros Remote Scripts existentes. Se já houver um
- * AbletonMind instalado, ele recusa a sobrescrever a não ser que `--force`
- * seja passado.
+ * The script does not touch other existing Remote Scripts. If AbletonMind is
+ * already installed, it refuses to overwrite unless `--force` is passed.
  */
 
 import { execSync } from "node:child_process";
@@ -39,24 +38,24 @@ function targetDir() {
     case "win32":
       return path.join(home, "Documents", "Ableton", "User Library", "Remote Scripts", "AbletonMind");
     case "linux":
-      throw new Error("Ableton Live não roda nativamente em Linux. Considere Wine/Bottles.");
+      throw new Error("Ableton Live does not run natively on Linux. Consider Wine/Bottles.");
     default:
-      throw new Error(`Plataforma não suportada: ${process.platform}`);
+      throw new Error(`Unsupported platform: ${process.platform}`);
   }
 }
 
 function ensureSourceExists() {
   if (!fs.existsSync(SRC)) {
-    throw new Error(`Source não encontrado: ${SRC}. Você rodou na raiz do repo?`);
+    throw new Error(`Source not found: ${SRC}. Did you run this from the repo root?`);
   }
 }
 
 function describe(p) {
-  if (!fs.existsSync(p)) return "AUSENTE";
+  if (!fs.existsSync(p)) return "MISSING";
   const st = fs.lstatSync(p);
   if (st.isSymbolicLink()) return `symlink → ${fs.readlinkSync(p)}`;
-  if (st.isDirectory()) return `diretório (cópia)`;
-  return `arquivo (?? inesperado)`;
+  if (st.isDirectory()) return `directory (copy)`;
+  return `file (unexpected)`;
 }
 
 function main() {
@@ -64,7 +63,7 @@ function main() {
   const target = targetDir();
   console.log(`source: ${SRC}`);
   console.log(`target: ${target}`);
-  console.log(`status atual: ${describe(target)}`);
+  console.log(`current status: ${describe(target)}`);
 
   if (CHECK_ONLY) {
     process.exit(0);
@@ -72,7 +71,7 @@ function main() {
 
   if (fs.existsSync(target) && !FORCE) {
     console.error(
-      `\n✗ ${target} já existe. Use --force para sobrescrever.`,
+      `\n✗ ${target} already exists. Use --force to overwrite.`,
     );
     process.exit(1);
   }
@@ -87,15 +86,15 @@ function main() {
 
   if (MODE === "symlink") {
     fs.symlinkSync(SRC, target, "dir");
-    console.log(`\n✓ symlink criado.`);
+    console.log(`\n✓ symlink created.`);
   } else {
-    // Cópia recursiva via cp -R (mais simples que walker em JS).
+    // Recursive copy via cp -R (simpler than a JS walker here).
     execSync(`cp -R "${SRC}" "${target}"`, { stdio: "inherit" });
-    console.log(`\n✓ cópia criada.`);
+    console.log(`\n✓ copy created.`);
   }
 
   console.log(
-    `\nPróximo passo: abra o Live → Preferences → Link/Tempo/MIDI → Control Surface → escolha AbletonMind.`,
+    `\nNext step: open Live -> Preferences -> Link/Tempo/MIDI -> Control Surface -> choose AbletonMind.`,
   );
 }
 

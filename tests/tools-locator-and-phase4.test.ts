@@ -1,12 +1,12 @@
 /**
- * Testes Cycle 7 + Cycle 8 (TD-022 + TD-023).
+ * Cycle 7 + Cycle 8 tests (TD-022 + TD-023).
  *
- * Cobre:
- *  - parseParameterLocator (todos os formatos)
+ * Covers:
+ *  - parseParameterLocator (all formats)
  *  - arrangementAddAutomationPointTool
  *  - clipSetEnvelopeTool (incl. curve_type=hold)
  *  - getServerNotifier adapter (TD-019)
- *  - Verify behavior em transport.play/stop e clip.fire/stop (UNVERIFIABLE)
+ *  - Verify behavior in transport.play/stop and clip.fire/stop (UNVERIFIABLE)
  */
 
 import { describe, expect, it, vi } from "vitest";
@@ -143,7 +143,7 @@ describe("clipSetEnvelopeTool", () => {
   });
 
   it("computes expected count with hold curve_type (2 points per hold after first)", async () => {
-    // 3 input points; 2 are hold (índice 1 e 2). Expected = 1 + 2 + 2 = 5.
+    // 3 input points; 2 are hold (indices 1 and 2). Expected = 1 + 2 + 2 = 5.
     const call = vi.fn(async () => ({
       changed: true,
       replaced: true,

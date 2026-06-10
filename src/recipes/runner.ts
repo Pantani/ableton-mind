@@ -1,14 +1,14 @@
 /**
  * Recipe runner (ADR-0007).
  *
- * Recebe um Recipe + inputs do LLM + BridgeClient, executa steps sequencialmente
- * substituindo placeholders.
+ * Takes a Recipe + inputs from the LLM + BridgeClient, executes steps sequentially
+ * substituting placeholders.
  *
- * Placeholder syntax: `"{{name}}"` em strings substitui por valor exato.
- *   `"{{var.path.to.field}}"` faz dotted access em variáveis `let`-bound.
- *   Strings com placeholders inline (ex: `"prefix-{{x}}"`) também funcionam.
+ * Placeholder syntax: `"{{name}}"` in strings substitutes with the exact value.
+ *   `"{{var.path.to.field}}"` does dotted access on `let`-bound variables.
+ *   Strings with inline placeholders (e.g. `"prefix-{{x}}"`) also work.
  *
- * Falha num step → para execução, retorna progresso parcial.
+ * Failure in a step → stops execution, returns partial progress.
  */
 
 import type { BridgeClient } from "../server/context.js";
@@ -42,12 +42,12 @@ function dottedGet(obj: unknown, path: string): unknown {
 
 function resolveValue(value: unknown, bindings: Record<string, unknown>): unknown {
   if (typeof value === "string") {
-    // Substituição completa: string inteira é `{{x}}` → devolve o tipo original.
+    // Whole-string substitution: full string is `{{x}}` → return the original type.
     const wholeMatch = value.match(/^\{\{([^}]+)\}\}$/);
     if (wholeMatch) {
       return dottedGet(bindings, (wholeMatch[1] ?? "").trim());
     }
-    // Substituição inline: stringifica.
+    // Inline substitution: stringifies.
     return value.replace(PLACEHOLDER_RE, (_, expr) => {
       const v = dottedGet(bindings, String(expr).trim());
       return v === undefined ? "" : String(v);

@@ -1,10 +1,10 @@
 /**
- * TD-044 — testes do MCP Prompts subsystem (Cycle 18).
+ * TD-044 — MCP Prompts subsystem tests (Cycle 18).
  *
- * Prompts são puros (sem efeitos colaterais) — testamos:
- *  - Registry: allPrompts tem 5 entries, todas com nome único + args válidos.
- *  - Cada handler renderiza messages[0].content.text contendo as substituições.
- *  - listPromptsTool devolve metadata sem chamar bridge.
+ * Prompts are pure (no side effects) — we test:
+ *  - Registry: allPrompts has 5 entries, each with a unique name + valid args.
+ *  - Each handler renders messages[0].content.text containing the substitutions.
+ *  - listPromptsTool returns metadata without calling the bridge.
  */
 
 import { describe, expect, it } from "vitest";

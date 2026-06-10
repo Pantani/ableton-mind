@@ -1,8 +1,8 @@
 """
-Importa todos os módulos de handler para que seus `@register(...)` rodem.
+Imports every handler module so their `@register(...)` decorators run.
 
-A ordem é irrelevante (registry é global), mas precisamos importar pelo menos
-uma vez para popular `REGISTRY`. O `bridge.py` faz `from .handlers import *`.
+Order is irrelevant (the registry is global), but we need to import at least
+once to populate `REGISTRY`. `bridge.py` does `from .handlers import *`.
 """
 from ._base import REGISTRY  # noqa: F401  re-export for tests/back-compat
 from . import system  # noqa: F401

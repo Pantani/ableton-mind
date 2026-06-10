@@ -1,54 +1,54 @@
-# ADR 0002 — `track.list` shape: collections em vez de indexes negativos
+# ADR 0002 — `track.list` shape: collections instead of negative indexes
 
-**Data:** 2026-06-08
-**Status:** Aceito
-**Autor:** architect
-**Supersede:** parte de `_workspace/contracts/phase0-methods.md §6` (tabela `track.list` response)
+**Date:** 2026-06-08
+**Status:** Accepted
+**Author:** architect
+**Supersedes:** part of `_workspace/contracts/phase0-methods.md §6` (`track.list` response table)
 
-## Contexto
+## Context
 
-Cycle 1 entregou `track.list` com indexing provisório:
-- `index >= 0` → track regular
+Cycle 1 delivered `track.list` with provisional indexing:
+- `index >= 0` → regular track
 - `index = -1` → master
 - `index = -2..-N` → return tracks
 
-Documentado em TD-002 como débito. PLAN.md §4.2 lista master/return como entidades de primeira classe na LOM — Live as expõe via `song.tracks`, `song.return_tracks`, `song.master_track` (coleções separadas).
+Documented in TD-002 as debt. PLAN.md §4.2 lists master/return as first-class entities in the LOM — Live exposes them via `song.tracks`, `song.return_tracks`, `song.master_track` (separate collections).
 
-## Decisão
+## Decision
 
-`track.list` agora devolve coleções separadas:
+`track.list` now returns separate collections:
 
 ```ts
 {
-  tracks: TrackInfo[];          // só song.tracks (audio + MIDI + group)
-  return_tracks: TrackInfo[];   // só song.return_tracks
-  master_track: TrackInfo | null; // só song.master_track (sempre presente em runtime real, null em testes)
+  tracks: TrackInfo[];          // only song.tracks (audio + MIDI + group)
+  return_tracks: TrackInfo[];   // only song.return_tracks
+  master_track: TrackInfo | null; // only song.master_track (always present in real runtime, null in tests)
   total: number;                // sum(tracks) + sum(return_tracks) + (master_track ? 1 : 0)
 }
 ```
 
-`TrackInfo` perde os campos `is_return` e `is_master` (a coleção em que o objeto aparece já diz). Mantém:
-- `index: number` (posição na própria coleção começando em 0)
+`TrackInfo` loses the `is_return` and `is_master` fields (the collection in which the object appears already says it). Keeps:
+- `index: number` (position in its own collection starting at 0)
 - `name`, `color_index`
 - `is_midi`, `is_audio`
-- `mute`, `solo`, `arm` (master não tem arm; já documentado)
+- `mute`, `solo`, `arm` (master has no arm; already documented)
 - `is_grouped`, `is_foldable`
 
-## Por quê
+## Why
 
-- Alinha com LOM real do Live (`Song.tracks`, `Song.return_tracks`, `Song.master_track`).
-- Acaba com a convenção mágica de indexes negativos (alvo de bugs em chamadas subsequentes — ex: `clip.create_midi` poderia receber `track_index=-1` por erro e tentaria criar clip no master).
-- TypeScript fica mais expressivo (`master_track: TrackInfo | null` é checável).
+- Aligns with Live's real LOM (`Song.tracks`, `Song.return_tracks`, `Song.master_track`).
+- Ends the magic convention of negative indexes (a source of bugs in subsequent calls — e.g. `clip.create_midi` could receive `track_index=-1` by mistake and try to create a clip on the master).
+- TypeScript becomes more expressive (`master_track: TrackInfo | null` is checkable).
 
-## Consequências
+## Consequences
 
-- **Breaking change** vs Cycle 1, mas Phase 0 ainda em pré-release (v0.0.x) → aceito sem deprecation window.
-- Atualizar contract `_workspace/contracts/phase0-methods.md §6` com nota apontando para este ADR.
-- Atualizar Python handler `live/AbletonMind/handlers/track.py`.
-- Atualizar testes Python afetados.
-- TS tool `track_list` mapeia 1:1 (sem transformação extra).
+- **Breaking change** vs Cycle 1, but Phase 0 still in pre-release (v0.0.x) → accepted without deprecation window.
+- Update contract `_workspace/contracts/phase0-methods.md §6` with a note pointing to this ADR.
+- Update Python handler `live/AbletonMind/handlers/track.py`.
+- Update affected Python tests.
+- TS tool `track_list` maps 1:1 (no extra transformation).
 
-## Como aplicar
+## How to apply
 
-- Implementado neste mesmo Cycle 2 (architect inline).
-- Próximas tools que recebem track index (`clip.create_midi`, `track.set`, etc) continuam usando `track_index` como posição em `song.tracks` regulares — return/master são opted-in via prefixo (Phase 2+).
+- Implemented in this very Cycle 2 (architect inline).
+- Future tools that receive track index (`clip.create_midi`, `track.set`, etc) continue to use `track_index` as a position in regular `song.tracks` — return/master are opted-in via prefix (Phase 2+).

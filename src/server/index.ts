@@ -1,13 +1,13 @@
 /**
- * Bootstrap do servidor MCP.
+ * MCP server bootstrap.
  *
- * Recebe um `BridgeClient` pronto + lista de `ToolDefinition` e devolve
- * um `McpServer` do SDK oficial com tudo registrado. Não conecta transport
- * (stdio fica em `src/index.ts`).
+ * Receives a ready `BridgeClient` + list of `ToolDefinition` and returns
+ * an `McpServer` from the official SDK with everything registered. Doesn't
+ * connect transport (stdio lives in `src/index.ts`).
  *
- * Cada `ToolDefinition.input` é convertido em ZodRawShape para a API
- * `server.tool()` do `@modelcontextprotocol/sdk`. O retorno é serializado
- * em texto JSON dentro do envelope `content: [{ type: "text", ... }]`.
+ * Each `ToolDefinition.input` is converted into a ZodRawShape for the
+ * `server.tool()` API of `@modelcontextprotocol/sdk`. The return is serialized
+ * as JSON text inside the `content: [{ type: "text", ... }]` envelope.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -38,8 +38,8 @@ export interface CreatedServer {
 }
 
 /**
- * Cria e popula o `McpServer`. Tools com `enabled === false` são logadas mas
- * NÃO registradas (Phase 0 evita expor tools quebradas/incompletas ao LLM).
+ * Creates and populates the `McpServer`. Tools with `enabled === false` are logged but
+ * NOT registered (Phase 0 avoids exposing broken/incomplete tools to the LLM).
  */
 export function createServer(opts: CreateServerOptions): CreatedServer {
   const server = new McpServer({
@@ -113,16 +113,16 @@ function registerPrompt(server: McpServer, p: PromptDefinition): void {
 }
 
 function registerTool(server: McpServer, tool: ToolDefinition, ctx: ToolContext): void {
-  // O SDK MCP 1.x recebe um ZodRawShape (object com shape, não ZodObject).
-  // Nossas tools declaram input como ZodObject por convenção; extraímos `.shape`.
+  // The MCP SDK 1.x takes a ZodRawShape (object with shape, not ZodObject).
+  // Our tools declare input as ZodObject by convention; we extract `.shape`.
   const shape = extractShape(tool.input);
 
   server.tool(tool.name, tool.description, shape, async (rawInput: unknown) => {
     try {
       const input = tool.input.parse(rawInput);
       const result = await tool.handler(input, ctx);
-      // Output schema é sempre obj com `ok`. Re-validamos pra cumprir contrato
-      // antes de mandar pro cliente MCP.
+      // Output schema is always an obj with `ok`. We re-validate to honor the contract
+      // before sending to the MCP client.
       const validated = tool.output.parse(result);
       return {
         content: [
@@ -149,8 +149,8 @@ function registerTool(server: McpServer, tool: ToolDefinition, ctx: ToolContext)
 }
 
 /**
- * Extrai ZodRawShape de uma ZodTypeAny. Se não for ZodObject, devolve `{}`
- * (tool sem inputs ainda registra, mas LLM não pode passar argumentos).
+ * Extracts ZodRawShape from a ZodTypeAny. If not a ZodObject, returns `{}`
+ * (a tool with no inputs still registers, but the LLM cannot pass arguments).
  */
 function extractShape(schema: z.ZodTypeAny): Record<string, z.ZodTypeAny> {
   const maybeShape = (schema as unknown as { shape?: Record<string, z.ZodTypeAny> }).shape;

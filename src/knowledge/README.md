@@ -1,17 +1,17 @@
 # Knowledge base — schema convention
 
-JSONs estáticos consumidos pelo loader em `src/knowledge/index.ts` (Zod-validado).
+Static JSON files consumed by the loader in `src/knowledge/index.ts` (Zod-validated).
 
-## Estrutura
+## Structure
 
 ```
 src/knowledge/
 ├─ index.ts                # loader + Zod schemas
-├─ scales.json             # 16 escalas + 12 root notes
+├─ scales.json             # 16 scales + 12 root notes
 ├─ devices/
-│  ├─ <id>.json            # 1 arquivo por device nativo do Live
-│  └─ _extracted/          # output do scripts/extract-device-schemas.mjs (não distribuído)
-└─ README.md               # este arquivo
+│  ├─ <id>.json            # 1 file per native Live device
+│  └─ _extracted/          # output from scripts/extract-device-schemas.mjs (not distributed)
+└─ README.md               # this file
 ```
 
 ## Device schema
@@ -23,62 +23,62 @@ src/knowledge/
   "name": "Wavetable",
   "category": "instrument | audio_effect | midi_effect | drum_rack | rack",
   "vendor": "Ableton",
-  "live_version_min": "10.0",      // semver string; tools podem filtrar
+  "live_version_min": "10.0",      // semver string; tools can filter
   "description": "...",
-  "source": "curated (Cycle N)",   // ou "extracted-from-default-adv (sha256:...)"
+  "source": "curated (Cycle N)",   // or "extracted-from-default-adv (sha256:...)"
   "completeness": "partial | complete | stub",
   "parameters": [
     { "index": 0, "name": "...", "min": 0, "max": 1, "default": 0.5, ... }
   ],
-  "modulation_matrix": { ... },     // opcional, só instrumentos com mod matrix
+  "modulation_matrix": { ... },     // optional, only instruments with a mod matrix
   "todo": []
 }
 ```
 
-`.passthrough()` no Zod schema permite campos device-específicos extras
-(ex: `drum_pads` em `drum_rack.json`).
+`.passthrough()` in the Zod schema allows extra device-specific fields
+(for example, `drum_pads` in `drum_rack.json`).
 
-## Convenção de `unit` (TD-041)
+## `unit` Convention (TD-041)
 
-LLMs precisam saber **como interpretar `value`** ao chamar `device_set_parameter`. Lista canônica:
+LLMs need to know **how to interpret `value`** when calling `device_set_parameter`. Canonical list:
 
-| Unit | Significado | Faixa típica | Exemplo |
+| Unit | Meaning | Typical range | Example |
 |---|---|---|---|
-| `linear` | Valor cru linear (espelha exatamente o slider do Live UI) | 0..1 ou -1..1 | Volume normalizado |
-| `curve` | Valor cru 0..1 que mapeia para uma **curva interna não-linear** (Drive, Amount, Color, etc.). 0.5 ≠ "meio audível" — só meio do slider | 0..1 | Drum Buss Drive, Pedal Gain |
-| `Hz` | Frequência em Hertz | 20..22000 | Filter Frequency |
-| `dB` | Decibéis | -36..36 (variável) | Output Gain |
-| `s` | Segundos | 0..60 | Envelope Attack |
-| `ms` | Milissegundos | 0..1000 | Compressor Attack |
+| `linear` | Raw linear value (exactly mirrors the Live UI slider) | 0..1 or -1..1 | Normalized volume |
+| `curve` | Raw 0..1 value mapped to an **internal nonlinear curve** (Drive, Amount, Color, etc.). 0.5 is not audibly half; it is only the slider midpoint | 0..1 | Drum Buss Drive, Pedal Gain |
+| `Hz` | Frequency in Hertz | 20..22000 | Filter Frequency |
+| `dB` | Decibels | -36..36 (variable) | Output Gain |
+| `s` | Seconds | 0..60 | Envelope Attack |
+| `ms` | Milliseconds | 0..1000 | Compressor Attack |
 | `semitones`, `cents`, `octaves` | Pitch | -48..48 / -50..50 / -2..2 | Osc Transpose |
 | `MIDI` | MIDI note number (0..127) | 0..127 | Pitch Tracking Note |
-| `°` | Degrees (fase, stereo image) | 0..360 ou 0..120 | LFO Phase |
-| `Q` | Q factor do filtro | 0.1..18 | EQ Resonance |
-| `%` | Percent | 0..100 ou -100..100 | Filter Env Amount |
+| `°` | Degrees (phase, stereo image) | 0..360 or 0..120 | LFO Phase |
+| `Q` | Filter Q factor | 0.1..18 | EQ Resonance |
+| `%` | Percent | 0..100 or -100..100 | Filter Env Amount |
 | `BPM` | Tempo | 20..999 | Looper Tempo |
-| `bits` | Resolução | 1..16 | Redux Bit Depth |
-| `voices`, `count` | Contagem discreta | 1..32 | Polyphony |
-| `bool` | 0 ou 1 | 0..1 | On/Off switches |
-| `enum` | Discrete choice index. `description` lista as opções | 0..N | Filter Type |
-| `ratio` | Multiplicador (FM ratios) | 0.0625..32 | Operator A Coarse |
+| `bits` | Resolution | 1..16 | Redux Bit Depth |
+| `voices`, `count` | Discrete count | 1..32 | Polyphony |
+| `bool` | 0 or 1 | 0..1 | On/Off switches |
+| `enum` | Discrete choice index. `description` lists the options | 0..N | Filter Type |
+| `ratio` | Multiplier (FM ratios) | 0.0625..32 | Operator A Coarse |
 
-### Quando usar `linear` vs `curve`
+### When to Use `linear` vs `curve`
 
-- **`linear`**: usuário clica num ponto do slider → engine recebe esse valor sem transformação significativa. Ex: pan (-1..1), volume (0..1 antes da curva dB), Dry/Wet (0..1).
-- **`curve`**: faixa visual é 0..1 mas engine aplica curva (logarítmica, exponencial, polinomial). Ex: Drum Buss Drive — 0.5 no slider produz drive bem mais sutil que metade do drive máximo, porque a curva é steep no final.
+- **`linear`**: the user clicks a slider point and the engine receives that value with no significant transformation. Examples: pan (-1..1), volume (0..1 before the dB curve), Dry/Wet (0..1).
+- **`curve`**: the visual range is 0..1 but the engine applies a logarithmic, exponential or polynomial curve. Example: Drum Buss Drive; 0.5 on the slider produces far less than half of maximum audible drive because the curve steepens near the end.
 
-LLM deve assumir que **subir Drive/Amount de 0.5 → 0.8 não é "60% mais drive"** — é "mais alguns dB de drive segundo a curva". Para fine-tuning audível, varia 0.05 por chamada.
+The LLM should assume that **raising Drive/Amount from 0.5 to 0.8 is not "60% more drive"**; it is "a few more dB of drive according to the curve". For audible fine-tuning, vary by 0.05 per call.
 
-## Adicionar um device novo
+## Add a New Device
 
-1. `node scripts/extract-device-schemas.mjs --device <Name>` (se tiver `.adv` salvo)
-2. Curador revisa output em `_extracted/`, completa `min/max/unit`, escolhe `linear` ou `curve` conforme acima.
-3. Move para `devices/<slug>.json`.
-4. Adiciona `<slug>` em `KNOWN_DEVICES` em `index.ts`.
-5. Test em `tests/distribution-validation.test.ts` valida via `loadAllDevices()`.
+1. `node scripts/extract-device-schemas.mjs --device <Name>` (if a saved `.adv` exists)
+2. The curator reviews output in `_extracted/`, completes `min/max/unit`, and chooses `linear` or `curve` as described above.
+3. Move it to `devices/<slug>.json`.
+4. Add `<slug>` to `KNOWN_DEVICES` in `index.ts`.
+5. The test in `tests/distribution-validation.test.ts` validates it through `loadAllDevices()`.
 
 ## Scales
 
-`scales.json` segue formato simples: 16 escalas + 12 root notes (intervals em semitones from root).
+`scales.json` follows a simple format: 16 scales + 12 root notes (intervals in semitones from root).
 
-LLM pode combinar com `session.get_info` (que devolve `root_note` + `scale_name` do Live) para gerar notas dentro da escala atual.
+The LLM can combine this with `session.get_info`, which returns Live's `root_note` and `scale_name`, to generate notes inside the current scale.

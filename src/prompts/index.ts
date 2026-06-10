@@ -1,9 +1,9 @@
 /**
  * MCP Prompts registry (ADR-0010).
  *
- * Prompts são templates pré-canned que o cliente MCP (Claude Desktop, Cursor, etc.)
- * expõe ao usuário via menu. Cada prompt aceita argumentos tipados e renderiza
- * uma primeira mensagem que orienta o LLM a usar as tools do servidor.
+ * Prompts are pre-canned templates that the MCP client (Claude Desktop, Cursor, etc.)
+ * exposes to the user via a menu. Each prompt accepts typed arguments and renders
+ * a first message that guides the LLM to use the server's tools.
  */
 
 import type { z } from "zod";
@@ -33,7 +33,7 @@ export interface PromptDefinition {
   name: string;
   description: string;
   arguments: PromptArgument[];
-  /** Zod schema espelhando arguments — usado para validation no handler MCP. */
+  /** Zod schema mirroring arguments — used for validation in the MCP handler. */
   argsSchema: z.ZodTypeAny;
   handler: (args: Record<string, string | undefined>) => PromptResult;
 }
@@ -48,7 +48,7 @@ export const allPrompts: PromptDefinition[] = [
   vocalChainPrompt,
 ];
 
-/** Lookup por nome — usado pelo tool `list_prompts`. */
+/** Lookup by name — used by the `list_prompts` tool. */
 export function loadPrompt(name: string): PromptDefinition | null {
   return allPrompts.find((p) => p.name === name) ?? null;
 }

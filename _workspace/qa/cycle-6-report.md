@@ -1,60 +1,60 @@
 # QA Report — Cycle 6
 
-**Data:** 2026-06-09
-**Veredito:** **PASS-WITH-WARNINGS**
+**Date:** 2026-06-09
+**Verdict:** **PASS-WITH-WARNINGS**
 **QA:** architect inline.
 
-## Resumo
+## Summary
 
-Cycle 6 fechou **pipeline de notifications end-to-end** (TD-014 + TD-015), atualizou contract doc (TD-017), preencheu lacuna de testes (TD-018), e quadruplicou cobertura de knowledge (EQ Eight + Compressor + Reverb + Operator). **Phase 2 funcional em código** — falta apenas smoke real para confirmar contra Live de verdade.
+Cycle 6 closed the **end-to-end notifications pipeline** (TD-014 + TD-015), updated the contract doc (TD-017), filled the test gap (TD-018), and quadrupled knowledge coverage (EQ Eight + Compressor + Reverb + Operator). **Phase 2 functional in code** — only real smoke is missing to confirm against actual Live.
 
 ## Tech debt status
 
-| ID | Status | Onde |
+| ID | Status | Where |
 |---|---|---|
-| TD-004 (smoke real) | 🟡 PENDENTE | `docs/smoke-test.md` |
-| TD-005 (npm install) | 🟡 PENDENTE | máquina real |
-| TD-014 (broadcast) | ✅ FECHADO | `BridgeServer.broadcast()` em `bridge.py:188` + ListenerManager wired no `__init__.py` |
-| TD-015 (TS forward) | ✅ FECHADO | `src/server/notifications.ts` + `attachNotificationForwarder` em `src/index.ts` |
-| TD-016 (verify carry-over) | 🟡 PENDENTE | 17 tools (migração progressiva) |
-| TD-017 (contract doc) | ✅ FECHADO | `phase0-methods.md` §21..§24 |
-| TD-018 (testes Cycle 5) | ✅ FECHADO | `test_cycle5_6.py` + `server-notifications.test.ts` + `tools-device-browser-load.test.ts` |
+| TD-004 (real smoke) | 🟡 PENDING | `docs/smoke-test.md` |
+| TD-005 (npm install) | 🟡 PENDING | real machine |
+| TD-014 (broadcast) | ✅ CLOSED | `BridgeServer.broadcast()` in `bridge.py:188` + ListenerManager wired in `__init__.py` |
+| TD-015 (TS forward) | ✅ CLOSED | `src/server/notifications.ts` + `attachNotificationForwarder` in `src/index.ts` |
+| TD-016 (verify carry-over) | 🟡 PENDING | 17 tools (progressive migration) |
+| TD-017 (contract doc) | ✅ CLOSED | `phase0-methods.md` §21..§24 |
+| TD-018 (Cycle 5 tests) | ✅ CLOSED | `test_cycle5_6.py` + `server-notifications.test.ts` + `tools-device-browser-load.test.ts` |
 
-**4 fechados / 3 carry-over** (todos baixos ou não-resolvíveis em sandbox).
+**4 closed / 3 carry-over** (all low or non-resolvable in sandbox).
 
-## Pipeline de notifications
+## Notifications pipeline
 
 ```
-Live event (ex: usuário muda tempo no GUI)
-  → LiveAPI dispara `add_tempo_listener` callback
-  → ListenerManager._on_tempo() em main thread
+Live event (e.g. user changes tempo in the GUI)
+  → LiveAPI fires `add_tempo_listener` callback
+  → ListenerManager._on_tempo() on main thread
   → bridge.broadcast("event.transport_tempo_changed", {value, previous, ts})
-  → loop sobre self._clients[]: socket.sendall(JSON-RPC notification + \n)
-  → Sockets mortos são removidos do _clients
+  → loop over self._clients[]: socket.sendall(JSON-RPC notification + \n)
+  → Dead sockets removed from _clients
 
 TS server:
-  TcpJsonRpcClient.processLine() detecta msg sem `id` → emit("notification", method, params)
+  TcpJsonRpcClient.processLine() detects msg without `id` → emit("notification", method, params)
   → attachNotificationForwarder handler → forwardNotification()
-  → filtra prefix `event.` (descarta o resto com warn)
-  → notifier (= McpServer.server.notification(...)) repassa para o cliente MCP
-  → erros são engolidos com log (não quebram conexão TCP)
+  → filters `event.` prefix (discards the rest with warn)
+  → notifier (= McpServer.server.notification(...)) forwards to the MCP client
+  → errors are swallowed with log (do not break the TCP connection)
 ```
 
-Testes cobrem cada peça em isolado (mock socketpair, EventEmitter fake, vi.fn notifier).
+Tests cover each piece in isolation (mock socketpair, EventEmitter fake, vi.fn notifier).
 
 ## Parity check
 
-**23 métodos JSON-RPC** no bridge / **21 tools MCP** registradas no TS. Match.
+**23 JSON-RPC methods** in the bridge / **21 MCP tools** registered in TS. Match.
 
-Eventos Phase 2 ativos:
+Active Phase 2 events:
 - `event.transport_tempo_changed`
 - `event.transport_is_playing_changed`
 
-Documentados em `phase0-methods.md §24`.
+Documented in `phase0-methods.md §24`.
 
 ## Knowledge
 
-| Device | Params | Completeness | Linhas JSON |
+| Device | Params | Completeness | JSON lines |
 |---|---|---|---|
 | Wavetable | 60 | complete (Cycle 5) | ~150 |
 | Operator | 53 | complete | ~80 |
@@ -62,47 +62,47 @@ Documentados em `phase0-methods.md §24`.
 | Compressor | 21 | complete | ~50 |
 | Reverb | 31 | complete | ~55 |
 
-**5 devices** totalizando **210 parameters** indexados. PLAN.md §5 alvo é 50+ devices → Phase 3 ainda longa.
+**5 devices** totaling **210 indexed parameters**. PLAN.md §5 target is 50+ devices → Phase 3 still long.
 
-`src/knowledge/index.ts::KNOWN_DEVICES` atualizado.
+`src/knowledge/index.ts::KNOWN_DEVICES` updated.
 
-## Testes
+## Tests
 
 Python:
-- `test_cycle5_6.py` NEW: 4 test classes / 16+ casos cobrindo browser.load_item, device.get_parameters, device.set_parameter, ListenerManager, BridgeServer.broadcast.
+- `test_cycle5_6.py` NEW: 4 test classes / 16+ cases covering browser.load_item, device.get_parameters, device.set_parameter, ListenerManager, BridgeServer.broadcast.
 
 TS:
-- `server-notifications.test.ts` NEW: 5 casos (forwarding, drop non-event, error swallow, attach/dispose).
-- `tools-device-browser-load.test.ts` NEW: 8 casos (browser_load_item input/output, device tools knowledge enrichment, name resolution, error path).
+- `server-notifications.test.ts` NEW: 5 cases (forwarding, drop non-event, error swallow, attach/dispose).
+- `tools-device-browser-load.test.ts` NEW: 8 cases (browser_load_item input/output, device tools knowledge enrichment, name resolution, error path).
 
-**Cobertura estimada** acumulada (todos os cycles): ~120 test cases TS + ~50 test cases Python.
+**Estimated coverage** accumulated (all cycles): ~120 TS test cases + ~50 Python test cases.
 
 ## Contract drift
 
-`phase0-methods.md` agora §1..§24 cobrindo todos os 23 métodos + seção de events. Drift = 0. ✅
+`phase0-methods.md` now covers §1..§24 across all 23 methods + events section. Drift = 0. ✅
 
 ## Warnings
 
-### W1 — TD-016: 17 tools ainda com `verified: true` literal
-Migração progressiva. Cycle 7 deve migrar +5-10. Baixa.
+### W1 — TD-016: 17 tools still with literal `verified: true`
+Progressive migration. Cycle 7 should migrate +5-10. Low.
 
-### W2 — `McpServer.server.notification` API depende de internals do SDK
-Acessamos via cast `(server as unknown as { server: { notification } }).server.notification(...)`. Se o SDK 2.x mudar o naming, quebra. Mitigado pelo adapter `McpNotifier` injetável — testes mockam a função, não o SDK. TD-019 (baixa, monitoring).
+### W2 — `McpServer.server.notification` API depends on SDK internals
+We access via cast `(server as unknown as { server: { notification } }).server.notification(...)`. If SDK 2.x changes naming, it breaks. Mitigated by the injectable `McpNotifier` adapter — tests mock the function, not the SDK. TD-019 (low, monitoring).
 
-### W3 — Broadcast em modo headless escreve para sockets mortos antes de detectar
-Comportamento esperado para TCP — só na próxima escrita o OS reporta EPIPE/RESET. Detector funciona, mas pode demorar 1-2 broadcasts até remover. Baixa, sem ação.
+### W3 — Broadcast in headless mode writes to dead sockets before detecting
+Expected TCP behavior — only on the next write does the OS report EPIPE/RESET. The detector works but may take 1-2 broadcasts to remove. Low, no action.
 
-### W4 — `_seed_track_with_device` nos testes Python mutaba `FakeDeviceParameter`
-Adicionei `name/is_quantized/value_items/automation_state` post-construção porque `FakeDeviceParameter` foi criado em Cycle 3 sem esses campos. Não migrado para o construtor pra não quebrar testes existentes. TD-020 (trivial).
+### W4 — `_seed_track_with_device` in Python tests mutated `FakeDeviceParameter`
+I added `name/is_quantized/value_items/automation_state` post-construction because `FakeDeviceParameter` was created in Cycle 3 without those fields. Not migrated to the constructor so as not to break existing tests. TD-020 (trivial).
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 6.** Phase 2 funcional em código. Próximo:
+**PASS Cycle 6.** Phase 2 functional in code. Next:
 
 Cycle 7:
-- Smoke real (TD-004) — gate Phase 0.
-- TD-016 progress — migrar verify em mais 5-10 tools.
-- TD-019 / TD-020 (baixos).
-- Phase 2 expansão: listeners de track (name, mute, solo, volume).
-- Phase 4 começar: automation envelopes (`Song.scrub_by`, `Clip.envelope_add_point`, etc.).
+- Real smoke (TD-004) — Phase 0 gate.
+- TD-016 progress — migrate verify on 5-10 more tools.
+- TD-019 / TD-020 (low).
+- Phase 2 expansion: track listeners (name, mute, solo, volume).
+- Phase 4 begin: automation envelopes (`Song.scrub_by`, `Clip.envelope_add_point`, etc.).
 - Phase 3 cont: +5 devices (Auto Filter, Echo, Saturator, Delay, Drum Rack).

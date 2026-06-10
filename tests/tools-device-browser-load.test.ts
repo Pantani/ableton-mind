@@ -1,8 +1,8 @@
 /**
- * Testes das tools do Cycle 5 que faltaram em TD-018:
+ * Tests for Cycle 5 tools missing in TD-018:
  *  - browserLoadItemTool
  *  - deviceGetParametersTool (knowledge enrichment)
- *  - deviceSetParameterTool (parameter_index e parameter_name)
+ *  - deviceSetParameterTool (parameter_index and parameter_name)
  */
 
 import { describe, expect, it, vi } from "vitest";
@@ -43,7 +43,7 @@ describe("browserLoadItemTool", () => {
 
 describe("deviceGetParametersTool", () => {
   it("enriches with knowledge when device matches", async () => {
-    // Wavetable está na knowledge — bridge devolve "Wavetable" com 1 param.
+    // Wavetable is in knowledge; the bridge returns "Wavetable" with 1 param.
     const call = vi.fn(async () => ({
       device_name: "Wavetable",
       class_name: "InstrumentVector",

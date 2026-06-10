@@ -93,14 +93,14 @@ class TestCreateMidiClip(unittest.TestCase):
 
     def test_slot_already_has_clip(self):
         song = _song_with_midi_and_audio()
-        song.tracks[0].clip_slots[3].create_clip(2.0)  # pré-popula
+        song.tracks[0].clip_slots[3].create_clip(2.0)  # pre-populate
         ctrl = FakeCtrl(song=song)
         with self.assertRaises(RpcError) as cm:
             CreateMidiClipHandler(ctrl).execute(
                 CreateMidiClipInput(track_index=0, clip_slot_index=3, length_beats=4.0)
             )
         self.assertEqual(cm.exception.code, INVALID_STATE)
-        # Não deve ter aberto undo step
+        # Should not have opened an undo step
         self.assertEqual(song.undo_steps, [])
 
 

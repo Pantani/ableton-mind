@@ -1,11 +1,11 @@
 /**
- * Testes do notification forwarder TS (TD-015 + TD-018).
+ * TS notification forwarder tests (TD-015 + TD-018).
  *
- * Verifica que:
- *  - Methods com prefixo `event.` são repassados para o notifier MCP.
- *  - Methods sem prefixo são descartados (não chama notifier).
- *  - Erros no notifier não propagam (são engolidos com log).
- *  - `attachNotificationForwarder` retorna função `dispose` que remove o listener.
+ * Verifies that:
+ *  - Methods with `event.` prefix are forwarded to the MCP notifier.
+ *  - Methods without the prefix are dropped (notifier not called).
+ *  - Notifier errors don't propagate (they are swallowed with a log).
+ *  - `attachNotificationForwarder` returns a `dispose` function that removes the listener.
  */
 
 import { EventEmitter } from "node:events";
@@ -56,7 +56,7 @@ describe("attachNotificationForwarder", () => {
     const dispose = attachNotificationForwarder(client as never, notifier);
 
     client.emit("notification", "event.transport_is_playing_changed", { value: true });
-    // forwardNotification é async — esperamos próximo tick.
+    // forwardNotification is async — wait for next tick.
     await new Promise<void>((r) => setTimeout(r, 0));
 
     expect(notifier).toHaveBeenCalledTimes(1);
@@ -67,7 +67,7 @@ describe("attachNotificationForwarder", () => {
     dispose();
     client.emit("notification", "event.foo", {});
     await new Promise<void>((r) => setTimeout(r, 0));
-    // Não foi chamado de novo.
+    // Was not called again.
     expect(notifier).toHaveBeenCalledTimes(1);
   });
 

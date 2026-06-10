@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Filtro multi-modo com envelope, LFO e sidechain. Tipos: LP, HP, BP, Notch, Morph, 12/24 dB/oct.",
+  "description": "Multi-mode filter with envelope, LFO and sidechain. Types: LP, HP, BP, Notch, Morph, 12/24 dB/oct.",
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [

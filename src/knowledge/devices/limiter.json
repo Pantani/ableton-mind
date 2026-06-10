@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "Look-ahead brickwall limiter para master bus. Single-band com Stereo/L/R mode, ceiling absoluto e gain reduction visível.",
+  "description": "Look-ahead brickwall limiter for the master bus. Single-band with Stereo/L/R mode, absolute ceiling and visible gain reduction.",
   "source": "curated (Cycle 9)",
   "completeness": "complete",
   "parameters": [

@@ -4,49 +4,117 @@
   "name": "Vocal Chain",
   "category": "mixing",
   "version": "0.1",
-  "description": "Vocal chain padrão: Gate (-40 dB) → EQ Eight (HP @ 100 Hz + presence boost) → Compressor (4:1, threshold -20) → Reverb (send-style).",
-  "tags": ["vocals", "mixing", "voice", "podcast", "recording"],
+  "description": "Default vocal chain: Gate (-40 dB) -> EQ Eight (HP @ 100 Hz + presence boost) -> Compressor (4:1, threshold -20) -> Reverb (send-style).",
+  "tags": [
+    "vocals",
+    "mixing",
+    "voice",
+    "podcast",
+    "recording"
+  ],
   "inputs": {
-    "track_index": { "type": "int", "default": 0, "description": "Track de vocal." },
-    "comp_threshold": { "type": "number", "default": -20, "min": -60, "max": 0 },
-    "hp_freq": { "type": "number", "default": 100, "min": 50, "max": 300 }
+    "track_index": {
+      "type": "int",
+      "default": 0,
+      "description": "Track de vocal."
+    },
+    "comp_threshold": {
+      "type": "number",
+      "default": -20,
+      "min": -60,
+      "max": 0
+    },
+    "hp_freq": {
+      "type": "number",
+      "default": 100,
+      "min": 50,
+      "max": 300
+    }
   },
   "steps": [
     {
       "op": "browser.load_item",
-      "args": { "path": ["audio_effects", "Gate", "Init"] }
+      "args": {
+        "path": [
+          "audio_effects",
+          "Gate",
+          "Init"
+        ]
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Threshold", "value": -40 }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "Threshold",
+        "value": -40
+      }
     },
     {
       "op": "browser.load_item",
-      "args": { "path": ["audio_effects", "EQ Eight", "Init"] }
+      "args": {
+        "path": [
+          "audio_effects",
+          "EQ Eight",
+          "Init"
+        ]
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 1, "parameter_name": "1 Filter On A", "value": 1 }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 1,
+        "parameter_name": "1 Filter On A",
+        "value": 1
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 1, "parameter_name": "1 Filter Type A", "value": 0 }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 1,
+        "parameter_name": "1 Filter Type A",
+        "value": 0
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 1, "parameter_name": "1 Frequency A", "value": "{{hp_freq}}" }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 1,
+        "parameter_name": "1 Frequency A",
+        "value": "{{hp_freq}}"
+      }
     },
     {
       "op": "browser.load_item",
-      "args": { "path": ["audio_effects", "Compressor", "Init"] }
+      "args": {
+        "path": [
+          "audio_effects",
+          "Compressor",
+          "Init"
+        ]
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 2, "parameter_name": "Threshold", "value": "{{comp_threshold}}" }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 2,
+        "parameter_name": "Threshold",
+        "value": "{{comp_threshold}}"
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 2, "parameter_name": "Ratio", "value": 4 }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 2,
+        "parameter_name": "Ratio",
+        "value": 4
+      }
     }
   ]
 }

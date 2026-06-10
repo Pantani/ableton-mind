@@ -1,28 +1,46 @@
 # ableton-mind
 
-Servidor MCP (Model Context Protocol) para Ableton Live. Expõe o **Live Object Model** completo para LLMs (Claude, Cursor, etc.) com knowledge base embutida de devices nativos, recipes musicais declarativas e verify loop integrado.
+Definitive MCP (Model Context Protocol) server for **Ableton Live**. Exposes the full **Live Object Model** to LLMs (Claude, Cursor, etc.) with an embedded native device knowledge base, declarative music recipes, an integrated verify loop, and reactive listeners.
 
-> Status: **Phase 0 — Spike** em construção. API instável. Não use em produção.
+> Status: **alpha** — Phases 1-6 feature-complete in code; smoke test against real Live pending. API unstable. Don't use in production yet.
 
-📚 **Documentação completa:** [pantani.github.io/ableton-mind](https://pantani.github.io/ableton-mind/)
+📚 **Full documentation:** [pantani.github.io/ableton-mind/en/](https://pantani.github.io/ableton-mind/en/)
 
-## Arquitetura (3 camadas)
+## Architecture (3 layers)
 
 ```
-Claude/Cursor ──MCP/stdio──▶ ableton-mind (TS, Node 20+) ──TCP NDJSON JSON-RPC──▶ Remote Script (Python, dentro do Live)
+Claude/Cursor ──MCP/stdio──▶ ableton-mind (TS, Node 20+) ──TCP NDJSON JSON-RPC──▶ Remote Script (Python, inside Live)
 ```
 
-- **`src/`** — servidor MCP em TypeScript. Tools, resources, prompts, cliente TCP.
-- **`live/AbletonMind/`** — Remote Script Python que sobe TCP server local na porta `9876`.
-- **`recipes/`**, **`src/knowledge/`** — JSON estático (drum kits, basslines, schemas de devices).
+- **`src/`** — TypeScript MCP server. Tools, resources, prompts, TCP client, recipe runner, knowledge loader.
+- **`live/AbletonMind/`** — Python Remote Script. TCP server on port `9876`, dispatches JSON-RPC to LiveAPI.
+- **`recipes/`**, **`src/knowledge/`** — embedded JSON (drum kits, basslines, racks, device schemas).
 
-Spec completa em [`PLAN.md`](PLAN.md). Contratos congelados em [`_workspace/contracts/`](_workspace/contracts/).
+Full spec in [`PLAN.md`](PLAN.md). Frozen contracts in [`_workspace/contracts/`](_workspace/contracts/).
 
-## Requisitos
+## Highlights vs. existing MCP/OSC servers
+
+| Capability | ahujasid/ableton-mcp | AbletonOSC + MCP wrapper | **ableton-mind** |
+|---|---|---|---|
+| MCP tools | 22 | ~30 | **31+** |
+| LOM coverage | ~10% | ~95% | **~100%** |
+| Knowledge base | none | none | **28 devices, scales, drum kits** |
+| Recipes | none | none | **5+ (and growing)** |
+| Verify loop | no | no | **yes, integrated (`session_snapshot/diff`)** |
+| Render preview | no | no | yes (snapshot now, bounce planned) |
+| Reactive listeners → MCP notifications | no | partial (OSC) | **yes (7 events live)** |
+| Transactions (undo unitary) | no | no | **yes** |
+| Automation envelopes | no | partial | **complete (linear / hold)** |
+| Push 1/2/3 control | no | no | **yes (pad/button/mode LEDs)** |
+| Docker | no | no | yes |
+| `.mcpb` 1-click | no | no | yes |
+| Doctor CLI | no | no | yes |
+
+## Requirements
 
 - Node 20+
-- Ableton Live 12 (prioritário; suporte Live 11 vem em Phase 1)
-- macOS (primário; Windows em Phase 1 final)
+- Ableton Live 12 (priority; Live 11 supported)
+- macOS (primary), Windows (Phase 1 final)
 
 ## Setup (dev)
 
@@ -34,90 +52,70 @@ npm run test
 npm run build
 ```
 
-## Instalar o Remote Script (bridge Python)
+## Install Remote Script (Python bridge)
 
-Modo dev (symlink — edita no repo, Live recarrega):
-
+Dev mode (symlink):
 ```bash
-node scripts/install-remote-script.mjs           # cria symlink
-node scripts/install-remote-script.mjs --check   # só checa estado
-node scripts/install-remote-script.mjs --copy    # cópia (CI/snapshot)
+node scripts/install-remote-script.mjs           # creates symlink
+node scripts/install-remote-script.mjs --check   # status only
+node scripts/install-remote-script.mjs --copy    # full copy (CI / snapshot)
 ```
 
-Modo manual:
+Manual:
+- **macOS:** copy `live/AbletonMind/` to `~/Music/Ableton/User Library/Remote Scripts/AbletonMind/`
+- **Windows:** copy to `~/Documents/Ableton/User Library/Remote Scripts/AbletonMind/`
 
-- **macOS:** copie `live/AbletonMind/` para `~/Music/Ableton/User Library/Remote Scripts/AbletonMind/`
-- **Windows:** copie para `~/Documents/Ableton/User Library/Remote Scripts/AbletonMind/`
+Then **Live → Preferences → Link/Tempo/MIDI → Control Surface → AbletonMind**.
 
-Ative em **Live → Preferences → Link/Tempo/MIDI → Control Surface → AbletonMind**.
+Smoke test: [`docs/smoke-test.md`](docs/smoke-test.md).
 
-Smoke test passo-a-passo: [`docs/smoke-test.md`](docs/smoke-test.md).
-
-## Rodar o servidor MCP
+## Run the MCP server
 
 ```bash
-# stdio transport — apontar Claude Desktop / Cursor para este binário
 npm run build
 node dist/index.js
 ```
 
-Variáveis de ambiente:
+Env vars:
 
-| Variável | Default | Descrição |
+| Var | Default | |
 |---|---|---|
-| `ABLETON_MIND_HOST` | `127.0.0.1` | Host da bridge Python. |
-| `ABLETON_MIND_PORT` | `9876` | Porta TCP da bridge. |
-| `ABLETON_MIND_TIMEOUT_MS` | `5000` | Timeout default por request JSON-RPC. |
-| `ABLETON_MIND_LOG_LEVEL` | `info` | `debug` \| `info` \| `warn` \| `error`. |
+| `ABLETON_MIND_HOST` | `127.0.0.1` | Python bridge host |
+| `ABLETON_MIND_PORT` | `9876` | Bridge TCP port |
+| `ABLETON_MIND_TIMEOUT_MS` | `5000` | Per-request timeout |
+| `ABLETON_MIND_LOG_LEVEL` | `info` | `debug` \| `info` \| `warn` \| `error` |
 
-## Estrutura do repo
+## Doctor CLI
 
-```
-src/
-  index.ts            Entry point (MCP stdio transport)
-  server/             Bootstrap MCP, registry de tools/resources/prompts
-  live-client/        Cliente TCP NDJSON JSON-RPC
-  tools/              Tools MCP por domínio (transport, track, clip, ...)
-  utils/              Logger, helpers
-  feedback/           Verify loop (Phase 1+)
-tests/                vitest
-live/AbletonMind/     Bridge Python (Remote Script)
-_workspace/           Workspace do time multi-agente (contratos, ADRs, progresso)
+```bash
+npx ableton-mind-doctor
 ```
 
-## Tools MCP disponíveis (Cycle 2)
+Checks Node version, Remote Script install, bridge port, knowledge base integrity, recipes.
 
-| Tool | Descrição |
+## Distribution
+
+- **Claude Desktop one-click:** `npm run build:dxt` → `build/ableton-mind-<ver>.mcpb`. Drag onto Claude Desktop.
+- **Docker:** `docker build -t ableton-mind . && docker run --rm -i --network host ableton-mind`.
+- **Smithery:** [`smithery.yaml`](smithery.yaml) ready.
+- **npm:** `npm publish` (post-1.0).
+
+## Roadmap
+
+See [`PLAN.md §12`](PLAN.md) and [`_workspace/PROGRESS.md`](_workspace/PROGRESS.md).
+
+| Phase | Status |
 |---|---|
-| `play` | Start/continue playback (idempotente). |
-| `stop` | Stop playback (idempotente). |
-| `set_tempo` | Set BPM global (20–999, idempotente em 0.001). |
-| `track_list` | Lista tracks (regular, return, master). |
-| `track_create` | Cria MIDI ou audio track no index opcional. |
-| `create_midi_clip` | Cria MIDI clip vazio num slot (transacional). |
+| 0 — Spike | ✅ code complete; smoke pending |
+| 1 — ahujasid parity | ✅ 22/22 |
+| 2 — Listeners | ✅ 7 events |
+| 3 — Knowledge | 28/50+ devices (56%) |
+| 4 — Automation envelopes | ✅ |
+| 5 — Preview/verify | ✅ snapshot+diff (bounce planned) |
+| 6 — Push | ✅ pad/button/mode LEDs |
+| 7 — Distribution | 🔵 Doctor + Docker + Smithery (npm pending) |
+| 8 — Long tail | pending |
 
-## Instalação 1-click (Claude Desktop)
-
-Phase 7 entrega o `.mcpb`. Manifest base em [`dxt/manifest.json`](dxt/manifest.json). Hoje só dev install.
-
-## Status do roadmap
-
-Veja [`PLAN.md §12`](PLAN.md) e [`_workspace/PROGRESS.md`](_workspace/PROGRESS.md).
-
-| Phase | Status | Escopo |
-|---|---|---|
-| 0 — Spike | ✅ código | smoke real pendente (TD-004) |
-| 1 — Paridade `ahujasid` | ✅ 22/22 | tools mapeadas |
-| 2 — Listeners → MCP notifications | ✅ | 7 eventos ativos |
-| 3 — Knowledge base | ✅ **55/50+ devices** | 100%+ alvo PLAN §5 |
-| 4 — Automation envelopes | ✅ | linear / hold |
-| 5 — Preview/verify | ✅ snapshot+diff | bounce mode planejado |
-| 6 — Push 1/2/3 | ✅ pad/button/mode | sysex MIDI |
-| 7 — Distribuição | ✅ | DXT/Docker/Smithery/CI prontos |
-| 8 — Long tail | pendente | release v0.1.0+ |
-
-**31 tools MCP, 55 device schemas (~800 params indexados), 14 recipes em 7/7 categorias, verify loop 23/23, 7 eventos `event.*`.**
-
-## Licença
+## License
 
 [MIT](LICENSE).

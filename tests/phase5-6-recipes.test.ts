@@ -1,8 +1,8 @@
 /**
- * TD-026 — testes consolidados Phase 5 (session/preview), Phase 6 (Push),
- * Recipes (loader + runner) e Doctor CLI knowledge/recipes checks.
+ * TD-026 — consolidated tests for Phase 5 (session/preview), Phase 6 (Push),
+ * Recipes (loader + runner) and Doctor CLI knowledge/recipes checks.
  *
- * Carry-over de Cycles 9, 10, 11. Patterns estabelecidos.
+ * Carry-over from Cycles 9, 10, 11. Established patterns.
  */
 
 import { describe, expect, it, vi } from "vitest";
@@ -195,12 +195,12 @@ describe("recipe loader + runner", () => {
     const r = await applyRecipe(recipe, { tune_semitones: -3 }, fakeBridge);
     expect(r.applied).toBe(true);
     expect(r.completed).toBe(recipe.steps.length);
-    // Confere que tune_semitones=-3 foi substituído.
+    // Confirms that tune_semitones=-3 was substituted.
     const tuneCall = calls.find(
       (c) => (c.params as { parameter_name?: string }).parameter_name === "Tune",
     );
     expect((tuneCall?.params as { value: number }).value).toBe(-3);
-    // Confere que dotted-let `kick.track.index` foi resolvido para 5.
+    // Confirms that dotted-let `kick.track.index` resolved to 5.
     const clipCall = calls.find((c) => c.method === "clip.create_midi");
     expect((clipCall?.params as { track_index: number }).track_index).toBe(5);
   });
@@ -257,7 +257,7 @@ describe("knowledge base integrity", () => {
   it("loadAllDevices loads all KNOWN_DEVICES without throwing", async () => {
     const devices = await loadAllDevices();
     expect(devices.length).toBeGreaterThanOrEqual(28);
-    // Cada device tem id + parameters não-vazios.
+    // Each device has id + non-empty parameters.
     for (const d of devices) {
       expect(d.id).toMatch(/^ableton\./);
       expect(Array.isArray(d.parameters)).toBe(true);

@@ -1,11 +1,11 @@
 /**
- * Tools MCP do domínio Arrangement (Phase 4 start — ADR-0006).
+ * MCP tools for the Arrangement domain (Phase 4 start — ADR-0006).
  *
- * `arrangement_add_automation_point` — adiciona um ponto a um automation
- * envelope no arrangement view. NÃO idempotente.
+ * `arrangement_add_automation_point` — adds a point to an automation
+ * envelope in the arrangement view. NOT idempotent.
  *
- * Resolução de `parameter_path` → `parameter_locator` (formato que o bridge
- * entende) acontece aqui no lado TS.
+ * Resolution of `parameter_path` → `parameter_locator` (the format the bridge
+ * understands) happens here on the TS side.
  */
 
 import { z } from "zod";

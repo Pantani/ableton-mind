@@ -1,12 +1,12 @@
 /**
- * dependency-cruiser config — Dependency Analysis para ableton-mind.
+ * dependency-cruiser config — dependency analysis for ableton-mind.
  *
- * Escopo: TypeScript (src/, tests/, scripts/). A bridge Python em
- * `live/AbletonMind/` NÃO é coberta por esta ferramenta (dep-cruiser
- * só parseia JS/TS/CoffeeScript).
+ * Scope: TypeScript (src/, tests/, scripts/). The Python bridge in
+ * `live/AbletonMind/` is not covered by this tool because dep-cruiser only
+ * parses JS/TS/CoffeeScript.
  *
- * As regras petrificam o grafo real observado em src/, não uma
- * arquitetura aspiracional. Cada regra tem comentário com a justificativa.
+ * These rules freeze the real graph observed in src/, not an aspirational
+ * architecture. Each rule includes a comment explaining the reason.
  */
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
@@ -15,8 +15,8 @@ module.exports = {
     {
       name: "no-circular",
       comment:
-        "Nenhum ciclo entre módulos. Ciclos quebram tree-shaking, " +
-        "tornam ordem de import significativa e indicam violação de camada.",
+        "No cycles between modules. Cycles break tree-shaking, " +
+        "make import order meaningful and indicate a layer violation.",
       severity: "error",
       from: { pathNot: "^(node_modules)" },
       to: { circular: true },
@@ -26,9 +26,9 @@ module.exports = {
     {
       name: "tools-cannot-touch-live-client",
       comment:
-        "Tools (camada de domínio MCP) devem falar com a bridge somente " +
-        "via `ctx.bridge` (BridgeClient), nunca importar o TcpJsonRpcClient " +
-        "direto. Atalho quebra mock em testes e o contrato Phase 0.",
+        "Tools (MCP domain layer) must talk to the bridge only through " +
+        "`ctx.bridge` (BridgeClient), never by importing TcpJsonRpcClient " +
+        "directly. Shortcuts break test mocks and the Phase 0 contract.",
       severity: "error",
       from: { path: "^src/tools/" },
       to: { path: "^src/live-client/" },
@@ -38,9 +38,9 @@ module.exports = {
     {
       name: "tools-cannot-touch-knowledge",
       comment:
-        "Knowledge faz I/O de filesystem; tools devem recebê-lo via `ctx` " +
-        "(plano Phase 1+). Hoje nenhuma tool importa knowledge — esta " +
-        "regra petrifica o limite antes que apareça atalho.",
+        "Knowledge performs filesystem I/O; tools must receive it through " +
+        "`ctx` (Phase 1+ plan). Today no tool imports knowledge; this rule " +
+        "freezes that boundary before shortcuts appear.",
       severity: "error",
       from: { path: "^src/tools/" },
       to: { path: "^src/knowledge/" },
@@ -50,9 +50,9 @@ module.exports = {
     {
       name: "server-cannot-depend-on-tools",
       comment:
-        "Inversão: tools são injetadas via `CreateServerOptions.tools`. " +
-        "Se server importasse tools, surgiria ciclo server ↔ tools " +
-        "(tools já importam types do server).",
+        "Inversion: tools are injected through `CreateServerOptions.tools`. " +
+        "If the server imported tools, it would create a server/tools cycle " +
+        "(tools already import server types).",
       severity: "error",
       from: { path: "^src/server/" },
       to: { path: "^src/tools/" },
@@ -62,8 +62,8 @@ module.exports = {
     {
       name: "live-client-isolated-from-upper-layers",
       comment:
-        "Camada inferior: live-client só pode subir até `utils`. Subir até " +
-        "server/tools/knowledge inverte a hierarquia e cria ciclos.",
+        "Lower layer: live-client may only depend upward on `utils`. Reaching " +
+        "server/tools/knowledge inverts the hierarchy and creates cycles.",
       severity: "error",
       from: { path: "^src/live-client/" },
       to: { path: "^src/(server|tools|knowledge)/" },
@@ -73,8 +73,8 @@ module.exports = {
     {
       name: "utils-must-stay-leaf",
       comment:
-        "Logger é folha. Importar para cima cria ciclos garantidos com " +
-        "qualquer módulo que já o consome (server, live-client).",
+        "Logger is a leaf. Importing upward creates guaranteed cycles with " +
+        "any module that already consumes it (server, live-client).",
       severity: "error",
       from: { path: "^src/utils/" },
       to: { path: "^src/(tools|server|live-client|knowledge)/" },
@@ -84,8 +84,8 @@ module.exports = {
     {
       name: "knowledge-must-stay-pure",
       comment:
-        "Knowledge é dado puro embarcado no bundle DXT. Não pode depender " +
-        "de logger/server/tools/live-client — quebraria embutibilidade.",
+        "Knowledge is pure data embedded in the DXT bundle. It cannot depend " +
+        "on logger/server/tools/live-client because that would break embedding.",
       severity: "error",
       from: { path: "^src/knowledge/" },
       to: { path: "^src/(tools|server|live-client|utils)/" },
@@ -95,8 +95,8 @@ module.exports = {
     {
       name: "no-prod-import-from-tests-or-scripts",
       comment:
-        "Código de produção (src/) jamais pode importar tests/ ou scripts/. " +
-        "Inversão clássica que vaza testes e tooling no bundle publicado.",
+        "Production code (src/) must never import tests/ or scripts/. This " +
+        "classic inversion leaks tests and tooling into the published bundle.",
       severity: "error",
       from: { path: "^src/" },
       to: { path: "^(tests|scripts)/" },
@@ -106,9 +106,9 @@ module.exports = {
     {
       name: "no-orphans",
       comment:
-        "Módulo sem ninguém importando: provavelmente esquecido em refactor. " +
-        "Warn (não error) porque entry points e barrels podem ser falso-positivos " +
-        "durante o crescimento do projeto (Phases 1-7).",
+        "Module imported by nobody: probably forgotten during a refactor. " +
+        "Warn (not error) because entry points and barrels can be false " +
+        "positives while the project grows (Phases 1-7).",
       severity: "warn",
       from: {
         orphan: true,
@@ -135,7 +135,7 @@ module.exports = {
     includeOnly: "^(src|tests|scripts)/",
     exclude: {
       path: [
-        "\\.test\\.ts$", // testes não entram no grafo de produção
+        "\\.test\\.ts$", // tests are not part of the production graph
         "^node_modules/",
         "^dist/",
         "^coverage/",

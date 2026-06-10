@@ -1,15 +1,15 @@
 """
-Registry global de handlers + classe base.
+Global handler registry + base class.
 
-Handlers se registram via decorador `@register("domain.verb")`. O dispatcher
-do bridge usa este dicionário para roteamento.
+Handlers register via the `@register("domain.verb")` decorator. The bridge
+dispatcher uses this dictionary for routing.
 
-A classe `Handler` tem só duas responsabilidades:
-- expor `self.song` (acesso conveniente, re-resolvido a cada call)
-- declarar `INPUT` (dataclass que parseia `params`)
+The `Handler` class has only two responsibilities:
+- expose `self.song` (convenience accessor, re-resolved per call)
+- declare `INPUT` (dataclass that parses `params`)
 
-`execute(params)` deve retornar um dict pronto pra virar `result` JSON-RPC.
-Para sinalizar erro estruturado, levanta `RpcError`.
+`execute(params)` must return a dict ready to become a JSON-RPC `result`.
+To signal a structured error, raise `RpcError`.
 """
 from typing import Dict, Type
 
@@ -17,11 +17,11 @@ REGISTRY: Dict[str, Type["Handler"]] = {}
 
 
 def register(method: str):
-    """Decorador para registrar um handler num método JSON-RPC."""
+    """Decorator to register a handler for a JSON-RPC method."""
 
     def deco(cls):
         if method in REGISTRY:
-            # Idempotente em reloads de módulo (Live re-carrega o script às vezes).
+            # Idempotent on module reloads (Live reloads the script occasionally).
             REGISTRY[method] = cls
         else:
             REGISTRY[method] = cls
@@ -32,19 +32,19 @@ def register(method: str):
 
 
 class Handler:
-    """Base. Subclasses definem `INPUT` (dataclass) e `execute(params)`."""
+    """Base. Subclasses define `INPUT` (dataclass) and `execute(params)`."""
 
     INPUT = None  # type: ignore
     METHOD: str = ""
 
     def __init__(self, ctrl):
-        # `ctrl` é o ControlSurface (ou um stub nos testes). Precisa expor
-        # `.song()` que devolve um objeto compatível com `Live.Song.Song`.
+        # `ctrl` is the ControlSurface (or a stub in tests). Must expose
+        # `.song()` returning an object compatible with `Live.Song.Song`.
         self.ctrl = ctrl
 
     @property
     def song(self):
         return self.ctrl.song()
 
-    def execute(self, params) -> dict:  # pragma: no cover - abstrato
+    def execute(self, params) -> dict:  # pragma: no cover - abstract
         raise NotImplementedError

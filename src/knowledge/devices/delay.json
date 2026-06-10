@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "10.0",
-  "description": "Delay stereo simplificado (substitui Simple Delay + Ping Pong Delay), com sync, feedback, filter, mode (Repitch/Fade/Jump) e dry/wet.",
+  "description": "Simplified stereo delay (replaces Simple Delay + Ping Pong Delay), with sync, feedback, filter, mode (Repitch/Fade/Jump) and dry/wet.",
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [

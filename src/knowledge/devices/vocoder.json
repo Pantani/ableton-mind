@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Vocoder com 4 modos de carrier (Noise / Modulator / Pitch Tracking / External) + bands ajustáveis.",
+  "description": "Vocoder with 4 carrier modes (Noise / Modulator / Pitch Tracking / External) + adjustable bands.",
   "source": "curated (Cycle 10)",
   "completeness": "complete",
   "parameters": [

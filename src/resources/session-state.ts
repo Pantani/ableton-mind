@@ -1,11 +1,11 @@
 import type { ResourceDefinition } from "./index.js";
 
 /**
- * `live://session/state` — snapshot deep do Live (tempo + transport + tracks
- * + clips + devices). Equivalente READ-ONLY do tool `session_snapshot`, mas
- * exposto via primitiva Resource MCP.
+ * `live://session/state` — deep snapshot of Live (tempo + transport + tracks
+ * + clips + devices). READ-ONLY equivalent of the `session_snapshot` tool, but
+ * exposed via the MCP Resource primitive.
  *
- * Cliente que quer "ver o estado atual" via menu resources → invoca este URI.
+ * A client wanting to "see current state" via the resources menu → invokes this URI.
  */
 export const sessionStateResource: ResourceDefinition = {
   uri: "live://session/state",

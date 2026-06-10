@@ -4,23 +4,58 @@
   "name": "Tech-House Kick",
   "category": "drums",
   "version": "0.1",
-  "description": "Cria uma MIDI track 'Kick' com Drum Cell tunado (-2 semitons), saturação leve e pattern 4-on-the-floor em 1 bar.",
-  "tags": ["tech-house", "drums", "kick", "techno", "4-on-the-floor"],
+  "description": "Creates a 'Kick' MIDI track with tuned Drum Cell (-2 semitones), light saturation and a 1-bar four-on-the-floor pattern.",
+  "tags": [
+    "tech-house",
+    "drums",
+    "kick",
+    "techno",
+    "4-on-the-floor"
+  ],
   "inputs": {
-    "track_name": { "type": "string", "default": "Kick" },
-    "tune_semitones": { "type": "number", "default": -2, "min": -12, "max": 12, "description": "Pitch shift do kick em semitons." },
-    "saturation": { "type": "number", "default": 0.2, "min": 0, "max": 1 },
-    "velocity": { "type": "int", "default": 100, "min": 1, "max": 127 }
+    "track_name": {
+      "type": "string",
+      "default": "Kick"
+    },
+    "tune_semitones": {
+      "type": "number",
+      "default": -2,
+      "min": -12,
+      "max": 12,
+      "description": "Pitch shift do kick em semitons."
+    },
+    "saturation": {
+      "type": "number",
+      "default": 0.2,
+      "min": 0,
+      "max": 1
+    },
+    "velocity": {
+      "type": "int",
+      "default": 100,
+      "min": 1,
+      "max": 127
+    }
   },
   "steps": [
     {
       "op": "track.upsert",
-      "args": { "name": "{{track_name}}", "type": "midi" },
+      "args": {
+        "name": "{{track_name}}",
+        "type": "midi"
+      },
       "let": "kick"
     },
     {
       "op": "browser.load_item",
-      "args": { "path": ["drums", "Drum Cell", "Kicks", "Kick 808"] }
+      "args": {
+        "path": [
+          "drums",
+          "Drum Cell",
+          "Kicks",
+          "Kick 808"
+        ]
+      }
     },
     {
       "op": "device.set_parameter",
@@ -45,7 +80,7 @@
       "args": {
         "track_index": "{{kick.track.index}}",
         "clip_slot_index": 0,
-        "length_beats": 4.0,
+        "length_beats": 4,
         "name": "Kick"
       },
       "let": "kick_clip"
@@ -56,10 +91,30 @@
         "track_index": "{{kick.track.index}}",
         "clip_slot_index": 0,
         "notes": [
-          { "pitch": 36, "start": 0, "duration": 0.25, "velocity": "{{velocity}}" },
-          { "pitch": 36, "start": 1, "duration": 0.25, "velocity": "{{velocity}}" },
-          { "pitch": 36, "start": 2, "duration": 0.25, "velocity": "{{velocity}}" },
-          { "pitch": 36, "start": 3, "duration": 0.25, "velocity": "{{velocity}}" }
+          {
+            "pitch": 36,
+            "start": 0,
+            "duration": 0.25,
+            "velocity": "{{velocity}}"
+          },
+          {
+            "pitch": 36,
+            "start": 1,
+            "duration": 0.25,
+            "velocity": "{{velocity}}"
+          },
+          {
+            "pitch": 36,
+            "start": 2,
+            "duration": 0.25,
+            "velocity": "{{velocity}}"
+          },
+          {
+            "pitch": 36,
+            "start": 3,
+            "duration": 0.25,
+            "velocity": "{{velocity}}"
+          }
         ]
       }
     }

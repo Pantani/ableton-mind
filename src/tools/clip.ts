@@ -1,10 +1,10 @@
 /**
- * Tools MCP do domínio Clip.
+ * MCP tools for the Clip domain.
  *
  * Cycle 2: `create_midi_clip`.
  * Cycle 3 add: `clip_add_notes`, `clip_fire`, `clip_stop`, `clip_set_name`.
  *
- * Formato canônico de nota MIDI definido em ADR-0003.
+ * Canonical MIDI note format defined in ADR-0003.
  */
 
 import { z } from "zod";
@@ -335,8 +335,8 @@ export const clipSetEnvelopeTool = defineTool({
       points: input.points,
     });
     const parsed = clipSetEnvelopeBridgeResult.parse(raw);
-    // TD-023: `hold` curve_type insere 2 pontos no bridge por point do LLM
-    // (um leading edge + o ponto em si). Calculamos o expected total.
+    // TD-023: `hold` curve_type inserts 2 points in the bridge per LLM point
+    // (one leading edge + the point itself). We compute the expected total.
     const expectedCount = input.points.reduce(
       (acc, p, i) => acc + (p.curve_type === "hold" && i > 0 ? 2 : 1),
       0,
@@ -361,7 +361,7 @@ export const clipSetLoopTool = defineTool({
       looping: input.looping,
     });
     const parsed = clipSetLoopBridgeResult.parse(raw);
-    // Só verifica fields que o LLM passou.
+    // Only verify fields that the LLM passed.
     const checks = [
       input.loop_start !== undefined
         ? verifyField(input.loop_start, parsed.after.loop_start, {

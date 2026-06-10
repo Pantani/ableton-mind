@@ -1,6 +1,6 @@
 /**
- * Barrel do live-client. Tudo que o restante do código precisa para falar
- * com a bridge sai daqui.
+ * live-client barrel. Everything the rest of the codebase needs to talk
+ * to the bridge comes from here.
  */
 
 export {

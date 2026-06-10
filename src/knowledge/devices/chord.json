@@ -5,7 +5,7 @@
   "category": "midi_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "MIDI effect: adiciona até 6 notas extras com semitones offset à nota tocada. Cria chords automaticamente.",
+  "description": "MIDI effect: adds up to 6 extra notes with semitone offsets from the played note. Creates chords automatically.",
   "source": "curated (Cycle 17)",
   "completeness": "complete",
   "parameters": [

@@ -1,49 +1,49 @@
 # Changelog
 
-Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) + SemVer ([ADR-0009](_workspace/decisions/0009-release-versioning.md)).
+All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) + SemVer ([ADR-0009](_workspace/decisions/0009-release-versioning.md)).
 
 ## [Unreleased]
 
-### Em preparação para `v0.1.0-rc.1`
+### In preparation for `v0.1.0-rc.1`
 
-- Smoke test real contra Live (TD-004) — gate de release.
-- Validação final de Push 2/3 sysex em hardware (TD-030).
+- Real smoke test against Live (TD-004) — release gate.
+- Final Push 2/3 sysex validation on hardware (TD-030).
 
 ## [0.0.21] — 2026-06-09 (Cycle 22) — Smoke-discovered fixes
 
 ### Fixed
-- **TD-046** ✅ `system.hello` agora retorna `version` lido de `package.json` no module load (não mais hardcoded `"0.0.1"`). Cache em `BRIDGE_VERSION`. Fallback `"0.0.0+unknown"` se package.json não estiver empacotado.
-- **TD-047** ✅ `_live_version()` agora tenta 3 paths Live API:
+- **TD-046** ✅ `system.hello` now returns `version` read from `package.json` at module load (no longer hardcoded `"0.0.1"`). Cached in `BRIDGE_VERSION`. Fallback `"0.0.0+unknown"` if package.json is not bundled.
+- **TD-047** ✅ `_live_version()` now tries 3 Live API paths:
   1. `Application.get_major_version() / get_minor_version() / get_bugfix_version()` (Live 11+).
-  2. `Application.get_major_minor_patch_version()` (tupla, builds antigas).
-  3. `Application.get_version_string()` (fallback raro).
-  Devolve `"0.0.0"` apenas se todos falharem (ex: ambiente sem `Live` module).
+  2. `Application.get_major_minor_patch_version()` (tuple, older builds).
+  3. `Application.get_version_string()` (rare fallback).
+  Returns `"0.0.0"` only if all fail (e.g., environment without the `Live` module).
 
 ## [0.0.20] — 2026-06-09 (Cycle 20) — Wire smoke + Doctor 7
 
 ### Added
-- TD-045 ✅ DXT manifest ganha `resources: [...]` array (3 entradas: session_state, knowledge_devices, recipes_index). Speculative — MCPB v0.2 deve aceitar; clientes mais antigos ignoram silently.
-- **`live/AbletonMind/__main__.py`** — CLI entrypoint para rodar bridge headless: `python -m AbletonMind --port <p>`. Útil para smoke tests, validação manual e CI Python jobs.
-- **`tests/wire-smoke.test.ts`** — opt-in via `RUN_WIRE_SMOKE=1`. Spawns bridge subprocess, conecta TS client over real TCP, exercises handshake + system.ping + track.list (espera -32000 sem Live). **Real wire-level test** — catches bugs that mocks miss (NDJSON framing, JSON-RPC envelope, dispatcher threading).
-- Doctor CLI **7º check** `checkMcpPrimitives()` — conta tools/prompts/resources, falha se algum import quebrar (regressão detection).
+- TD-045 ✅ DXT manifest gains a `resources: [...]` array (3 entries: session_state, knowledge_devices, recipes_index). Speculative — MCPB v0.2 should accept; older clients silently ignore.
+- **`live/AbletonMind/__main__.py`** — CLI entrypoint to run the bridge headless: `python -m AbletonMind --port <p>`. Useful for smoke tests, manual validation, and Python CI jobs.
+- **`tests/wire-smoke.test.ts`** — opt-in via `RUN_WIRE_SMOKE=1`. Spawns the bridge subprocess, connects the TS client over real TCP, exercises handshake + system.ping + track.list (expects -32000 without Live). **Real wire-level test** — catches bugs mocks miss (NDJSON framing, JSON-RPC envelope, dispatcher threading).
+- Doctor CLI **7th check** `checkMcpPrimitives()` — counts tools/prompts/resources, fails if any import breaks (regression detection).
 
 ### Changed
-- Doctor CLI agora tem 7 checks (era 6).
+- Doctor CLI now has 7 checks (was 6).
 
-## [0.0.19] — 2026-06-09 (Cycle 19) — MCP Resources subsystem 🎯 **3/3 primitivas MCP**
+## [0.0.19] — 2026-06-09 (Cycle 19) — MCP Resources subsystem 🎯 **3/3 MCP primitives**
 
 ### Added
 - **ADR-0011** — MCP Resources shape (`live://<scope>/<path>` URI namespace).
 - **`src/resources/`** — registry + 3 seed resources:
-  - `live://session/state` — deep snapshot do Live via bridge.
-  - `live://knowledge/devices` — índice estático dos 55 devices (id, category, parameter_count).
-  - `live://recipes/index` — índice das 14 recipes (id, step_count, input_count).
-- **Server bootstrap** — `registerResource()` wira `server.resource(name, uri, metadata, readHandler)` do SDK 1.x.
-- **Tool MCP** `list_resources` — fallback discovery.
-- **TD-044** ✅ `tests/prompts.test.ts` — 16+ casos cobrindo registry + 5 handlers + listPromptsTool.
-- **`tests/resources.test.ts`** — 10+ casos cobrindo 3 resources + listResourcesTool + erro handling.
-- **Total tools MCP: 33** (era 32, +`list_resources`).
-- **3/3 primitivas MCP entregues**: Tools (33) + Prompts (5) + Resources (3).
+  - `live://session/state` — deep snapshot of Live via the bridge.
+  - `live://knowledge/devices` — static index of the 55 devices (id, category, parameter_count).
+  - `live://recipes/index` — index of the 14 recipes (id, step_count, input_count).
+- **Server bootstrap** — `registerResource()` wires `server.resource(name, uri, metadata, readHandler)` from SDK 1.x.
+- **MCP tool** `list_resources` — fallback discovery.
+- **TD-044** ✅ `tests/prompts.test.ts` — 16+ cases covering registry + 5 handlers + listPromptsTool.
+- **`tests/resources.test.ts`** — 10+ cases covering 3 resources + listResourcesTool + error handling.
+- **Total MCP tools: 33** (was 32, +`list_resources`).
+- **3/3 MCP primitives delivered**: Tools (33) + Prompts (5) + Resources (3).
 
 ## [0.0.18] — 2026-06-09 (Cycle 18) — MCP Prompts subsystem
 
@@ -55,16 +55,16 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
   - `build_arrangement` (intro-build-drop-break-outro / aaba / verse-chorus / minimal).
   - `sound_design_session` (synth + target → starting params + tweak loop).
   - `process_vocal_take` (style-aware vocal chain).
-- **Server bootstrap** — `registerPrompt()` em `src/server/index.ts` wira ao `McpServer.prompt(name, desc, shape, handler)` do SDK 1.x.
-- **Tool MCP** `list_prompts` — fallback discovery quando cliente MCP não expõe prompts nativamente.
-- **DXT manifest** — `prompts: [...]` populado para Claude Desktop listar.
-- **Total tools MCP: 32** (era 31, +`list_prompts`).
+- **Server bootstrap** — `registerPrompt()` in `src/server/index.ts` wires to SDK 1.x `McpServer.prompt(name, desc, shape, handler)`.
+- **MCP tool** `list_prompts` — fallback discovery when the MCP client does not expose prompts natively.
+- **DXT manifest** — `prompts: [...]` populated for Claude Desktop to list.
+- **Total MCP tools: 32** (was 31, +`list_prompts`).
 
 ## [0.0.17] — 2026-06-09 (Cycle 17)
 
 ### Added
-- TD-043 ✅ 5 MIDI effects restantes: Chord (6 shift+velocity slots), Note Length, Random, Scale, Velocity. **Knowledge: 55 devices** — 110% alvo PLAN.md §5.
-- README PT-BR atualizado refletindo status real das phases + métricas (31 tools, 55 devices, ~800 params, 14 recipes, verify 23/23, 7 eventos).
+- TD-043 ✅ 5 remaining MIDI effects: Chord (6 shift+velocity slots), Note Length, Random, Scale, Velocity. **Knowledge: 55 devices** — 110% of PLAN.md §5 target.
+- README updated to reflect the real status of phases + metrics (31 tools, 55 devices, ~800 params, 14 recipes, verify 23/23, 7 events).
 
 ## [0.0.16] — 2026-06-09 (Cycle 16) 🎯 **Knowledge 100% PLAN.md §5**
 
@@ -73,46 +73,46 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 - Recipes: **14 recipes** (+`mixing/bass-glue` Channel EQ → Saturator Tape → Glue Comp, +`drums/lofi-kit` Drum Bus + Vinyl Distortion + Redux 12-bit + boom-bap 90 BPM).
 
 ### Changed
-- TD-042 ✅ Re-anotação `unit: "curve"` em params não-lineares de devices antigos:
+- TD-042 ✅ Re-annotation `unit: "curve"` on non-linear params of older devices:
   - Drum Buss: Drive, Crunch, Compression, Boom.
   - Pedal: Gain.
   - Roar: Stage 1/2/3 Amount, Feedback Amount, Compressor Amount.
-- Saturator Drive ganha description aclarando dependência de Type.
+- Saturator Drive gains a description clarifying dependency on Type.
 
 ## [0.0.15] — 2026-06-09 (Cycle 15)
 
 ### Added
-- TD-041 ✅ `src/knowledge/README.md` — convenção de `unit` documentada (linear vs curve + 16 unit types canônicos + processo de adicionar device).
+- TD-041 ✅ `src/knowledge/README.md` — `unit` convention documented (linear vs curve + 16 canonical unit types + process for adding a device).
 - Knowledge: **45 devices** (+5: Cabinet, Dynamic Tube, Filter Delay, Grain Delay, Utility). **90% PLAN.md §5 target.**
 - Recipes: **12 recipes** (+`drums/jungle-break` — Amen-style 170 BPM, +`bass/reese` — Operator detuned saws + Chorus-Ensemble).
 
 ## [0.0.14] — 2026-06-09 (Cycle 14, RC prep)
 
 ### Added
-- TD-039 ✅ Doctor CLI checa version sync entre `package.json` e `dxt/manifest.json` (ADR-0009).
-- TD-040 ✅ `docs/distribution.md` seção CI secrets (NPM_TOKEN, GITHUB_TOKEN perms, Smithery opcional, dry-run local).
-- TD-038 ✅ `tests/distribution-validation.test.ts` — 14+ casos validando pkg/dxt sync, CHANGELOG format, GitHub workflows shape, Dockerfile, smithery.yaml, .npmignore, README/docs presence.
+- TD-039 ✅ Doctor CLI checks version sync between `package.json` and `dxt/manifest.json` (ADR-0009).
+- TD-040 ✅ `docs/distribution.md` CI secrets section (NPM_TOKEN, GITHUB_TOKEN perms, optional Smithery, local dry-run).
+- TD-038 ✅ `tests/distribution-validation.test.ts` — 14+ cases validating pkg/dxt sync, CHANGELOG format, GitHub workflows shape, Dockerfile, smithery.yaml, .npmignore, README/docs presence.
 - Knowledge: **40 devices** (+2: Drum Buss, Redux). **80% PLAN.md §5 target.**
 - Recipes: **10 recipes** (+`chords/lofi-jazz` — Operator Rhodes + Redux + Vinyl Distortion + Cmaj7-Am7-Fmaj7-G7).
 
 ## [0.0.13] — 2026-06-09 (Cycle 13)
 
 ### Added
-- **Phase 7 finalização:** GitHub Actions CI (TS + Python + Docker matrices) e release workflow (npm + ghcr + GitHub Releases).
-- `docs/distribution.md` — Docker Windows hint completo (TD-035), Smithery, dev install, troubleshooting.
-- `.npmignore` whitelist defesa adicional (TD-036).
-- `CHANGELOG.md` (este arquivo).
+- **Phase 7 finalization:** GitHub Actions CI (TS + Python + Docker matrices) and release workflow (npm + ghcr + GitHub Releases).
+- `docs/distribution.md` — complete Docker Windows hint (TD-035), Smithery, dev install, troubleshooting.
+- `.npmignore` whitelist as additional defense (TD-036).
+- `CHANGELOG.md` (this file).
 - ADR-0009 — release versioning + branching policy.
 - Knowledge: **38 devices** (+5 Cycle 13: Meld, Pitch, Multiband Dynamics, EQ Three, Vinyl Distortion).
-- Recipes: **9 recipes** — +`live_performance/launchpad-rig` (TD-037), +`racks/parallel-comp`. **7/7 categorias PLAN.md §6 cobertas.**
+- Recipes: **9 recipes** — +`live_performance/launchpad-rig` (TD-037), +`racks/parallel-comp`. **7/7 PLAN.md §6 categories covered.**
 
 ## [0.0.12] — 2026-06-09 (Cycle 12)
 
 ### Added
-- **Phase 7 start:** `Dockerfile` (multi-stage Node 20 Alpine), `smithery.yaml`, `README.en.md`.
-- TD-026 ✅ `tests/phase5-6-recipes.test.ts` — 24+ casos (Phase 5/6/recipes/knowledge integrity).
+- **Phase 7 start:** `Dockerfile` (multi-stage Node 20 Alpine), `smithery.yaml`, and root README updates.
+- TD-026 ✅ `tests/phase5-6-recipes.test.ts` — 24+ cases (Phase 5/6/recipes/knowledge integrity).
 - TD-033 ✅ `package.json` bin `ableton-mind-doctor`.
-- TD-034 ✅ neo-soul recipe aceita `instrument_path_*` overrides (Live 11/12 compat).
+- TD-034 ✅ neo-soul recipe accepts `instrument_path_*` overrides (Live 11/12 compat).
 - Knowledge: 33 devices (+5: Looper, Spectral Resonator, Spectral Time, Shifter, Chorus-Ensemble).
 - Recipes: 7 (+`mixing/vocal-chain`, +`arrangements/tech-house-7min`).
 
@@ -137,29 +137,29 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 ## [0.0.9] — 2026-06-09 (Cycle 9)
 
 ### Added
-- **Phase 5 start:** `session.snapshot`, `session.diff`, `render.preview` — foundation para verify loop completo.
-- **Recipes Trilha C estreia** (ADR-0007): loader Zod, runner mustache + dotted-let, `list_recipes`, `apply_recipe`.
-- TD-024 ✅ Sampler completo (49 params + modulation_matrix).
-- TD-025 ✅ `install_listener_methods` + `fire_listener` em `_fakes/live_api.py`.
+- **Phase 5 start:** `session.snapshot`, `session.diff`, `render.preview` — foundation for the full verify loop.
+- **Recipes Track C debut** (ADR-0007): Zod loader, mustache + dotted-let runner, `list_recipes`, `apply_recipe`.
+- TD-024 ✅ Full Sampler (49 params + modulation_matrix).
+- TD-025 ✅ `install_listener_methods` + `fire_listener` in `_fakes/live_api.py`.
 - Knowledge: 20 devices (+5: Limiter, Glue Compressor, Bass, Drift, Hybrid Reverb).
 - Recipes: 1 seed (`drums/tech-house-kick`).
 
 ## [0.0.8] — 2026-06-09 (Cycle 8)
 
 ### Added
-- **Verify loop 23/23** — finalização TD-016. Read-only inherently verified; async UNVERIFIABLE sentinel.
-- TD-019 ✅ `src/server/_mcp-internals.ts` — adapter centralizando acesso a SDK internals.
+- **Verify loop 23/23** — TD-016 finalized. Read-only inherently verified; async UNVERIFIABLE sentinel.
+- TD-019 ✅ `src/server/_mcp-internals.ts` — adapter centralizing access to SDK internals.
 - TD-021 ✅ contract doc §25..§26.
-- TD-022 ✅ 28+ casos de teste novos (Phase 4 + locator + SDK adapter + UNVERIFIABLE).
-- TD-023 ✅ curve_type=hold implementação via 2-step split.
+- TD-022 ✅ 28+ new test cases (Phase 4 + locator + SDK adapter + UNVERIFIABLE).
+- TD-023 ✅ curve_type=hold implementation via 2-step split.
 - Knowledge: 15 devices (+5: Drum Cell, Simpler, Sampler partial, Tuner, Phaser-Flanger).
 
 ## [0.0.7] — 2026-06-09 (Cycle 7)
 
 ### Added
-- **Phase 4 start** (ADR-0006): automation envelopes. `clip.envelope_set_points`, `arrangement.add_automation_point`. `parameter_path` syntax + locator parser TS.
-- **Phase 2 expansion**: 5 listeners novos (track name/mute/solo/volume + clip name/is_playing).
-- 6 tools migradas para verify loop (TD-016 progress).
+- **Phase 4 start** (ADR-0006): automation envelopes. `clip.envelope_set_points`, `arrangement.add_automation_point`. `parameter_path` syntax + TS locator parser.
+- **Phase 2 expansion**: 5 new listeners (track name/mute/solo/volume + clip name/is_playing).
+- 6 tools migrated to the verify loop (TD-016 progress).
 - TD-020 ✅ FakeDeviceParameter constructor.
 - Knowledge: 10 devices (+5: Auto Filter, Echo, Saturator, Delay, Drum Rack).
 
@@ -170,17 +170,17 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 - TD-014 ✅ `BridgeServer.broadcast()` thread-safe NDJSON.
 - TD-015 ✅ `src/server/notifications.ts` + forwarder.
 - TD-017 ✅ contract doc §21..§24.
-- TD-018 ✅ 29+ casos de teste novos.
+- TD-018 ✅ 29+ new test cases.
 - Knowledge: 5 devices (+4: Operator, EQ Eight, Compressor, Reverb).
 
 ## [0.0.5] — 2026-06-09 (Cycle 5)
 
 ### Added
-- **Phase 1 fechada — paridade ahujasid 22/22.**
-- **Phase 2 listeners scaffold** (ADR-0005): tempo + is_playing eventos.
-- 3 tools knowledge-aware: `browser_load_item`, `device_get_parameters`, `device_set_parameter`.
+- **Phase 1 closed — ahujasid parity 22/22.**
+- **Phase 2 listeners scaffold** (ADR-0005): tempo + is_playing events.
+- 3 knowledge-aware tools: `browser_load_item`, `device_get_parameters`, `device_set_parameter`.
 - TD-012 ✅ Wavetable 60 params + modulation_matrix.
-- TD-013 ✅ verify loop integrado em 4 tools.
+- TD-013 ✅ verify loop integrated in 4 tools.
 
 ## [0.0.4] — 2026-06-09 (Cycle 4)
 
@@ -192,17 +192,17 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 ## [0.0.3] — 2026-06-09 (Cycle 3)
 
 ### Added
-- 9 tools novas (clip/track/session/browser/scene).
+- 9 new tools (clip/track/session/browser/scene).
 - ADR-0003 (note format), ADR-0004 (volume scale).
-- Knowledge: Wavetable seed + scales.json + loader Zod.
-- Distribuição: `build:dxt.mjs` zipa `.mcpb` autocontido.
+- Knowledge: Wavetable seed + scales.json + Zod loader.
+- Distribution: `build:dxt.mjs` zips a self-contained `.mcpb`.
 
 ## [0.0.2] — 2026-06-08 (Cycle 2)
 
 ### Added
-- 5 tools novas + `track.create` (primeira feature inédita).
+- 5 new tools + `track.create` (first net-new feature).
 - `dxt/manifest.json`, `scripts/install-remote-script.mjs`, `docs/smoke-test.md`.
-- ADR-0002 — track.list shape via coleções.
+- ADR-0002 — track.list shape via collections.
 
 ### Fixed
 - TD-001 (NaN env var), TD-002 (track.list indexes), TD-003 (naming).
@@ -212,9 +212,9 @@ Todas as mudanças notáveis vão aqui. Formato [Keep a Changelog](https://keepa
 ### Added
 - Repo scaffold (TS + Node 20 + tsup + biome + vitest).
 - Python Remote Script (TCP NDJSON server + 7 handlers + LiveAPI mock).
-- TS server (entry stdio + cliente TCP + handshake + tool `play`).
-- ADR-0001 — stack/transport/licença/alvo.
-- Contratos JSON-RPC frozen para Phase 0.
+- TS server (stdio entry + TCP client + handshake + `play` tool).
+- ADR-0001 — stack/transport/license/target.
+- Frozen JSON-RPC contracts for Phase 0.
 - `docs/architecture.md`.
 
 [Unreleased]: https://github.com/Pantani/ableton-mind/compare/v0.0.13...HEAD

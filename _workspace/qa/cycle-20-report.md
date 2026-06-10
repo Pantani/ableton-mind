@@ -1,28 +1,28 @@
 # QA Report — Cycle 20
 
-**Data:** 2026-06-09
-**Veredito:** **PASS**
+**Date:** 2026-06-09
+**Verdict:** **PASS**
 
-## Resumo
+## Summary
 
-TD-045 fechado. Real **wire-level smoke** entregue (opt-in via env var). Doctor CLI ganha 7º check. Versão 0.0.20.
+TD-045 closed. Real **wire-level smoke** delivered (opt-in via env var). Doctor CLI gains a 7th check. Version 0.0.20.
 
-**TD-004 smoke real ainda blocker para rc.1** — mas wire smoke já exercita a infraestrutura inteira (sockets, NDJSON, dispatcher, error envelopes) sem depender de Live.
+**TD-004 real smoke still blocker for rc.1** — but the wire smoke already exercises the entire infrastructure (sockets, NDJSON, dispatcher, error envelopes) without depending on Live.
 
 ## Tech debt
 
 | ID | Status |
 |---|---|
-| TD-004 | 🟡 PENDENTE (usuário — Live UI) |
-| TD-005 | 🟡 PENDENTE (sandbox) |
-| TD-030 | 🟡 PENDENTE (Push hardware) |
-| TD-045 (DXT resources field) | ✅ FECHADO — manifest ganha array `resources` com 3 entradas |
+| TD-004 | 🟡 PENDING (user — Live UI) |
+| TD-005 | 🟡 PENDING (sandbox) |
+| TD-030 | 🟡 PENDING (Push hardware) |
+| TD-045 (DXT resources field) | ✅ CLOSED — manifest gains `resources` array with 3 entries |
 
-**3 abertos — todos hardware/Live UI dependent. 42 TDs fechados em 20 ciclos.**
+**3 open — all hardware/Live UI dependent. 42 TDs closed in 20 cycles.**
 
 ## TD-045 — DXT manifest resources
 
-`dxt/manifest.json` ganha:
+`dxt/manifest.json` gains:
 ```json
 "resources": [
   { "uri": "live://session/state", "name": "session_state", "description": "...", "mimeType": "application/json" },
@@ -31,7 +31,7 @@ TD-045 fechado. Real **wire-level smoke** entregue (opt-in via env var). Doctor 
 ]
 ```
 
-Speculative — MCPB spec v0.1 não documenta `resources` field, mas clientes que suportam (MCPB v0.2+) renderizam menu. Clientes antigos ignoram silently. Sem custo.
+Speculative — MCPB spec v0.1 does not document the `resources` field, but clients that support it (MCPB v0.2+) render the menu. Old clients ignore silently. No cost.
 
 ## Wire smoke test — Cycle 20 keystone
 
@@ -39,69 +39,69 @@ Speculative — MCPB spec v0.1 não documenta `resources` field, mas clientes qu
 ```bash
 python -m AbletonMind --port 9999
 ```
-Roda BridgeServer em headless (sem Live), aceita conexões TCP, dispatch JSON-RPC normal. SIGTERM/SIGINT shutdown clean.
+Runs BridgeServer headless (no Live), accepts TCP connections, normal JSON-RPC dispatch. SIGTERM/SIGINT clean shutdown.
 
 `tests/wire-smoke.test.ts`:
-- **OPT-IN** via `RUN_WIRE_SMOKE=1` (skip default — não quer Python obrigatório no CI).
-- Spawns bridge subprocess em porta efêmera.
-- `waitForPort(port, 5s)` aguarda accept.
-- Real `TcpJsonRpcClient.connect()` → real TCP handshake → JSON-RPC envelope wire.
+- **OPT-IN** via `RUN_WIRE_SMOKE=1` (default skip — does not want Python mandatory in CI).
+- Spawns bridge subprocess on an ephemeral port.
+- `waitForPort(port, 5s)` waits for accept.
+- Real `TcpJsonRpcClient.connect()` → real TCP handshake → JSON-RPC wire envelope.
 - Asserts:
-  1. `performHandshake` retorna `protocol_version: "0.1"` + `bridge: "ableton-mind/python"`.
-  2. `system.ping` retorna `{pong:true, ts:number}`.
-  3. `track.list` rejeita com `JsonRpcRemoteError code:-32000` (sem song → LIVE_NOT_RUNNING).
+  1. `performHandshake` returns `protocol_version: "0.1"` + `bridge: "ableton-mind/python"`.
+  2. `system.ping` returns `{pong:true, ts:number}`.
+  3. `track.list` rejects with `JsonRpcRemoteError code:-32000` (no song → LIVE_NOT_RUNNING).
 - Cleanup: SIGTERM bridge, SIGKILL fallback.
 
-**Este é o smoke mais real que dá pra fazer sem Live aberto.** Catches bugs que mocks de socket não pegam:
-- NDJSON line-split correto sob carga.
-- JSON-RPC envelope shape exato.
-- Dispatcher threading em modo headless.
-- Error encoding `-32000` com data `{detected:false}`.
+**This is the most real smoke possible without Live open.** Catches bugs that socket mocks miss:
+- Correct NDJSON line-split under load.
+- Exact JSON-RPC envelope shape.
+- Dispatcher threading in headless mode.
+- Error encoding `-32000` with data `{detected:false}`.
 
-CI Phase 7 (`ci.yml` já tem Python matrix) pode setar `RUN_WIRE_SMOKE: "1"` no env do TS job — Cycle 21+ opcional.
+CI Phase 7 (`ci.yml` already has a Python matrix) can set `RUN_WIRE_SMOKE: "1"` in the TS job's env — Cycle 21+ optional.
 
 ## Doctor CLI — 7 checks
 
 | # | Check | Cycle |
 |---|---|---|
 | 1 | Node.js ≥ 20 | 1 |
-| 2 | Remote Script instalado | 1 |
-| 3 | Bridge em :9876 | 1 |
-| 4 | Knowledge base válida | 1 |
-| 5 | Recipes válidas | 9 |
+| 2 | Remote Script installed | 1 |
+| 3 | Bridge on :9876 | 1 |
+| 4 | Valid knowledge base | 1 |
+| 5 | Valid recipes | 9 |
 | 6 | Version sync (pkg ↔ DXT) | 14 |
 | 7 | **MCP primitives** | 20 |
 
-Check 7 conta `allTools/allPrompts/allResources.length` — falha se algum import quebrar (regressão tipo "registry voltou 0"). Esperado: ≥30 tools, ≥5 prompts, ≥3 resources.
+Check 7 counts `allTools/allPrompts/allResources.length` — fails if any import breaks (regression like "registry returned 0"). Expected: ≥30 tools, ≥5 prompts, ≥3 resources.
 
-## Versão: 0.0.20
+## Version: 0.0.20
 
 `package.json` + `dxt/manifest.json` + CHANGELOG sync.
 
-## Total MCP — final estado
+## Total MCP — final state
 
 - **33 tools**, **5 prompts**, **3 resources**.
 - **55 devices**, **14 recipes**.
-- **30 métodos JSON-RPC** no bridge + 7 listener events.
+- **30 JSON-RPC methods** in the bridge + 7 listener events.
 - **Verify loop 23/23**.
-- **9 ADRs** consolidados.
-- **42 TDs fechados / 3 abertos** (todos hardware/UI dependent).
+- **9 consolidated ADRs**.
+- **42 TDs closed / 3 open** (all hardware/UI dependent).
 
 ## Warnings
 
-### W1 — TD-004 segue blocker oficial
-Mas Cycle 20 reduz risco: wire smoke já valida toda infra. O que falta é apenas UI integration (Live carregar Remote Script + responder via LiveAPI real). 95% do código está exercitado.
+### W1 — TD-004 still official blocker
+But Cycle 20 reduces risk: the wire smoke already validates all infrastructure. What is left is only UI integration (Live loading the Remote Script + responding via real LiveAPI). 95% of the code is exercised.
 
-### W2 — `wire-smoke` test depende de Python 3 no PATH
-Aceito — quando `RUN_WIRE_SMOKE=1` env var setada, assume Python está presente. CI Python job já requer.
+### W2 — `wire-smoke` test depends on Python 3 in PATH
+Accepted — when `RUN_WIRE_SMOKE=1` env var set, it assumes Python is present. The CI Python job already requires it.
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 20.** Sistema agora tem real wire-level smoke contra a bridge headless. Próximo:
+**PASS Cycle 20.** The system now has a real wire-level smoke against the headless bridge. Next:
 
 Cycle 21 / Release Window:
-- **TD-004 smoke real** (Live UI). Aposta agora baixa — wire smoke já cobre 95%.
-- Tag `v0.1.0-rc.1` quando TD-004 passar.
-- Eventual v0.1.0 final.
+- **TD-004 real smoke** (Live UI). Stake now low — wire smoke already covers 95%.
+- Tag `v0.1.0-rc.1` when TD-004 passes.
+- Eventual final v0.1.0.
 
-Estado: sistema é como **maxi-Spec** — 20 ciclos, 42 TDs fechados, 3 primitivas MCP completas, knowledge 100%+, recipes 7/7 categorias, distribution-ready (DXT + Docker + Smithery + CI/release), wire smoke contra bridge headless. **Único bloqueio restante é teste manual em Live.**
+State: the system is like a **maxi-Spec** — 20 cycles, 42 closed TDs, complete 3 MCP primitives, knowledge 100%+, recipes 7/7 categories, distribution-ready (DXT + Docker + Smithery + CI/release), wire smoke against the headless bridge. **The only remaining blocker is the manual test in Live.**

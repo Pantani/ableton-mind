@@ -1,18 +1,18 @@
 /**
- * Entry point do servidor MCP ableton-mind.
+ * Entry point for the ableton-mind MCP server.
  *
- * Fluxo:
- *  1. Lê env vars (host, port).
- *  2. Cria `TcpJsonRpcClient` e conecta no bridge Python (Live).
- *  3. Roda `system.hello` para validar versão de protocolo.
- *  4. Cria `McpServer`, registra tools.
- *  5. Conecta transport stdio.
- *  6. Mantém processo vivo até SIGTERM/SIGINT.
+ * Flow:
+ *  1. Reads env vars (host, port).
+ *  2. Creates a `TcpJsonRpcClient` and connects to the Python bridge (Live).
+ *  3. Runs `system.hello` to validate protocol version.
+ *  4. Creates `McpServer`, registers tools.
+ *  5. Connects the stdio transport.
+ *  6. Keeps the process alive until SIGTERM/SIGINT.
  *
- * Erros fatais:
- *  - Falha em conectar no bridge → loga, faz tooling MCP responder em modo
- *    "bridge offline" (Phase 1+); por enquanto sai com exit 1.
- *  - SIGTERM/SIGINT → close graceful.
+ * Fatal errors:
+ *  - Failure to connect to the bridge → logs, makes MCP tooling respond in
+ *    "bridge offline" mode (Phase 1+); for now exits with code 1.
+ *  - SIGTERM/SIGINT → graceful close.
  */
 
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";

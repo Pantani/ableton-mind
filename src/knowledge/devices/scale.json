@@ -5,7 +5,7 @@
   "category": "midi_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "MIDI effect: força notas a caírem numa escala definida. 12-cell grid configura cada pitch class.",
+  "description": "MIDI effect: forces notes into a defined scale. A 12-cell grid configures each pitch class.",
   "source": "curated (Cycle 17)",
   "completeness": "complete",
   "parameters": [
@@ -68,6 +68,6 @@
     }
   ],
   "todo": [
-    "Os 12 cells (pitch class → out class) da grid são editáveis no UI mas não expostos como params individuais. Phase 8 pode expor via LOM (`scale_map`)."
+    "The grid's 12 cells (pitch class to output class) are editable in the UI but not exposed as individual params. Phase 8 can expose them through the LOM (`scale_map`)."
   ]
 }

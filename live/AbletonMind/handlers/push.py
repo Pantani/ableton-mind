@@ -1,12 +1,12 @@
 """
-Handlers Push 2/3 (Phase 6 start — ADR-0008).
+Push 2/3 handlers (Phase 6 start — ADR-0008).
 
-Ableton Push usa Sysex MIDI para LEDs/pads. Frame: F0 00 21 1D 01 01 <cmd> <args> F7.
+Ableton Push uses MIDI Sysex for LEDs/pads. Frame: F0 00 21 1D 01 01 <cmd> <args> F7.
 
-Bridge envia via `ctrl._send_midi(bytes)`. Em headless / sem Push, devolve
-`-32000` com `detected: false`.
+Bridge sends via `ctrl._send_midi(bytes)`. In headless / no Push, returns
+`-32000` with `detected: false`.
 
-Buttons canônicos (subset Cycle 10):
+Canonical buttons (Cycle 10 subset):
   Play, Record, Stop, Tap Tempo, Metronome, Undo, Mute, Solo, Master,
   Note, Session, Browse, Add Track, Add Device, Setup, Shift, Select.
 """
@@ -18,17 +18,17 @@ from ._base import Handler, register
 _SYSEX_PREFIX = bytes([0xF0, 0x00, 0x21, 0x1D, 0x01, 0x01])
 _SYSEX_END = bytes([0xF7])
 
-# Commands (Push 2/3 — referência docs Ableton Push API).
+# Commands (Push 2/3 — reference: Ableton Push API docs).
 _CMD_SET_PAD_COLOR = 0x04
 _CMD_SET_BUTTON_LED = 0x05
 _CMD_SET_MODE = 0x0A
 
 _PUSH_MODES = {"note": 0, "session": 1, "drum": 2, "step": 3}
 
-# Modes para botões.
+# Modes for buttons.
 _BUTTON_MODES = {"solid": 0, "blink": 1, "pulse": 2}
 
-# Map button name → MIDI CC number (canônico Push 2/3 — subset).
+# Map button name → MIDI CC number (canonical Push 2/3 — subset).
 _BUTTON_CCS = {
     "Play": 85,
     "Record": 86,
@@ -51,8 +51,8 @@ _BUTTON_CCS = {
 
 
 def _has_push(ctrl) -> bool:
-    """Detecção heurística: ctrl.application().control_surfaces tem alguma com
-    name contendo 'Push'? Em headless retorna False."""
+    """Heuristic detection: does ctrl.application().control_surfaces contain
+    any with name including 'Push'? Returns False in headless."""
     app = getattr(ctrl, "application", None) or getattr(ctrl, "_application", None)
     if app is None:
         return False

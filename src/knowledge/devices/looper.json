@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Live performance looper. Record / Overdub / Play / Stop states com quantize, reverse e tempo control.",
+  "description": "Live performance looper. Record / Overdub / Play / Stop states with quantize, reverse and tempo control.",
   "source": "curated (Cycle 12)",
   "completeness": "complete",
   "parameters": [

@@ -1,18 +1,18 @@
 /**
  * `parameter_path` → `parameter_locator` resolver (ADR-0006).
  *
- * Aceita strings:
+ * Accepts strings:
  *   - "mixer.volume"
  *   - "mixer.panning"
  *   - "mixer.send.<i>"
  *   - "device.<i>.parameter.<n>"
  *
- * Devolve um objeto `{kind, ...}` que o bridge consome em
- * `clip.envelope_set_points` e `arrangement.add_automation_point`.
+ * Returns a `{kind, ...}` object that the bridge consumes in
+ * `clip.envelope_set_points` and `arrangement.add_automation_point`.
  *
- * Resolução por NOME de parameter (ex: "device.0.Cutoff") fica para Cycle 8:
- * exigiria 1 round-trip extra de `device.get_parameters` — adicionar overload
- * async quando necessário.
+ * Resolution by parameter NAME (e.g.: "device.0.Cutoff") is deferred to Cycle 8:
+ * would require 1 extra round-trip of `device.get_parameters` — add async
+ * overload when needed.
  */
 
 import { z } from "zod";

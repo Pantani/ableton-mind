@@ -1,10 +1,10 @@
 // @ts-check
 /**
- * ESLint config — exclusivo para a métrica de Cyclomatic Complexity.
+ * ESLint config used only for the Cyclomatic Complexity metric.
  *
- * Escopo intencional: APENAS a regra `complexity` (core do ESLint), limite 10.
- * Linting geral fica com Biome (`biome.json`). Esta config existe para gerar
- * a métrica acionável de complexidade ciclomática em TS/JS.
+ * Intentional scope: ONLY the `complexity` rule (ESLint core), limit 10.
+ * General linting stays with Biome (`biome.json`). This config exists to
+ * produce an actionable TS/JS complexity metric.
  */
 import tseslint from "typescript-eslint";
 

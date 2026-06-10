@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "5 resonators (tuned filters) — adiciona pitches harmônicos ao input. Sound design / drone.",
+  "description": "5 resonators (tuned filters); adds harmonic pitches to the input. Sound design / drone.",
   "source": "curated (Cycle 16)",
   "completeness": "complete",
   "parameters": [

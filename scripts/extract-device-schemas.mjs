@@ -2,28 +2,29 @@
 /**
  * extract-device-schemas.mjs (TD-011 — real parser)
  *
- * Lê `.adv` (XML gzip) dos devices nativos do Live no User Library e gera
- * JSONs em `src/knowledge/devices/_extracted/<device>.json`.
+ * Reads `.adv` (gzipped XML) for native Live devices in the User Library and
+ * generates JSONs in `src/knowledge/devices/_extracted/<device>.json`.
  *
- * `.adv` format: gzip → XML. Cada parameter automatável aparece como
- * `<NomeDoParam><Manual Value="X.YZ"/><MidiCcOnOff.../>...</NomeDoParam>`
- * (tag varia mas Manual+Value é universal). Para Phase 1 extraímos pares
- * `(name, default_value)` — ranges (min/max) e units virão de uma tabela
- * curada por device.
+ * `.adv` format: gzip → XML. Each automatable parameter appears as
+ * `<ParamName><Manual Value="X.YZ"/><MidiCcOnOff.../>...</ParamName>`
+ * (tag varies but Manual+Value is universal). For Phase 1 we extract
+ * `(name, default_value)` pairs — ranges (min/max) and units will come from
+ * a curated per-device table.
+
  *
- * Estratégia robusta a 100% dos devices? Não. O `.adv` é um snapshot do
- * estado salvo, não um schema. Para schemas completos seria preciso introspecção
- * via LiveAPI (`device.parameters[i].min/max/name/value`). Phase 2 add isso.
+ * 100%-robust strategy? No. `.adv` is a saved-state snapshot, not a schema.
+ * For complete schemas we'd need introspection via LiveAPI
+ * (`device.parameters[i].min/max/name/value`). Phase 2 adds that.
  *
- * Por enquanto: extrai nomes e defaults dos params escritos no `.adv`, marca
- * `source: "extracted-from-default-adv"`, e deixa `min/max/unit` para o
- * curador manual completar.
+ * For now: extracts names and defaults of params written in `.adv`, marks
+ * `source: "extracted-from-default-adv"`, and leaves `min/max/unit` for the
+ * curator to complete manually.
  *
- * Uso:
- *   node scripts/extract-device-schemas.mjs              # extrai todos
+ * Usage:
+ *   node scripts/extract-device-schemas.mjs              # extract all
  *   node scripts/extract-device-schemas.mjs --device Wavetable
  *   node scripts/extract-device-schemas.mjs --dry-run
- *   node scripts/extract-device-schemas.mjs --inventory  # só lista, não extrai
+ *   node scripts/extract-device-schemas.mjs --inventory  # list only, don't extract
  */
 
 import { createHash } from "node:crypto";
@@ -50,7 +51,7 @@ function defaultsRoot() {
     case "win32":
       return path.join(home, "Documents", "Ableton", "User Library", "Defaults", "Devices");
     default:
-      throw new Error(`Plataforma não suportada: ${process.platform}`);
+      throw new Error(`Unsupported platform: ${process.platform}`);
   }
 }
 
@@ -74,8 +75,8 @@ async function walkAdv(dir, out = []) {
 }
 
 /**
- * Lê e descomprime um `.adv`. Live usa gzip raw (sem container).
- * Retorna string XML.
+ * Reads and decompresses an `.adv`. Live uses raw gzip (no container).
+ * Returns an XML string.
  */
 async function readAdvXml(filePath) {
   const buf = await fs.readFile(filePath);
@@ -88,7 +89,7 @@ async function readAdvXml(filePath) {
 }
 
 /**
- * Parser sax-lite por regex. Extrai pares `(tag_path, manual_value)`.
+ * Regex-based sax-lite parser. Extracts `(tag_path, manual_value)` pairs.
  *
  * Live encoding: cada parameter aparece como
  *   <ParamName>
@@ -101,8 +102,8 @@ async function readAdvXml(filePath) {
  *     ...
  *   </ParamName>
  *
- * Heurística: caçamos todas as ocorrências de `<TagName ...> ... <Manual Value="X"/> ... </TagName>`
- * onde TagName não é genérico (LomId, AutomationTarget, etc).
+ * Heuristic: we hunt every occurrence of `<TagName ...> ... <Manual Value="X"/> ... </TagName>`
+ * where TagName is not generic (LomId, AutomationTarget, etc).
  */
 const GENERIC_TAGS = new Set([
   "LomId",
@@ -121,14 +122,14 @@ const GENERIC_TAGS = new Set([
 ]);
 
 /**
- * Encontra blocos `<X>...</X>` que contêm exatamente um `<Manual Value="...">`.
- * Retorna `[{ name: "X", default: 0.5 }, ...]`. Best-effort.
+ * Finds `<X>...</X>` blocks containing exactly one `<Manual Value="...">`.
+ * Returns `[{ name: "X", default: 0.5 }, ...]`. Best-effort.
  */
 function extractParams(xml) {
   const params = [];
   const seen = new Set();
-  // Regex matches `<TagName>...</TagName>` (não self-closing) num único nivel
-  // simplificado — usa lazy matching.
+  // Regex matches `<TagName>...</TagName>` (not self-closing) at a single
+  // simplified level — uses lazy matching.
   const blockRe = /<([A-Z][A-Za-z0-9_]*)>([\s\S]*?)<\/\1>/g;
   let m;
   while ((m = blockRe.exec(xml)) !== null) {
@@ -136,9 +137,9 @@ function extractParams(xml) {
     const inner = m[2];
     if (GENERIC_TAGS.has(tag)) continue;
     if (seen.has(tag)) continue;
-    // procura `<Manual Value="X" />` apenas em primeiro nível (heurística:
-    // não pular nested blocks complicados — Live tipicamente coloca Manual
-    // como first-level child do param).
+    // Look for `<Manual Value="X" />` only at the first level (heuristic:
+    // avoid skipping complex nested blocks; Live typically writes Manual
+    // as a first-level child of the parameter).
     const mm = inner.match(/<Manual\s+Value="([^"]+)"\s*\/>/);
     if (!mm) continue;
     const valStr = mm[1];
@@ -185,7 +186,7 @@ async function extractOne(filePath, defaultsRootDir) {
       automatable: true,
       description: "(extracted from Default.adv — min/max/unit pending curation)",
     })),
-    todo: ["Curador: revisar min/max/unit", "Adicionar params não-automatáveis"],
+    todo: ["Curator: review min/max/unit", "Add non-automatable params"],
   };
 }
 
@@ -198,7 +199,7 @@ function categoryFromPath(cat) {
 }
 
 function printInventory(root, files) {
-  console.log(`\n${files.length} arquivos .adv:\n`);
+  console.log(`\n${files.length} .adv files:\n`);
   for (const f of files) {
     console.log(`  ${path.relative(root, f)}`);
   }
@@ -232,7 +233,7 @@ async function main() {
   console.log(`Defaults root: ${root}`);
   const files = await walkAdv(root);
   if (files.length === 0) {
-    console.log("(nenhum .adv encontrado — `Save as Default Preset` no Live para gerar)");
+    console.log("(no .adv files found; use `Save as Default Preset` in Live to generate them)");
     return;
   }
   if (INVENTORY) {
@@ -245,7 +246,7 @@ async function main() {
     : files;
 
   if (filtered.length === 0) {
-    console.error(`✗ device "${ONLY_DEVICE}" não encontrado nos .adv disponíveis.`);
+    console.error(`✗ device "${ONLY_DEVICE}" not found in the available .adv files.`);
     process.exit(1);
   }
 
@@ -256,8 +257,8 @@ async function main() {
   const written = await extractAll(filtered, root);
 
   if (!DRY) {
-    console.log(`\n${written} arquivos escritos em ${path.relative(REPO_ROOT, OUT_DIR)}/`);
-    console.log("Próximo passo: curador revisa min/max/unit e move para `src/knowledge/devices/`.");
+    console.log(`\n${written} files written to ${path.relative(REPO_ROOT, OUT_DIR)}/`);
+    console.log("Next step: curator reviews min/max/unit and moves files to `src/knowledge/devices/`.");
   }
 }
 

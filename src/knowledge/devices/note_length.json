@@ -5,7 +5,7 @@
   "category": "midi_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "MIDI effect: ajusta duração das notas ou converte note-off em on-off triggers.",
+  "description": "MIDI effect: adjusts note duration or converts note-off into on-off triggers.",
   "source": "curated (Cycle 17)",
   "completeness": "complete",
   "parameters": [

@@ -1,9 +1,9 @@
 /**
- * Tools MCP do domínio Transport.
+ * MCP tools for the Transport domain.
  *
- * Phase 0 strict tinha só `play`. Cycle 2 adicionou `stop` e `set_tempo`.
- * Todos mapeiam 1:1 para handlers `transport.*` no bridge Python (contrato
- * em `_workspace/contracts/phase0-methods.md`).
+ * Phase 0 strict had only `play`. Cycle 2 added `stop` and `set_tempo`.
+ * All map 1:1 to `transport.*` handlers in the Python bridge (contract
+ * in `_workspace/contracts/phase0-methods.md`).
  */
 
 import { z } from "zod";
@@ -17,7 +17,7 @@ const playInputSchema = z.object({
   from_beginning: z
     .boolean()
     .optional()
-    .describe("Se true, reinicia a música do começo. Default false (continua)."),
+    .describe("If true, restarts the song from the beginning. Default false (continues)."),
 });
 
 const playOutputSchema = z.object({
@@ -110,7 +110,7 @@ export const stopTool = defineTool({
 // ----- set_tempo -------------------------------------------------------------
 
 const setTempoInputSchema = z.object({
-  bpm: z.number().min(20).max(999).describe("Tempo em BPM. Faixa válida do Live: 20–999."),
+  bpm: z.number().min(20).max(999).describe("Tempo in BPM. Live's valid range: 20–999."),
 });
 
 const setTempoOutputSchema = z.object({

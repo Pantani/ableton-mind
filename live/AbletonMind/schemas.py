@@ -1,12 +1,12 @@
 """
-Dataclasses I/O para os métodos JSON-RPC da Phase 0.
+I/O dataclasses for Phase 0 JSON-RPC methods.
 
-Fonte da verdade: _workspace/contracts/phase0-methods.md
-Drift entre este arquivo e o contrato é checado pelo qa-integration.
+Source of truth: _workspace/contracts/phase0-methods.md
+Drift between this file and the contract is checked by qa-integration.
 
-Cada Input é construído via `INPUT(**params)` no dispatcher. Campos opcionais
-têm default; campos obrigatórios disparam TypeError, que o bridge converte em
-JSON-RPC -32602 (Invalid params).
+Each Input is constructed via `INPUT(**params)` in the dispatcher. Optional
+fields have defaults; required fields raise TypeError, which the bridge
+converts into JSON-RPC -32602 (Invalid params).
 """
 from dataclasses import dataclass, field
 from typing import Optional
@@ -68,12 +68,12 @@ class TrackListInput:
 @dataclass
 class TrackCreateInput:
     type: str = "midi"  # "midi" | "audio"
-    index: Optional[int] = None  # None → append no fim
+    index: Optional[int] = None  # None → append at the end
     name: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
-# track.upsert (idempotente: cria só se nome ainda não existe)
+# track.upsert (idempotent: creates only if name doesn't already exist)
 # ---------------------------------------------------------------------------
 @dataclass
 class TrackUpsertInput:
@@ -155,7 +155,7 @@ class NoteSpec:
 class ClipAddNotesInput:
     track_index: int = -1
     clip_slot_index: int = -1
-    notes: list = field(default_factory=list)  # list[dict] no wire; convertemos no handler
+    notes: list = field(default_factory=list)  # list[dict] on the wire; converted in the handler
 
 
 # ---------------------------------------------------------------------------
@@ -197,15 +197,15 @@ class BrowserGetCategoriesInput:
 
 
 # ---------------------------------------------------------------------------
-# browser.load_item — carrega item no track selecionado/armado
+# browser.load_item — loads item on selected/armed track
 # ---------------------------------------------------------------------------
 @dataclass
 class BrowserLoadItemInput:
-    path: list = field(default_factory=list)  # ex: ["instruments", "Wavetable", "Pads", "Air Pad"]
+    path: list = field(default_factory=list)  # e.g. ["instruments", "Wavetable", "Pads", "Air Pad"]
 
 
 # ---------------------------------------------------------------------------
-# device.get_parameters — list params do device em (track, device_index)
+# device.get_parameters — list params of the device at (track, device_index)
 # ---------------------------------------------------------------------------
 @dataclass
 class DeviceGetParametersInput:
@@ -214,7 +214,7 @@ class DeviceGetParametersInput:
 
 
 # ---------------------------------------------------------------------------
-# device.set_parameter — set por index. Resolução por name é responsabilidade do TS.
+# device.set_parameter — set by index. Name resolution is the TS layer's responsibility.
 # ---------------------------------------------------------------------------
 @dataclass
 class DeviceSetParameterInput:
@@ -227,7 +227,7 @@ class DeviceSetParameterInput:
 # ---------------------------------------------------------------------------
 # clip.envelope_set_points (Phase 4 — ADR-0006)
 # ---------------------------------------------------------------------------
-# parameter_locator: dict resolvido pelo TS para "mixer.volume", "device.0.<index>", etc.
+# parameter_locator: dict resolved by TS for "mixer.volume", "device.0.<index>", etc.
 # Format: { kind: "mixer_volume" | "mixer_panning" | "mixer_send" | "device_param",
 #          device_index?: int, parameter_index?: int, send_index?: int }
 @dataclass

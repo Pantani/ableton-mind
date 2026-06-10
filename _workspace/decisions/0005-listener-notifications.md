@@ -1,34 +1,34 @@
-# ADR 0005 — Formato de listener notifications
+# ADR 0005 — Listener notifications format
 
-**Data:** 2026-06-09
-**Status:** Aceito
-**Autor:** architect
+**Date:** 2026-06-09
+**Status:** Accepted
+**Author:** architect
 
-## Contexto
+## Context
 
-PLAN.md §4.21 promete listeners reativos: mudanças de estado no Live viram MCP notifications para o cliente LLM. AbletonOSC entrega via OSC raw; nós entregamos via JSON-RPC notification (já especificado no contrato em `_workspace/contracts/jsonrpc.md`).
+PLAN.md §4.21 promises reactive listeners: state changes in Live become MCP notifications for the LLM client. AbletonOSC delivers via raw OSC; we deliver via JSON-RPC notification (already specified in the contract in `_workspace/contracts/jsonrpc.md`).
 
-Falta definir:
-1. Nomes de método para os eventos.
-2. Shape do `params`.
-3. Quais eventos ligar primeiro.
-4. Como o servidor MCP repassa para o LLM.
+Still to define:
+1. Method names for the events.
+2. `params` shape.
+3. Which events to enable first.
+4. How the MCP server forwards to the LLM.
 
-## Decisão
+## Decision
 
 ### 1. Naming
 
-`event.<domain>_<property>_changed`. Ex:
+`event.<domain>_<property>_changed`. e.g.:
 - `event.transport_tempo_changed`
 - `event.transport_is_playing_changed`
-- `event.transport_current_song_time_changed` (alta frequência — opt-in via subscribe)
+- `event.transport_current_song_time_changed` (high frequency — opt-in via subscribe)
 - `event.track_<i>_name_changed`
 - `event.track_<i>_volume_changed`
 - `event.clip_<t>_<s>_name_changed`
 
-Por que NÃO `event.<domain>.<verb>`: o ponto já é separador do método JSON-RPC do request side; misturar gera confusão de parsing. Underscore é mais legível.
+Why NOT `event.<domain>.<verb>`: the dot is already the JSON-RPC method separator on the request side; mixing creates parsing confusion. Underscore is more readable.
 
-Beat events ficam fora do padrão (`event.beat`) porque já estavam no contrato JSON-RPC §framing.
+Beat events stay outside the standard (`event.beat`) because they were already in the JSON-RPC contract §framing.
 
 ### 2. Shape
 
@@ -37,13 +37,13 @@ Beat events ficam fora do padrão (`event.beat`) porque já estavam no contrato 
   jsonrpc: "2.0",
   method: "event.<name>",
   params: {
-    // SEMPRE inclui o valor novo:
+    // ALWAYS includes the new value:
     value: T,
-    // OPCIONAL, presente em mutações via API (não em playback):
+    // OPTIONAL, present in API mutations (not in playback):
     previous?: T,
-    // SEMPRE inclui timestamp (ms epoch — server bridge wall clock):
+    // ALWAYS includes timestamp (ms epoch — server bridge wall clock):
     ts: number,
-    // Para listeners object-scoped: referência ao objeto.
+    // For object-scoped listeners: reference to the object.
     track_index?: number,
     clip_slot_index?: number,
     return_track_index?: number,
@@ -53,35 +53,35 @@ Beat events ficam fora do padrão (`event.beat`) porque já estavam no contrato 
 
 ### 3. Bootstrap (Cycle 5)
 
-Liga apenas:
+Enables only:
 - `event.transport_tempo_changed`
 - `event.transport_is_playing_changed`
 
-Phase 2 expande para track/clip listeners. Phase 3 add probability/beat listeners.
+Phase 2 expands to track/clip listeners. Phase 3 adds probability/beat listeners.
 
-### 4. Repasse server → MCP client
+### 4. Forwarding server → MCP client
 
-`src/server/index.ts` ouve `client.on("notification", ...)` e:
+`src/server/index.ts` listens to `client.on("notification", ...)` and:
 
-- Se método começa com `event.`, encaminha via `server.notification({method, params})` (MCP SDK 1.x).
-- Caso contrário, loga warn e ignora (proteção contra drift).
+- If the method begins with `event.`, forwards via `server.notification({method, params})` (MCP SDK 1.x).
+- Otherwise, logs a warn and ignores (drift protection).
 
-MCP client recebe como `notifications/<method>` (formato MCP padrão).
+The MCP client receives it as `notifications/<method>` (standard MCP format).
 
 ### 5. Subscribe / unsubscribe
 
-Phase 2 NÃO obriga subscribe — todos os eventos vão para o cliente. Phase 3 introduz `subscribe(events: string[])` para reduzir tráfego em eventos high-frequency (current_song_time, beat).
+Phase 2 does NOT require subscribe — all events go to the client. Phase 3 introduces `subscribe(events: string[])` to reduce traffic on high-frequency events (current_song_time, beat).
 
-## Consequências
+## Consequences
 
-- Bridge precisa de `BridgeServer.broadcast(method, params)` que serializa NDJSON em todos os sockets conectados (Phase 0 não precisava porque tudo era request/response síncrono).
-- Threading: callbacks LiveAPI executam no main thread (Live API constraint). `broadcast()` enfileira na thread de IO do socket, idêntico ao que dispatcher de request já faz reverso.
-- Idempotência não se aplica a events (mas garantimos at-most-once para mutação via undo unitário).
+- The bridge needs `BridgeServer.broadcast(method, params)` which serializes NDJSON on all connected sockets (Phase 0 did not need this because everything was synchronous request/response).
+- Threading: LiveAPI callbacks execute on the main thread (Live API constraint). `broadcast()` enqueues on the socket IO thread, identical to what the request dispatcher already does in reverse.
+- Idempotency does not apply to events (but we guarantee at-most-once for mutation via unitary undo).
 
-## Como aplicar
+## How to apply
 
-- `live/AbletonMind/listeners.py` (novo): registra `song.add_tempo_listener(callback)` e `song.add_is_playing_listener(callback)`. Callbacks chamam `bridge.broadcast`.
-- `live/AbletonMind/bridge.py`: método `broadcast(method, params)` que itera `self._clients` e escreve NDJSON.
-- `src/server/index.ts`: handler de notification que detecta prefix `event.` e repassa para MCP server via `server.sendNotification` (ou equivalente).
+- `live/AbletonMind/listeners.py` (new): registers `song.add_tempo_listener(callback)` and `song.add_is_playing_listener(callback)`. Callbacks call `bridge.broadcast`.
+- `live/AbletonMind/bridge.py`: `broadcast(method, params)` method that iterates `self._clients` and writes NDJSON.
+- `src/server/index.ts`: notification handler that detects `event.` prefix and forwards to the MCP server via `server.sendNotification` (or equivalent).
 
-Se a API do MCP SDK não expuser sendNotification facilmente em 1.x, encapsular em `src/server/notifications.ts` e mockar até a versão 2.x.
+If the MCP SDK's API does not expose sendNotification easily in 1.x, encapsulate in `src/server/notifications.ts` and mock until version 2.x.

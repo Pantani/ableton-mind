@@ -18,13 +18,13 @@ const GENRE_BPM: Record<string, number> = {
 
 const GENRE_KIT_HINTS: Record<string, string> = {
   techno:
-    "Drum Cell com kick 909, hat off-beat. Use recipe `drums/tech-house-kick` (adapte tempo).",
-  "tech-house": "Use `drums/tech-house-kick` direto.",
-  dnb: "Use recipe `drums/jungle-break` (ajuste 174 BPM).",
-  jungle: "Use recipe `drums/jungle-break` direto.",
+    "Drum Cell with 909 kick, off-beat hat. Use recipe `drums/tech-house-kick` (adapt tempo).",
+  "tech-house": "Use `drums/tech-house-kick` directly.",
+  dnb: "Use recipe `drums/jungle-break` (adjust to 174 BPM).",
+  jungle: "Use recipe `drums/jungle-break` directly.",
   lofi: "Use recipe `drums/lofi-kit`.",
   "neo-soul": "Loose swing kit. Drum Cell + Vinyl Distortion subtle.",
-  trap: "808 kick com tune e decay longo. Recipe `bass/sub-808` para o 808.",
+  trap: "808 kick with tune and long decay. Recipe `bass/sub-808` for the 808.",
 };
 
 export const genreTrackPrompt: PromptDefinition = {
@@ -38,8 +38,8 @@ export const genreTrackPrompt: PromptDefinition = {
         "techno | tech-house | house | trance | dnb | jungle | lofi | hiphop | trap | neo-soul | ambient",
       required: true,
     },
-    { name: "tempo", description: "BPM (default auto baseado no gênero)", required: false },
-    { name: "duration_min", description: "Duração em minutos (default 7)", required: false },
+    { name: "tempo", description: "BPM (default auto-derived from genre)", required: false },
+    { name: "duration_min", description: "Duration in minutes (default 7)", required: false },
   ],
   argsSchema: z.object({
     genre: z.string(),
@@ -68,7 +68,7 @@ export const genreTrackPrompt: PromptDefinition = {
               `2. **Drums.** ${kitHint}`,
               "",
               "3. **Bass.** Pick from `list_recipes { category: 'bass' }`. Apply with `apply_recipe`.",
-              "   - For ${genre}, a typical choice: `bass/sub-808` (electronic) or `bass/reese` (D&B).",
+              `   - For ${genre}, a typical choice: \`bass/sub-808\` (electronic) or \`bass/reese\` (D&B).`,
               "",
               "4. **Chords/melody.** Pick from `list_recipes { category: 'chords' }`. Apply.",
               "   - Tip: `chords/neo-soul-progressions` works for many genres with `instrument_path_*` overrides.",

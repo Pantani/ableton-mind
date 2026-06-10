@@ -1,24 +1,24 @@
-# Contrato — JSON-RPC 2.0 sobre TCP
+# Contract — JSON-RPC 2.0 over TCP
 
-**Versão:** 0.1 (Phase 0 Spike)
-**Owners:** ts-server-engineer (cliente), python-bridge-engineer (servidor)
-**Status:** Frozen para Phase 0. Mutações → ADR.
+**Version:** 0.1 (Phase 0 Spike)
+**Owners:** ts-server-engineer (client), python-bridge-engineer (server)
+**Status:** Frozen for Phase 0. Mutations → ADR.
 
 ## Transport
 
-- **Protocolo:** TCP socket local.
-- **Host default:** `127.0.0.1`
-- **Porta default:** `9876`
+- **Protocol:** local TCP socket.
+- **Default host:** `127.0.0.1`
+- **Default port:** `9876`
 - **Override:** env vars `ABLETON_MIND_HOST`, `ABLETON_MIND_PORT`.
-- **Framing:** Newline-delimited JSON (`\n` separa mensagens). Cada mensagem é UMA linha JSON, sem pretty-print.
+- **Framing:** Newline-delimited JSON (`\n` separates messages). Each message is ONE JSON line, no pretty-print.
 - **Encoding:** UTF-8.
-- **Conexão:** server (bridge) aceita múltiplos clientes mas Phase 0 assume 1 cliente. Reconnect transparente do lado TS.
+- **Connection:** the server (bridge) accepts multiple clients but Phase 0 assumes 1 client. Transparent reconnect on the TS side.
 
-### Por que NDJSON e não Content-Length
+### Why NDJSON and not Content-Length
 
-NDJSON é simples para Spike. Phase 1 avalia trocar por `Content-Length` (estilo LSP) se houver mensagens >1MB (knowledge dumps).
+NDJSON is simple for the Spike. Phase 1 evaluates switching to `Content-Length` (LSP style) if there are messages >1MB (knowledge dumps).
 
-## Envelope JSON-RPC 2.0
+## JSON-RPC 2.0 envelope
 
 ### Request
 ```json
@@ -35,70 +35,70 @@ NDJSON é simples para Spike. Phase 1 avalia trocar por `Content-Length` (estilo
 { "jsonrpc": "2.0", "id": 42, "error": { "code": -32000, "message": "...", "data": {...} } }
 ```
 
-### Notification (server → client, sem `id`)
+### Notification (server → client, without `id`)
 ```json
 { "jsonrpc": "2.0", "method": "event.beat", "params": {...} }
 ```
 
-## Método naming
+## Method naming
 
-`{domain}.{verb}` — sempre lowercase, ponto-separado.
+`{domain}.{verb}` — always lowercase, dot-separated.
 
-- Domínios Phase 0: `transport`, `track`, `clip`, `ping`.
-- Verbos comuns: `get`, `set`, `list`, `create`, `delete`, `play`, `stop`, `add`.
-- Notifications: `event.{name}` (ex: `event.beat`, `event.track_added`).
+- Phase 0 domains: `transport`, `track`, `clip`, `ping`.
+- Common verbs: `get`, `set`, `list`, `create`, `delete`, `play`, `stop`, `add`.
+- Notifications: `event.{name}` (e.g. `event.beat`, `event.track_added`).
 
-## Códigos de erro
+## Error codes
 
-Reservados JSON-RPC (não usar):
+JSON-RPC reserved (do not use):
 - `-32700` Parse error
 - `-32600` Invalid Request
 - `-32601` Method not found
 - `-32602` Invalid params
 - `-32603` Internal error
 
-Custom (ableton-mind, faixa -32000 a -32099):
+Custom (ableton-mind, range -32000 to -32099):
 - `-32000` Live not running / API unavailable
 - `-32001` Live API call failed (raw exception)
 - `-32002` Object not found (track, clip, scene, device)
-- `-32003` Type mismatch (e.g. tentou MIDI op em audio track)
-- `-32004` Out of range (index, valor além de min/max)
-- `-32005` Invalid state (e.g. tentou record sem arm)
-- `-32006` Transaction error (undo step quebrado)
+- `-32003` Type mismatch (e.g. attempted MIDI op on audio track)
+- `-32004` Out of range (index, value beyond min/max)
+- `-32005` Invalid state (e.g. attempted record without arm)
+- `-32006` Transaction error (broken undo step)
 - `-32007` Listener error
 - `-32008` Knowledge lookup failed
 
-`error.data` SEMPRE traz contexto acionável:
-- `{ "num_tracks": 3 }` quando `-32002` em `track.get index=5`
-- `{ "min": 0, "max": 127, "got": 200 }` quando `-32004`
-- `{ "expected": "midi", "actual": "audio" }` quando `-32003`
+`error.data` ALWAYS carries actionable context:
+- `{ "num_tracks": 3 }` when `-32002` on `track.get index=5`
+- `{ "min": 0, "max": 127, "got": 200 }` when `-32004`
+- `{ "expected": "midi", "actual": "audio" }` when `-32003`
 
-## Idempotência
+## Idempotency
 
-Toda mutação MUST:
-1. Ler estado atual primeiro.
-2. Se já está no estado pedido → retorna `result: { changed: false, ... }`.
-3. Caso contrário aplica e retorna `result: { changed: true, before: {...}, after: {...} }`.
+Every mutation MUST:
+1. Read the current state first.
+2. If already in the requested state → return `result: { changed: false, ... }`.
+3. Otherwise apply and return `result: { changed: true, before: {...}, after: {...} }`.
 
-Phase 0 lança o padrão; Phase 1 audita compliance.
+Phase 0 establishes the pattern; Phase 1 audits compliance.
 
-## Transações (undo)
+## Transactions (undo)
 
-Composite ops envolvem `Song.begin_undo_step()` / `end_undo_step()` no bridge. Phase 0 NÃO expõe isso ao cliente — handler decide. Phase 4 expõe `tx.begin` / `tx.commit` para LLM agrupar.
+Composite ops wrap `Song.begin_undo_step()` / `end_undo_step()` in the bridge. Phase 0 does NOT expose this to the client — the handler decides. Phase 4 exposes `tx.begin` / `tx.commit` for the LLM to group.
 
 ## Notifications (Phase 0 = stub)
 
-Spike só implementa `event.beat` opcional (não obrigatório). Listeners completos chegam Phase 2.
+The Spike only implements optional `event.beat` (not required). Full listeners arrive in Phase 2.
 
-## Versão e handshake
+## Version and handshake
 
-Primeira mensagem do cliente: `system.hello`
+First client message: `system.hello`
 ```json
 { "jsonrpc": "2.0", "id": 1, "method": "system.hello", 
   "params": { "client": "ableton-mind/ts", "version": "0.0.1" } }
 ```
 
-Resposta do bridge:
+Bridge response:
 ```json
 { "jsonrpc": "2.0", "id": 1, "result": {
   "bridge": "ableton-mind/python", "version": "0.0.1",
@@ -106,4 +106,4 @@ Resposta do bridge:
   "protocol_version": "0.1" } }
 ```
 
-Phase 0: protocolo 0.1. Mudança breaking → bump major.
+Phase 0: protocol 0.1. Breaking change → major bump.

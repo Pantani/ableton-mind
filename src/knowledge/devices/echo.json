@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "10.0",
-  "description": "Delay com modulation (Wobble), character (Modern/Vintage/Bucket), gate, ducking, filter input/output e reverb tail.",
+  "description": "Delay with modulation (Wobble), character (Modern/Vintage/Bucket), gate, ducking, input/output filter and reverb tail.",
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [

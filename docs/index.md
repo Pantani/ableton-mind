@@ -3,14 +3,14 @@ layout: home
 
 hero:
   name: ableton-mind
-  text: O MCP definitivo para Ableton Live
-  tagline: "\"Crie um tech house de 128 BPM com kick punchy, bassline rolling, hi-hats com swing.\" — o LLM faz no Live. Sem palpite, sem cola visual."
+  text: The definitive MCP for Ableton Live
+  tagline: "\"Make me a 128 BPM tech house with a punchy kick, rolling bassline, swung hi-hats.\" — the LLM does it in Live. No guesswork, no visual hack."
   actions:
     - theme: brand
-      text: Começar
+      text: Get started
       link: /guide/getting-started
     - theme: alt
-      text: Instalar
+      text: Install
       link: /guide/installation
     - theme: alt
       text: GitHub
@@ -18,43 +18,25 @@ hero:
 
 features:
   - icon: 🎛️
-    title: 100% LOM
-    details: ~180 tools cobrindo os 21 domínios do Live Object Model — transport, tracks, clips, devices, automation, modulação, browser, arrangement, push.
+    title: Full LOM
+    details: ~180 tools covering the 21 Live Object Model domains — transport, tracks, clips, devices, automation, modulation, browser, arrangement, push.
   - icon: 🧠
-    title: Knowledge base embutida
-    details: 55+ devices nativos do Live 12 com schema de parâmetros (nome, range, default, unidade). LLM nunca chuta "Osc 1 Position".
+    title: Embedded knowledge base
+    details: 55+ Live 12 native devices with parameter schemas (name, range, default, unit). The LLM never guesses "Osc 1 Position".
   - icon: 🍳
-    title: Recipes musicais
-    details: JSON declarativo para drum kits, basslines, racks e arranjos por gênero. O servidor expande recipes em sequências de tools.
+    title: Music recipes
+    details: Declarative JSON for drum kits, basslines, racks and arrangements per genre. The server expands recipes into tool sequences.
   - icon: 🔁
     title: Verify loop
-    details: Depois de cada batch, re-lê o estado e diffa contra a intenção. Tools retornam { ok, verified, diff } — não só ok.
+    details: After every batch, re-read state and diff against intent. Tools return { ok, verified, diff } — not just ok.
   - icon: 📡
-    title: Listeners reativos
-    details: Mudanças no LOM viram MCP notifications. O LLM "vê" o usuário tocar, gravar, mudar tempo.
+    title: Reactive listeners
+    details: LOM property changes become MCP notifications. The LLM "sees" the user play, record, change tempo.
   - icon: 📦
-    title: Distribuição completa
-    details: DXT one-click pro Claude Desktop, npm publish com provenance, Docker para CI, Smithery listing.
+    title: Full distribution
+    details: One-click DXT for Claude Desktop, npm publish with provenance, Docker for CI, Smithery listing.
 ---
-
-## Stack
-
-- **TypeScript + Node 20+** — servidor MCP, `@modelcontextprotocol/sdk`, Zod.
-- **Python 3.11** (Live 12) — Remote Script bridge dentro do Live, TCP NDJSON JSON-RPC 2.0 em `127.0.0.1:9876`.
-- **Idempotente, transacional, reversível, schema-aware** — invariantes em [PLAN.md §2](https://github.com/Pantani/ableton-mind/blob/main/PLAN.md).
 
 ## Status
 
-| Phase | Status |
-|---|---|
-| 0 — Spike | código pronto, smoke real validado |
-| 1 — Paridade `ahujasid` | 22/22 tools |
-| 2 — Listeners → MCP notifications | 7 eventos `event.*` |
-| 3 — Knowledge base | 55/50+ devices |
-| 4 — Automation envelopes | linear/hold |
-| 5 — Preview/verify | snapshot+diff |
-| 6 — Push 1/2/3 | pad/button/mode |
-| 7 — Distribuição | DXT/Docker/Smithery/CI |
-| 8 — Long tail | em aberto |
-
-> Atualmente: **31 tools MCP**, **55 device schemas (~800 params indexados)**, **14 recipes** em 7/7 categorias, **verify loop 23/23**, **7 eventos `event.*`**.
+**31 MCP tools**, **55 device schemas (~800 indexed params)**, **14 recipes** across 7/7 categories, **verify loop 23/23**, **7 `event.*` notifications**.

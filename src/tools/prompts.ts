@@ -1,6 +1,6 @@
 /**
- * Tool MCP `list_prompts` — fallback discovery quando o cliente MCP não
- * expõe prompts nativamente.
+ * MCP tool `list_prompts` — fallback discovery when the MCP client doesn't
+ * expose prompts natively.
  */
 
 import { z } from "zod";

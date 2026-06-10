@@ -1,71 +1,58 @@
-# Smoke Test — ableton-mind end-to-end
+# Smoke Test
 
-Roteiro manual para validar que server TS + bridge Python + Live conversam. **Este é o gate de fechamento da Phase 0.** Não há como rodar automaticamente em sandbox (precisa GUI do Live aberta).
+Manual checklist for validating the TypeScript server, Python bridge and Ableton Live end to end. This is the Phase 0 closing gate because it requires the Live GUI.
 
-## Pré-requisitos
+## Prerequisites
 
-- macOS (primário; Windows segue mesmo passo a passo trocando os paths).
-- Ableton Live 12.x instalado e ativado.
-- Node 20+ no PATH (`node --version`).
-- Repositório clonado em `~/Desktop/projects/art/ableton-mind` (ou ajuste caminhos).
-- `npm install` rodado com sucesso na raiz.
+- macOS primary path; Windows follows the same flow with adjusted paths.
+- Ableton Live 12.x installed and activated.
+- Node 20+ on PATH.
+- Repo cloned locally.
+- `npm ci` or `npm install` completed at the repo root.
 
-## 1. Instalar a bridge Python
+## 1. Install the Python Bridge
 
 ```bash
-cd ~/Desktop/projects/art/ableton-mind
-node scripts/install-remote-script.mjs --check   # mostra estado atual
-node scripts/install-remote-script.mjs           # cria symlink
+node scripts/install-remote-script.mjs --check
+node scripts/install-remote-script.mjs
 ```
 
-Esperado:
-```
-source: .../ableton-mind/live/AbletonMind
-target: ~/Music/Ableton/User Library/Remote Scripts/AbletonMind
-status atual: AUSENTE
-✓ symlink criado.
-```
+Expected output shows the repo source, the Live Remote Scripts target and a created symlink or copy.
 
-## 2. Ativar no Live
+## 2. Activate in Live
 
-1. Abra (ou reinicie) o Ableton Live 12.
-2. **Live → Preferences → Link, Tempo & MIDI**.
-3. Na seção **Control Surface**, escolha **AbletonMind** num slot vazio.
-4. Live carrega o Remote Script. Em caso de erro, abra **Help → Show Log File** e procure por "AbletonMind" — o bridge loga `bridge_started host=127.0.0.1 port=9876`.
+1. Open or restart Ableton Live 12.
+2. Open Preferences -> Link, Tempo & MIDI.
+3. In an empty Control Surface slot, choose `AbletonMind`.
+4. Open Help -> Show Log File if needed and search for `AbletonMind`.
 
-Verificação rápida: a porta 9876 deve estar em LISTEN:
+The bridge should listen on port 9876:
 
 ```bash
 lsof -nP -iTCP:9876 -sTCP:LISTEN
 ```
 
-Esperado: linha mostrando `Live` ou `Python` segurando a porta.
-
-## 3. Build do server TS
+## 3. Build the Server
 
 ```bash
-cd ~/Desktop/projects/art/ableton-mind
 npm run build
 ```
 
-Esperado: `dist/index.js` criado, sem erros de TS.
+Expected: `dist/index.js` exists and TypeScript build succeeds.
 
-## 4. Conectar manualmente (sem MCP client) — handshake check
+## 4. Manual Handshake
 
-Antes de plugar no Claude Desktop, valide handshake direto via `netcat`:
+Before using an MCP client, validate the bridge directly:
 
 ```bash
 printf '{"jsonrpc":"2.0","id":1,"method":"system.hello","params":{"client":"manual","version":"0.0.0"}}\n' | nc 127.0.0.1 9876
 ```
 
-Esperado (na mesma linha):
-```json
-{"jsonrpc":"2.0","id":1,"result":{"bridge":"ableton-mind/python","version":"0.0.1","live_version":"12.0.10","python_version":"3.11.6","protocol_version":"0.1"}}
-```
+Expected: one JSON-RPC response containing bridge version, Live version, Python version and `protocol_version`.
 
-Se travar ou der `connection refused`: o Remote Script não foi carregado, ou o slot Control Surface não foi confirmado.
+If this hangs or returns connection refused, the Remote Script was not loaded or the Control Surface slot was not activated.
 
-## 5. Ping + play + stop direto via netcat
+## 5. Ping, Play and Stop by Netcat
 
 ```bash
 printf '%s\n%s\n%s\n' \
@@ -75,20 +62,18 @@ printf '%s\n%s\n%s\n' \
   | nc 127.0.0.1 9876
 ```
 
-Esperado: 3 responses; durante o id=2 o Live deve começar a tocar; após o id=3, parar.
+Expected: three responses. Live starts playing for request 2 and stops for request 3.
 
-## 6. Smoke via servidor MCP
+## 6. Smoke Through an MCP Client
 
-Conecte o Claude Desktop (ou Cursor) ao server:
-
-`~/Library/Application Support/Claude/claude_desktop_config.json`:
+Point Claude Desktop, Cursor or another MCP client at `dist/index.js`. Example Claude Desktop config:
 
 ```json
 {
   "mcpServers": {
     "ableton-mind": {
       "command": "node",
-      "args": ["/Users/SEU_USER/Desktop/projects/art/ableton-mind/dist/index.js"],
+      "args": ["/absolute/path/to/ableton-mind/dist/index.js"],
       "env": {
         "ABLETON_MIND_LOG_LEVEL": "debug"
       }
@@ -97,40 +82,37 @@ Conecte o Claude Desktop (ou Cursor) ao server:
 }
 ```
 
-Reinicie o Claude Desktop e peça:
+Restart the client and ask it to call the `play` tool. Expected response includes `{ ok: true, verified: true, is_playing: true }` and Live starts playback.
 
-> "Use a tool play do servidor ableton-mind para começar a tocar."
+Then test in this order:
 
-Esperado: tool call disparada, Live começa a tocar, resposta volta com `{ ok: true, verified: true, changed: true, is_playing: true, current_song_time: 0 }`.
+1. `track_list` lists regular, return and master tracks.
+2. `set_tempo` with `bpm=140` updates Live.
+3. `track_create` with `type=midi` creates a MIDI track.
+4. `create_midi_clip` creates an empty clip in a target session slot.
 
-Outras tools para testar nesta ordem:
-1. `track_list` — deve listar tracks do set aberto.
-2. `set_tempo` com bpm=140 — Live atualiza.
-3. `track_create` com `type=midi` — track nova aparece.
-4. `create_midi_clip` com `track_index=0, clip_slot_index=0, length_beats=4` — clip vazio de 1 bar criado.
+## 7. PASS Criteria
 
-## 7. Critérios de PASS
-
-| Critério | Como verificar |
+| Criterion | How to verify |
 |---|---|
-| Handshake responde com `protocol_version: "0.1"` | passo 4 |
-| Play/stop refletem no transport do Live | passo 5 |
-| Tool MCP `play` funciona end-to-end via Claude Desktop | passo 6 |
-| Undo do Live (Cmd+Z) desfaz `track_create` em UMA undo step | manual após passo 6 |
-| Idempotência: chamar `play` 2x retorna `changed: true` então `changed: false` | manual |
+| Handshake returns protocol version | Step 4 |
+| Play/stop reflect in Live transport | Step 5 |
+| MCP `play` works through the client | Step 6 |
+| Live undo reverses `track_create` in one step | Manual Cmd+Z after Step 6 |
+| `play` is idempotent | Calling twice returns changed true, then changed false |
 
-Se todos passarem → Phase 0 está FECHADA. Registre no `_workspace/PROGRESS.md` com data e atualize `qa/cycle-2-report.md`.
+If every criterion passes, Phase 0 is closed. Record date, Live version and evidence in `_workspace/PROGRESS.md` and the matching QA report.
 
-## 8. Falhas comuns
+## 8. Common Failures
 
-- `connection refused` na porta 9876 → Remote Script não carregou. Cheque o Log File do Live por exceções Python.
-- `protocol_version mismatch` → bridge nova, server velho (ou vice-versa). Confira `git log` em `live/AbletonMind/handlers/system.py` e `src/live-client/handshake.ts`.
-- Live trava ao chamar uma tool → algum handler tocou LiveAPI fora do main thread. Cheque que `BridgeServer.__init__` recebeu `ctrl` (não `headless=True`).
+- `connection refused` on port 9876: Remote Script did not load. Check Live's Log File for Python exceptions.
+- `protocol_version mismatch`: server and bridge versions are out of sync.
+- Live freezes on a tool call: a handler likely touched LiveAPI off the main thread.
 
-## 9. Reverter
+## 9. Revert
 
 ```bash
-rm ~/Music/Ableton/User\ Library/Remote\ Scripts/AbletonMind  # remove o symlink
+rm ~/Music/Ableton/User\ Library/Remote\ Scripts/AbletonMind
 ```
 
-Reinicie o Live, desmarque AbletonMind no Control Surface.
+Restart Live and clear the AbletonMind Control Surface slot.

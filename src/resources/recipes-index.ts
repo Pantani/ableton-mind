@@ -3,8 +3,8 @@ import { listRecipes } from "../recipes/index.js";
 import type { ResourceDefinition } from "./index.js";
 
 /**
- * `live://recipes/index` — índice de todas as 14 recipes embarcadas.
- * Lê dos JSONs em `recipes/`, não toca bridge.
+ * `live://recipes/index` — index of all 14 embedded recipes.
+ * Reads from JSONs in `recipes/`, doesn't touch the bridge.
  */
 export const recipesIndexResource: ResourceDefinition = {
   uri: "live://recipes/index",

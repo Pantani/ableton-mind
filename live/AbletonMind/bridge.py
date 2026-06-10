@@ -1,35 +1,35 @@
 """
-TCP NDJSON server + dispatcher JSON-RPC 2.0.
+TCP NDJSON server + JSON-RPC 2.0 dispatcher.
 
 # Threading
 
-LiveAPI **só pode ser tocada no main thread do Live**. Por isso:
+LiveAPI **can only be touched on Live's main thread**. Therefore:
 
-- Socket TCP roda em thread daemon (`_serve` aceita; cada conexão em thread).
-- Cada request lida do socket vai para `_call_queue` (FIFO multi-producer).
-- Um `schedule_message(50, _drain_queue)` registrado pelo ControlSurface
-  acorda o main thread do Live a cada ~50ms para drenar a fila e despachar
-  os handlers (que tocam LiveAPI em segurança).
-- A thread do socket bloqueia em `result_q.get(timeout=...)` esperando a
-  resposta processada pelo main thread.
+- TCP socket runs on a daemon thread (`_serve` accepts; each connection in a thread).
+- Each request read from the socket goes into `_call_queue` (FIFO multi-producer).
+- A `schedule_message(50, _drain_queue)` registered by the ControlSurface
+  wakes Live's main thread every ~50ms to drain the queue and dispatch
+  handlers (which touch LiveAPI safely).
+- The socket thread blocks on `result_q.get(timeout=...)` waiting for the
+  response processed by the main thread.
 
-**Modo headless (testes/CLI)**: se nenhum ControlSurface é fornecido, o
-`BridgeServer` despacha sincronamente no próprio thread. Útil para o smoke
-test em mock e para qa-integration.
+**Headless mode (tests/CLI)**: if no ControlSurface is provided, `BridgeServer`
+dispatches synchronously on its own thread. Useful for the smoke test in mocks
+and for qa-integration.
 
 # Framing
 
-NDJSON: cada mensagem é uma linha JSON terminada por `\n`. Implementação
-segue jsonrpc.md §Transport.
+NDJSON: each message is a JSON line terminated by `\n`. Implementation
+follows jsonrpc.md §Transport.
 
-# Erros
+# Errors
 
-Mapeamento das exceções para códigos do contrato:
-- `RpcError`           → usa código próprio
+Exception → contract-code mapping:
+- `RpcError`           → uses its own code
 - `json.JSONDecodeError` → -32700 Parse error
-- `TypeError` ao construir dataclass de input → -32602 Invalid params
-- `KeyError` no REGISTRY → -32601 Method not found
-- Qualquer outra exception → -32001 Live API call failed (com classname/str)
+- `TypeError` constructing input dataclass → -32602 Invalid params
+- `KeyError` in REGISTRY → -32601 Method not found
+- Any other exception → -32001 Live API call failed (with classname/str)
 """
 import json
 import queue
@@ -65,9 +65,9 @@ class BridgeServer:
     ):
         """
         ctrl     — ControlSurface (`self.ctrl.song()`, `self.ctrl.schedule_message(...)`).
-                   Em modo headless pode ser None.
-        headless — quando True, dispatcha no próprio thread do socket. Útil para
-                   testes e smoke fora do Live.
+                   May be None in headless mode.
+        headless — when True, dispatches on the socket's own thread. Useful for
+                   tests and smoke outside Live.
         """
         self.ctrl = ctrl
         self.host = host
@@ -81,25 +81,25 @@ class BridgeServer:
         self._sock: Optional[socket.socket] = None
         self._drain_scheduled = False
 
-        # Clients vivos para broadcast (TD-014). Lock para acesso multi-thread.
+        # Live clients for broadcast (TD-014). Lock for multi-thread access.
         self._clients: list = []
         self._clients_lock = threading.Lock()
 
-        # Import dos handlers (popula REGISTRY)
+        # Import handlers (populates REGISTRY)
         from . import handlers  # noqa: F401
 
     # ------------------------------------------------------------------ lifecycle
 
     def start(self) -> None:
         if self._server_thread and self._server_thread.is_alive():
-            return  # idempotente
+            return  # idempotent
         self._stop.clear()
         self._server_thread = threading.Thread(
             target=self._serve, name="AbletonMindBridge", daemon=True
         )
         self._server_thread.start()
         if not self.headless and self.ctrl is not None and hasattr(self.ctrl, "schedule_message"):
-            # Inicia o loop de drenagem no main thread do Live
+            # Start the drain loop on Live's main thread
             self._drain_scheduled = True
             self.ctrl.schedule_message(0, self._drain_queue)
         self.log.info("bridge_started", host=self.host, port=self.port, headless=self.headless)
@@ -164,7 +164,7 @@ class BridgeServer:
                         continue
                     response = self._process_line(line)
                     if response is None:
-                        # notification (no id) — não responde
+                        # notification (no id) — no response
                         continue
                     try:
                         client.sendall((json.dumps(response) + "\n").encode("utf-8"))
@@ -184,11 +184,11 @@ class BridgeServer:
     # ------------------------------------------------------------------ broadcast
 
     def broadcast(self, method: str, params: Optional[dict] = None) -> int:
-        """Envia JSON-RPC notification (sem `id`) para todos os clientes
-        conectados. Sockets que falham são removidos da lista.
+        """Sends a JSON-RPC notification (no `id`) to all connected clients.
+        Sockets that fail are removed from the list.
 
-        Retorna número de clientes que receberam com sucesso.
-        Thread-safe: pode ser chamado do main thread (listeners callbacks).
+        Returns the number of clients that received successfully.
+        Thread-safe: may be called from the main thread (listener callbacks).
         """
         notification = {"jsonrpc": "2.0", "method": method}
         if params is not None:
@@ -229,7 +229,7 @@ class BridgeServer:
             return _error_envelope(None, INVALID_REQUEST, "request must be an object")
 
         id_ = request.get("id")
-        # Notifications: sem id — não respondemos (mas ainda enfileiramos)
+        # Notifications: no id — we don't respond (but still enqueue)
         is_notification = "id" not in request
 
         if self.headless:
@@ -251,7 +251,7 @@ class BridgeServer:
     # ------------------------------------------------------------------ main-thread drain
 
     def _drain_queue(self) -> None:
-        """Roda no main thread do Live. Drena toda a fila atual e re-agenda."""
+        """Runs on Live's main thread. Drains the current queue and re-schedules."""
         if self._stop.is_set():
             return
         while True:
@@ -261,7 +261,7 @@ class BridgeServer:
                 break
             try:
                 response = self._dispatch(request)
-            except Exception as exc:  # safety net — nunca deixa _drain morrer
+            except Exception as exc:  # safety net — never let _drain die
                 response = _error_envelope(
                     request.get("id"),
                     INTERNAL_ERROR,
@@ -272,7 +272,7 @@ class BridgeServer:
                 result_q.put_nowait(response)
             except queue.Full:
                 pass
-        # Re-agenda
+        # Re-schedule
         if not self._stop.is_set() and self.ctrl is not None and hasattr(
             self.ctrl, "schedule_message"
         ):
@@ -305,7 +305,7 @@ class BridgeServer:
                 id_, INVALID_PARAMS, "invalid params", {"method": method, "reason": str(exc)}
             )
 
-        # Executa
+        # Execute
         t0 = time.time()
         try:
             handler = handler_cls(self.ctrl)

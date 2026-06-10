@@ -1,63 +1,63 @@
 # Cycle 2 — 2026-06-08
 
-**Fase PLAN.md:** transição Phase 0 → Phase 1.
-**Objetivo do ciclo:** fechar 5 débitos técnicos do Cycle 1 + expor as 4 tools restantes do bridge + 1 handler novo (`track.create`) + stub de Distribuição.
+**PLAN.md Phase:** transition Phase 0 → Phase 1.
+**Cycle goal:** close 5 tech debts from Cycle 1 + expose the 4 remaining bridge tools + 1 new handler (`track.create`) + Distribution stub.
 
-## Estratégia
+## Strategy
 
-Execução **inline pelo architect** (sem disparar agentes). Motivo:
-- Agentes do Cycle 1 falharam com API error de socket.
-- Trabalho do Cycle 2 é majoritariamente cirúrgico (fixes pontuais + arquivos pequenos seguindo patterns já estabelecidos).
-- Custo de contexto < custo de re-disparar e arriscar nova falha.
+**Inline execution by the architect** (no agent dispatch). Reason:
+- Cycle 1 agents failed with a socket API error.
+- Cycle 2 work is mostly surgical (point fixes + small files following already established patterns).
+- Context cost < cost of redispatching and risking another failure.
 
-Se Cycle 3+ tiver entregas grandes (50+ handlers, knowledge), volta para agentes.
+If Cycle 3+ has large deliveries (50+ handlers, knowledge), it returns to agents.
 
-## Atribuições inline
+## Inline assignments
 
-### Trilha A — Server TS
+### Track A — TS Server
 1. Fix TD-001: tcp-client.ts env var parsing.
-2. Expor `stop`, `set_tempo`, `track_list`, `create_midi_clip` como tools MCP em `src/tools/`.
-3. Expor `track_create` (tool nova).
-4. Atualizar `src/tools/index.ts` para incluir todas.
-5. Adicionar testes de cada tool nova em `tests/`.
+2. Expose `stop`, `set_tempo`, `track_list`, `create_midi_clip` as MCP tools in `src/tools/`.
+3. Expose `track_create` (new tool).
+4. Update `src/tools/index.ts` to include all.
+5. Add tests for each new tool in `tests/`.
 
-### Trilha A — Bridge Python
-1. Fix TD-003: renomear `LIVE_API_FAILED` → `LIVE_API_CALL_FAILED`.
-2. Fix TD-002: alterar shape de `track.list` para `{tracks, return_tracks, master_track, total}` (não usar indexes negativos).
-3. Adicionar handler `track.create` em `handlers/track.py` + schema em `schemas.py`.
-4. Atualizar testes afetados.
+### Track A — Python Bridge
+1. Fix TD-003: rename `LIVE_API_FAILED` → `LIVE_API_CALL_FAILED`.
+2. Fix TD-002: change `track.list` shape to `{tracks, return_tracks, master_track, total}` (do not use negative indexes).
+3. Add `track.create` handler in `handlers/track.py` + schema in `schemas.py`.
+4. Update affected tests.
 
-### Trilha D — Distribuição (entra agora)
-1. Esboço `dxt/manifest.json` para Claude Desktop one-click install (MCPB v0.2 spec).
-2. Atualizar `README.md` raiz com seção "Instalação dev".
-3. Adicionar script `scripts/install-remote-script.mjs` (symlink dev — não copia).
+### Track D — Distribution (enters now)
+1. Draft `dxt/manifest.json` for Claude Desktop one-click install (MCPB v0.2 spec).
+2. Update root `README.md` with "Dev install" section.
+3. Add `scripts/install-remote-script.mjs` (dev symlink — does not copy).
 
-### Trilha — Docs (architect)
-1. `docs/smoke-test.md` — passo a passo para usuário rodar o smoke manual (gate Phase 0).
+### Track — Docs (architect)
+1. `docs/smoke-test.md` — step-by-step for the user to run the manual smoke (Phase 0 gate).
 
 ### QA (inline)
-- Parity check após mudanças (track.list shape mudou; track_create é novo).
-- Contract drift: phase0-methods.md vai precisar de uma nota de "phase 1 evolves track.list shape" — mas sem mutar o contrato em si.
-- Registrar em ADR-0002 a mudança de track.list (breaking change pré-1.0, OK).
+- Parity check after changes (track.list shape changed; track_create is new).
+- Contract drift: phase0-methods.md will need a "phase 1 evolves track.list shape" note — but without mutating the contract itself.
+- Record the track.list change in ADR-0002 (breaking change pre-1.0, OK).
 
-## Contratos novos/alterados
+## New/changed contracts
 
 ### track.list — breaking change
-**ADR-0002** vai documentar. Shape novo:
+**ADR-0002** will document. New shape:
 ```ts
 {
-  tracks: TrackInfo[];        // só song.tracks regulares, index = posição em song.tracks
-  return_tracks: TrackInfo[]; // só returns, index = posição em song.return_tracks
+  tracks: TrackInfo[];        // only regular song.tracks, index = position in song.tracks
+  return_tracks: TrackInfo[]; // only returns, index = position in song.return_tracks
   master_track: TrackInfo | null;
   total: number;              // sum(tracks) + sum(returns) + (master ? 1 : 0)
 }
 ```
 
-`TrackInfo` mantém os mesmos campos do Cycle 1 (name, color_index, is_midi, is_audio, mute, solo, arm, is_grouped, is_foldable, etc) — mas com `index` agora sendo posição dentro da própria coleção.
+`TrackInfo` keeps the same fields as Cycle 1 (name, color_index, is_midi, is_audio, mute, solo, arm, is_grouped, is_foldable, etc) — but with `index` now being the position within its own collection.
 
-Remove `is_return`/`is_master` dos TrackInfo (a posição na coleção já indica).
+Removes `is_return`/`is_master` from TrackInfo (the position in the collection already indicates it).
 
-### track.create — novo método
+### track.create — new method
 
 ```ts
 // request
@@ -67,7 +67,7 @@ Remove `is_return`/`is_master` dos TrackInfo (a posição na coleção já indic
 {
   changed: true;
   track: {
-    index: number;       // posição em song.tracks após criação
+    index: number;       // position in song.tracks after creation
     name: string;
     is_midi: boolean;
     is_audio: boolean;
@@ -75,27 +75,27 @@ Remove `is_return`/`is_master` dos TrackInfo (a posição na coleção já indic
 }
 ```
 
-Erros: `-32004` se `index` for inválido (>= num_tracks + 1).
+Errors: `-32004` if `index` is invalid (>= num_tracks + 1).
 
-## Dependências
+## Dependencies
 
-- Distribution depende apenas de saber as tools registradas (não bloqueia).
-- track.list shape change deve ser feita **simultaneamente** nos dois lados (TS aceita só shape novo, Python só devolve shape novo). Mudança coordenada inline.
-- Tools MCP novas (stop, set_tempo, etc) dependem dos handlers do bridge (já existem desde Cycle 1) — só TS muda.
+- Distribution depends only on knowing the registered tools (does not block).
+- The track.list shape change must be done **simultaneously** on both sides (TS accepts only the new shape, Python returns only the new shape). Coordinated inline change.
+- New MCP tools (stop, set_tempo, etc) depend on the bridge handlers (existed since Cycle 1) — only TS changes.
 
-## Critérios de gate
+## Gate criteria
 
-- [ ] Tech debt TD-001, TD-002, TD-003 fechados.
-- [ ] TD-004 e TD-005 documentados como aceitos até Cycle 3.
-- [ ] 4 tools MCP novas registradas + testadas (mock).
-- [ ] track.create handler + tool funcionando (mock).
-- [ ] dxt/manifest.json existe e tem campos mínimos.
-- [ ] README tem seção "Instalação dev".
-- [ ] docs/smoke-test.md existe.
-- [ ] ADR-0002 escrito.
+- [ ] Tech debt TD-001, TD-002, TD-003 closed.
+- [ ] TD-004 and TD-005 documented as accepted until Cycle 3.
+- [ ] 4 new MCP tools registered + tested (mock).
+- [ ] track.create handler + tool working (mock).
+- [ ] dxt/manifest.json exists and has minimum fields.
+- [ ] README has "Dev install" section.
+- [ ] docs/smoke-test.md exists.
+- [ ] ADR-0002 written.
 
-## Próximo ciclo (depois deste)
+## Next cycle (after this one)
 
-- Smoke real (TD-004) — usuário roda manual seguindo `docs/smoke-test.md`.
-- Phase 1 contínua: tools restantes do ahujasid (~15) + verify loop genérico.
-- Knowledge curator entra (esboço de schema de Wavetable como prova de conceito).
+- Real smoke (TD-004) — user runs it manually following `docs/smoke-test.md`.
+- Phase 1 continued: remaining ahujasid tools (~15) + generic verify loop.
+- Knowledge curator enters (Wavetable schema draft as a proof of concept).

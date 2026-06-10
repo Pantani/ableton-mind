@@ -1,21 +1,21 @@
 """
-Handlers de transporte: play, stop, set_tempo.
+Transport handlers: play, stop, set_tempo.
 
-Todos idempotentes. Lemos o estado antes de mutar; se já está no alvo,
-retornamos `changed: false` e não tocamos no Live (evita undo step inútil e
-restart de loops).
+All idempotent. We read state before mutating; if already at target, we
+return `changed: false` and don't touch Live (avoids useless undo step
+and loop restart).
 """
 from ..errors import LIVE_NOT_RUNNING, OUT_OF_RANGE, RpcError
 from ..schemas import PlayInput, SetTempoInput, StopInput
 from ._base import Handler, register
 
-# Faixa de tempo aceita pelo Live (docs Cycling74 / Live 12).
+# Tempo range accepted by Live (Cycling74 / Live 12 docs).
 TEMPO_MIN = 20.0
 TEMPO_MAX = 999.0
 
 
 def _require_song(handler) -> object:
-    """Garante que `ctrl.song()` retorna algo (Live aberto)."""
+    """Ensures `ctrl.song()` returns something (Live open)."""
     song = handler.song
     if song is None:
         raise RpcError(LIVE_NOT_RUNNING, "Live song is not available")
@@ -31,9 +31,9 @@ class PlayHandler(Handler):
         was_playing = bool(song.is_playing)
 
         if params.from_beginning:
-            # `start_playing` recomeça do começo da song (current_song_time = 0).
-            # Mesmo se `is_playing` for True, "from_beginning" muda o estado:
-            # consideramos `changed` = True a menos que já esteja em t=0 tocando.
+            # `start_playing` restarts from the beginning (current_song_time = 0).
+            # Even if `is_playing` is True, "from_beginning" changes state:
+            # we consider `changed` = True unless already at t=0 playing.
             if was_playing and float(song.current_song_time) == 0.0:
                 changed = False
             else:
@@ -87,7 +87,7 @@ class SetTempoHandler(Handler):
                 {"min": TEMPO_MIN, "max": TEMPO_MAX, "got": bpm},
             )
         before = float(song.tempo)
-        # Comparamos com tolerância de 0.001 para evitar set redundante por float.
+        # Compare with 0.001 tolerance to avoid redundant float set.
         if abs(before - bpm) < 1e-3:
             return {"changed": False, "before": before, "after": before}
         song.tempo = bpm

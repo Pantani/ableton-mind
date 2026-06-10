@@ -1,10 +1,10 @@
-# Instalação
+# Installation
 
-Quatro canais. Escolha pela audiência.
+Four channels. Pick by audience.
 
-## 1. Claude Desktop `.mcpb` (recomendado)
+## 1. Claude Desktop `.mcpb` (recommended)
 
-Bundle one-click. Baixe `ableton-mind.mcpb` na [release mais recente](https://github.com/Pantani/ableton-mind/releases) e dê duplo-clique. O Claude Desktop registra o servidor e roda o setup do Remote Script automaticamente.
+One-click bundle. Download `ableton-mind.mcpb` from the [latest release](https://github.com/Pantani/ableton-mind/releases) and double-click. Claude Desktop registers the server and runs the Remote Script setup automatically.
 
 ## 2. npm global
 
@@ -13,7 +13,7 @@ npm install -g ableton-mind
 ableton-mind install:remote-script
 ```
 
-Em `claude_desktop_config.json`:
+`claude_desktop_config.json`:
 
 ```json
 {
@@ -31,12 +31,8 @@ docker run --rm -it \
   ghcr.io/pantani/ableton-mind:latest
 ```
 
-Útil para CI e sandboxes — não para uso interativo no desktop (o transport MCP é stdio).
-
 ## 4. Smithery
 
-Listing em `smithery.yaml`. Quem usa Smithery para descobrir servidores MCP encontra `ableton-mind` lá.
+Listing in `smithery.yaml`.
 
-## Detalhes completos
-
-A página [Distribuição](../distribution) cobre cada canal em profundidade, incluindo CI, release pipeline e gates de publicação.
+Full details in [Distribution](../distribution).

@@ -5,7 +5,7 @@
   "category": "midi_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "MIDI effect que transpõe notes em semitones e limita à faixa MIDI.",
+  "description": "MIDI effect that transposes notes in semitones and clamps them to the MIDI range.",
   "source": "curated (Cycle 13)",
   "completeness": "complete",
   "parameters": [

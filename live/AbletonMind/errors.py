@@ -1,15 +1,15 @@
 """
-Códigos de erro JSON-RPC do ableton-mind.
+ableton-mind JSON-RPC error codes.
 
-Fonte: _workspace/contracts/jsonrpc.md (faixa custom -32000..-32099).
+Source: _workspace/contracts/jsonrpc.md (custom range -32000..-32099).
 
-`RpcError` é a exceção interna que os handlers levantam. O dispatcher do bridge
-captura e serializa no envelope JSON-RPC 2.0.
+`RpcError` is the internal exception handlers raise. The bridge dispatcher
+catches it and serializes it into the JSON-RPC 2.0 envelope.
 """
 from typing import Any, Optional
 
 
-# Reservados JSON-RPC (padrão da spec)
+# JSON-RPC reserved (spec standard)
 PARSE_ERROR = -32700
 INVALID_REQUEST = -32600
 METHOD_NOT_FOUND = -32601
@@ -29,7 +29,7 @@ KNOWLEDGE_LOOKUP_FAILED = -32008
 
 
 class RpcError(Exception):
-    """Erro estruturado convertido em envelope JSON-RPC pelo bridge."""
+    """Structured error converted into a JSON-RPC envelope by the bridge."""
 
     def __init__(self, code: int, message: str, data: Optional[Any] = None):
         super().__init__(message)

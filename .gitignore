@@ -39,6 +39,9 @@ __pycache__/
 
 # Local-only workspace state (kept under git only when curated)
 _workspace/cache/
+.claude/sessions/
+.claude/state/
+.claude/worktrees/
 
 # VitePress docs site
 docs/.vitepress/cache/

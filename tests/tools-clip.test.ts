@@ -1,5 +1,5 @@
 /**
- * Testes da tool create_midi_clip.
+ * Tests for the create_midi_clip tool.
  */
 
 import { describe, expect, it, vi } from "vitest";

@@ -1,8 +1,8 @@
 """
-Handler `scene.fire` — dispara uma cena.
+`scene.fire` handler — triggers a scene.
 
-LiveAPI: `Scene.fire()` ou `Song.scenes[i].fire()`. NÃO idempotente
-estritamente, mas a operação é "trigger" — chamadas duplicadas só re-disparam.
+LiveAPI: `Scene.fire()` or `Song.scenes[i].fire()`. NOT strictly idempotent,
+but the operation is a "trigger" — duplicate calls just re-fire.
 """
 from ..errors import LIVE_NOT_RUNNING, OBJECT_NOT_FOUND, RpcError
 from ..schemas import SceneFireInput

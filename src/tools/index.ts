@@ -1,14 +1,14 @@
 /**
- * Registry de tools MCP.
+ * MCP tools registry.
  *
- * Cycle 5: 21 tools registradas. **Paridade ahujasid 22/22** (faltava
- * load_browser_item/get_device_parameters/set_device_parameter — agora aqui).
+ * Cycle 5: 21 tools registered. **Parity with ahujasid 22/22** (missing
+ * load_browser_item/get_device_parameters/set_device_parameter — now here).
  *
- * Verify loop integrado em set_tempo, track_set_volume, track_set_name,
+ * Verify loop integrated into set_tempo, track_set_volume, track_set_name,
  * clip_set_name (TD-013).
  *
- * Phase 2 começa neste ciclo com listeners no bridge — repasse para MCP
- * notifications acontece no server bootstrap (src/server/index.ts).
+ * Phase 2 starts in this cycle with bridge listeners — forwarding to MCP
+ * notifications happens in the server bootstrap (src/server/index.ts).
  */
 
 import type { ToolDefinition } from "../server/define-tool.js";
@@ -117,7 +117,7 @@ export const allTools = [
   sessionSnapshotTool,
   sessionDiffTool,
   renderPreviewTool,
-  // Recipes (Trilha C)
+  // Recipes (Track C)
   listRecipesTool,
   applyRecipeTool,
   // Prompts discovery

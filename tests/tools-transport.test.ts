@@ -1,6 +1,6 @@
 /**
- * Testes das tools MCP do domínio Transport: play, stop, set_tempo.
- * Usam BridgeClient mockado — sem rede real.
+ * Tests for the Transport-domain MCP tools: play, stop, set_tempo.
+ * Use a mocked BridgeClient — no real network.
  */
 
 import { describe, expect, it, vi } from "vitest";

@@ -1,10 +1,10 @@
 /**
  * Knowledge base loader.
  *
- * Carrega JSONs estáticos embarcados no pacote npm. Não toca rede, não toca FS
- * em runtime (tudo via `import.meta.url` no build).
+ * Loads static JSONs embedded in the npm package. Doesn't touch the network,
+ * doesn't touch the FS at runtime (everything via `import.meta.url` at build).
  *
- * Phase 3 expande: 50+ devices, packs, grooves, MIDI standards.
+ * Phase 3 expands: 50+ devices, packs, grooves, MIDI standards.
  */
 
 import { readFile } from "node:fs/promises";
@@ -82,13 +82,13 @@ async function readJson(rel: string): Promise<unknown> {
   return JSON.parse(buf);
 }
 
-/** Carrega o schema de UM device por id (= filename sem .json). */
+/** Loads the schema of ONE device by id (= filename without .json). */
 export async function loadDevice(id: string): Promise<DeviceSchema> {
   const raw = await readJson(`devices/${id}.json`);
   return deviceSchema.parse(raw);
 }
 
-/** Carrega TODOS os devices listados em `devices/_index.json` (ou conhecidos). */
+/** Loads ALL devices listed in `devices/_index.json` (or known ones). */
 const KNOWN_DEVICES = [
   "wavetable",
   "operator",
@@ -157,7 +157,7 @@ export async function loadScales(): Promise<ScalesPayload> {
   return scalesSchema.parse(raw);
 }
 
-/** Lookup: dado um device id e um param name, devolve o parameter schema (ou null). */
+/** Lookup: given a device id and a param name, returns the parameter schema (or null). */
 export function findParameter(device: DeviceSchema, name: string) {
   return device.parameters.find((p) => p.name === name) ?? null;
 }

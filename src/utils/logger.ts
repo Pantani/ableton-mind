@@ -1,11 +1,11 @@
 /**
- * Logger que escreve EXCLUSIVAMENTE em stderr.
+ * Logger that writes EXCLUSIVELY to stderr.
  *
- * O servidor MCP usa stdio transport: stdout é canal sagrado do protocolo MCP.
- * Qualquer write no stdout que não seja uma mensagem MCP válida quebra o cliente.
- * Portanto todo log de produção, debug, warn, error vai em stderr.
+ * The MCP server uses the stdio transport: stdout is the sacred MCP protocol channel.
+ * Any write to stdout that isn't a valid MCP message breaks the client.
+ * Therefore all production, debug, warn, error logs go to stderr.
  *
- * Níveis: debug < info < warn < error.
+ * Levels: debug < info < warn < error.
  * Default: info. Override via env `ABLETON_MIND_LOG_LEVEL`.
  */
 
@@ -34,8 +34,8 @@ function emit(level: LogLevel, message: string, meta?: Record<string, unknown>):
   const ts = new Date().toISOString();
   const base = `[${ts}] [${level.toUpperCase()}] ${message}`;
   const line = meta ? `${base} ${safeJson(meta)}` : base;
-  // process.stderr.write em vez de console.error para garantir que não há
-  // nenhuma interceptação acidental do console que vaze pro stdout.
+  // process.stderr.write instead of console.error to ensure no accidental
+  // console interception leaks to stdout.
   process.stderr.write(`${line}\n`);
 }
 

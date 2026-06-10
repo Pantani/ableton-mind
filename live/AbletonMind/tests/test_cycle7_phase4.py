@@ -1,11 +1,11 @@
 """
-Testes Cycle 7 Phase 4 (TD-022).
+Cycle 7 Phase 4 tests (TD-022).
 
-Cobre:
+Covers:
   - clip.envelope_set_points (incl. curve_type=hold via 2-step split)
   - arrangement.add_automation_point
-  - _resolve_parameter_locator (todos os kinds)
-  - ListenerManager expandido (track + clip listeners)
+  - _resolve_parameter_locator (all kinds)
+  - extended ListenerManager (track + clip listeners)
 """
 import unittest
 
@@ -126,7 +126,7 @@ class TestClipEnvelopeSetPoints(unittest.TestCase):
     def test_locator_device_param(self):
         song = _seed_song_with_track()
         clip = self._seed_clip(song)
-        # Adiciona um device com parameter resolvível.
+        # Add a device with a resolvable parameter.
         param = FakeDeviceParameter(value=0, mn=0, mx=1, name="Frequency")
 
         class FakeDev:
@@ -189,7 +189,7 @@ class TestClipEnvelopeSetPoints(unittest.TestCase):
 class TestArrangementAddAutomationPoint(unittest.TestCase):
     def setUp(self):
         self.song = _seed_song_with_track()
-        # Track precisa de create_or_get_automation_envelope.
+        # Track needs create_or_get_automation_envelope.
         track = self.song.tracks[0]
         track.create_or_get_automation_envelope = lambda p: FakeEnvelope()
         self.ctrl = FakeCtrl(self.song)
@@ -270,7 +270,7 @@ class TestListenerManagerExpansion(unittest.TestCase):
     def setUp(self):
         self.events = []
         self.song = _seed_song_with_track()
-        # Adiciona métodos add_/remove_ para name/mute/solo + volume + clip
+        # Add add_/remove_ methods for name/mute/solo + volume + clip
         self._registered = {}
 
         def mock_setter(obj, prop):
@@ -297,13 +297,13 @@ class TestListenerManagerExpansion(unittest.TestCase):
         # mixer.volume.value listener
         mock_setter(track.mixer_device.volume, "value")
 
-        # Cria 1 clip e adiciona name/is_playing listeners
+        # Create 1 clip and add name/is_playing listeners
         track.clip_slots[0].clip.__class__ = type(
             "ClipWithListeners",
             (track.clip_slots[0].clip.__class__,),
             {},
         )
-        # Skip clip listener test (FakeClip não tem add_name_listener default).
+        # Skip clip listener test (FakeClip has no add_name_listener default).
         self.ctrl = FakeCtrl(self.song)
         self.mgr = ListenerManager(
             self.ctrl, broadcast=lambda m, p: self.events.append((m, p))
@@ -312,7 +312,7 @@ class TestListenerManagerExpansion(unittest.TestCase):
     def test_setup_registers_track_listeners(self):
         self.mgr.setup()
         # Pelo menos 5 listeners: tempo, is_playing, track.name, track.mute, track.solo
-        # Volume listener é separado.
+        # Volume listener is separate.
         registered_props = [r[1] for r in self.mgr._registered]
         self.assertIn("tempo", registered_props)
         self.assertIn("name", registered_props)

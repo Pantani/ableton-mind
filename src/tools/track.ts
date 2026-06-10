@@ -1,14 +1,14 @@
 /**
- * Tools MCP do domínio Track.
+ * MCP tools for the Track domain.
  *
- * - `track_list` (read-only) — coleções separadas conforme ADR-0002.
- *   INVARIANTE (TD-006): em runtime real `master_track` está sempre presente;
- *   `null` só aparece em testes com FakeSong sem master configurado.
- *   LLM pode assumir non-null; defensiva apenas para tooling de teste.
- * - `track_create` — cria audio ou MIDI track. NÃO idempotente.
- * - `track_upsert` — cria só se name=X ainda não existe. Idempotente.
- * - `track_set_name` — renomeia. Idempotente.
- * - `track_set_volume` — volume 0..1 normalized (ADR-0004). Retorna also _db.
+ * - `track_list` (read-only) — separate collections per ADR-0002.
+ *   INVARIANT (TD-006): in real runtime `master_track` is always present;
+ *   `null` only appears in tests with FakeSong without master configured.
+ *   LLM can assume non-null; defensive only for test tooling.
+ * - `track_create` — creates audio or MIDI track. NOT idempotent.
+ * - `track_upsert` — creates only if name=X doesn't already exist. Idempotent.
+ * - `track_set_name` — renames. Idempotent.
+ * - `track_set_volume` — volume 0..1 normalized (ADR-0004). Also returns _db.
  */
 
 import { z } from "zod";
@@ -123,7 +123,7 @@ export const trackCreateTool = defineTool({
       name: input.name,
     });
     const parsed = trackCreateBridgeResult.parse(raw);
-    // Verifica: tipo da track criada bate com o intent.
+    // Verify: type of created track matches the intent.
     const expectedMidi = input.type === "midi";
     const v = verifyField(expectedMidi, parsed.track.is_midi, { field: "is_midi" });
     return { ok: true as const, verified: v.ok, ...parsed, diff: v.diff };

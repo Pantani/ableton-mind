@@ -1,10 +1,10 @@
 # ableton-mind MCP server — Docker image
 #
-# Use case primário: rodar o **server MCP** (TypeScript) num container que
-# conecta no bridge Python rodando NO HOST (Ableton Live precisa estar local).
+# Primary use case: run the TypeScript MCP server in a container that connects
+# to the Python bridge running on the host (Ableton Live must be local).
 #
-# A imagem NÃO contém Ableton Live nem o Remote Script — esses ficam no host.
-# Container só roda Node 20 + dist/.
+# The image does not include Ableton Live or the Remote Script; those stay on
+# the host. The container only runs Node 20 + dist/.
 #
 # Build:    docker build -t ableton-mind .
 # Run:      docker run --rm -i --network host \
@@ -15,7 +15,7 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy manifests primeiro para cache de deps.
+# Copy manifests first for dependency cache.
 COPY package.json package-lock.json* tsup.config.ts tsconfig.json ./
 RUN npm install --no-audit --no-fund
 
@@ -30,7 +30,7 @@ RUN npm run build
 FROM node:20-alpine
 WORKDIR /app
 
-# Não precisa de deps de build no runtime.
+# Build dependencies are not needed at runtime.
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/recipes ./recipes
 COPY --from=builder /app/src/knowledge ./knowledge

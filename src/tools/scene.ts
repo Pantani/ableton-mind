@@ -1,8 +1,8 @@
 /**
- * Tools MCP do domínio Scene.
+ * MCP tools for the Scene domain.
  *
- * `scene_fire` — dispara uma cena por index. Útil para arrangement-style
- * playback no Session view (cena toca tudo na sua linha).
+ * `scene_fire` — fires a scene by index. Useful for arrangement-style
+ * playback in Session view (scene plays everything on its row).
  */
 
 import { z } from "zod";
@@ -45,8 +45,8 @@ export const sceneFireTool = defineTool({
   handler: async (input, ctx) => {
     const raw = await ctx.bridge.call("scene.fire", { index: input.index });
     const parsed = bridgeResultSchema.parse(raw);
-    // scene.fire's effect (clips começam a tocar) é async — não dá pra verificar
-    // de forma síncrona. Marca como UNVERIFIABLE.
+    // scene.fire's effect (clips start playing) is async — can't be verified
+    // synchronously. Marked as UNVERIFIABLE.
     return { ok: true as const, verified: UNVERIFIABLE.ok, ...parsed, diff: UNVERIFIABLE.diff };
   },
 });

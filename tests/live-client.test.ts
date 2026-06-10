@@ -1,14 +1,14 @@
 /**
- * Testes do TcpJsonRpcClient contra um mini-server TCP NDJSON em loopback.
+ * Tests for TcpJsonRpcClient against a mini NDJSON TCP server on loopback.
  *
- * Cobre:
+ * Covers:
  * - connect + system.hello + close.
- * - call() request/response com correlação por `id`.
- * - call() recebendo error e mapeando para JsonRpcRemoteError.
- * - notification chega via evento.
- * - timeout estoura JsonRpcTransportError.
+ * - call() request/response correlated by `id`.
+ * - call() receiving error and mapping to JsonRpcRemoteError.
+ * - notification arrives via event.
+ * - timeout fires JsonRpcTransportError.
  *
- * Não toca Live. Não usa rede real além do loopback.
+ * Doesn't touch Live. Uses no real network beyond loopback.
  */
 
 import { type AddressInfo, type Server, type Socket, createServer } from "node:net";
@@ -25,7 +25,7 @@ interface MockServer {
   server: Server;
   port: number;
   sockets: Set<Socket>;
-  /** Encaminha cada linha recebida para esse handler. */
+  /** Forwards each received line to this handler. */
   onLine: (line: string, sock: Socket) => void;
   send: (sock: Socket, payload: object) => void;
   close: () => Promise<void>;

@@ -1,27 +1,27 @@
-# QA Report — Cycle 21 — TD-004 SMOKE REAL ✅
+# QA Report — Cycle 21 — TD-004 REAL SMOKE ✅
 
-**Data:** 2026-06-09
-**Veredito:** **PASS — TD-004 FECHADO contra Ableton Live 12.4.1 rodando**
+**Date:** 2026-06-09
+**Verdict:** **PASS — TD-004 CLOSED against running Ableton Live 12.4.1**
 
 ## Executive summary
 
-Smoke test real contra Live 12.4.1 macOS executado. **Todas as 8 chamadas RPC passaram**, incluindo:
+Real smoke test against Live 12.4.1 macOS executed. **All 8 RPC calls passed**, including:
 - handshake `system.hello`
 - read-only `system.ping`, `session.get_info`, `track.list`
 - mutations `transport.play`, `transport.stop`, `transport.set_tempo`, `track.set_name`
 - **6 listener notifications** (`event.transport_is_playing_changed` × 2, `event.transport_tempo_changed` × 2, `event.track_name_changed` × 2)
 
-**Phase 0 fechada oficialmente. Sistema pronto para tag `v0.1.0-rc.1`.**
+**Phase 0 officially closed. System ready for tag `v0.1.0-rc.1`.**
 
 ## Setup
 
-1. ✅ Symlink Remote Script: `~/Music/Ableton/User Library/Remote Scripts/AbletonMind → repo/live/AbletonMind`.
-2. ✅ Live reiniciado (Cmd+Q + reopen).
+1. ✅ Remote Script symlink: `~/Music/Ableton/User Library/Remote Scripts/AbletonMind → repo/live/AbletonMind`.
+2. ✅ Live restarted (Cmd+Q + reopen).
 3. ✅ Live → Preferences → Link/Tempo/MIDI → Control Surface = **AbletonMind**.
-4. ✅ Live carregou Remote Script (sem traceback no Log.txt).
-5. ✅ Porta TCP 9876 LISTEN (Live PID 63434).
+4. ✅ Live loaded the Remote Script (no traceback in Log.txt).
+5. ✅ TCP port 9876 LISTEN (Live PID 63434).
 
-## Smoke calls executados
+## Executed smoke calls
 
 ### Handshake
 
@@ -33,7 +33,7 @@ Smoke test real contra Live 12.4.1 macOS executado. **Todas as 8 chamadas RPC pa
     "protocol_version":"0.1"}}
 ```
 
-**Nota:** `version: "0.0.1"` é stub do bridge (esperado 0.0.20). `live_version: "0.0.0"` também stub. **Bugs descobertos** — TD-046, TD-047.
+**Note:** `version: "0.0.1"` is a bridge stub (expected 0.0.20). `live_version: "0.0.0"` also a stub. **Bugs discovered** — TD-046, TD-047.
 
 ### Ping
 
@@ -49,7 +49,7 @@ Smoke test real contra Live 12.4.1 macOS executado. **Todas as 8 chamadas RPC pa
    song_length:232, root_note:0, scale_name:"Major", time_signature:{numerator:4,denominator:4}}
 ```
 
-LOM acesso real ✅.
+Real LOM access ✅.
 
 ### transport.play (from_beginning:true)
 
@@ -58,18 +58,18 @@ LOM acesso real ✅.
 + NOTIFICATION: event.transport_is_playing_changed {value:true, previous:false, ts:1781037448794}
 ```
 
-**Race documentada:** `is_playing: false` no return imediato é race read-after-write da LiveAPI. Documentado em Cycle 8: `playTool` marcado `UNVERIFIABLE` em `src/tools/transport.ts`. Notification confirma realidade.
+**Documented race:** `is_playing: false` on the immediate return is a LiveAPI read-after-write race. Documented in Cycle 8: `playTool` marked `UNVERIFIABLE` in `src/tools/transport.ts`. The notification confirms reality.
 
 Phase 2 listener pipeline ✅.
 
 ### transport.stop
 
 ```
-+ NOTIFICATION: event.transport_is_playing_changed {value:false, previous:true} (chega antes do reply)
++ NOTIFICATION: event.transport_is_playing_changed {value:false, previous:true} (arrives before reply)
 ← {"changed":true, "is_playing":true, "current_song_time":0.0}
 ```
 
-Idempotência idem play (race). Notification correta.
+Idempotency same as play (race). Correct notification.
 
 ### transport.set_tempo
 
@@ -83,7 +83,7 @@ Idempotência idem play (race). Notification correta.
 + NOTIFICATION: event.transport_tempo_changed {value:120, previous:126}
 ```
 
-Verify field PASS — `after === intent`. Live voltou ao tempo original.
+Verify field PASS — `after === intent`. Live returned to original tempo.
 
 ### track.list (ADR-0002 shape)
 
@@ -102,7 +102,7 @@ Verify field PASS — `after === intent`. Live voltou ao tempo original.
    total: 7}
 ```
 
-ADR-0002 shape EXATA. Verifica que TD-002 (indexing negativos) está corretamente eliminado.
+EXACT ADR-0002 shape. Verifies that TD-002 (negative indexes) is correctly eliminated.
 
 ### track.set_name (verify roundtrip)
 
@@ -116,63 +116,63 @@ ADR-0002 shape EXATA. Verifica que TD-002 (indexing negativos) está corretament
 + NOTIFICATION: event.track_name_changed {value:"1-MIDI", previous:"Drums", track_index:0}
 ```
 
-Verify loop PASS (after === intent). Listener inclui `track_index` ✅. Live state restaurado.
+Verify loop PASS (after === intent). The listener includes `track_index` ✅. Live state restored.
 
-## Bugs descobertos no smoke real — fechados em Cycle 22
+## Bugs discovered in real smoke — closed in Cycle 22
 
-### TD-046 — `system.hello` retorna `version: "0.0.1"` hardcoded — ✅ FECHADO
+### TD-046 — `system.hello` returns `version: "0.0.1"` hardcoded — ✅ CLOSED
 
-Fix: `_read_pkg_version()` lê `version` de `package.json` no module load. Cache em `BRIDGE_VERSION` constant.
+Fix: `_read_pkg_version()` reads `version` from `package.json` on module load. Cache in the `BRIDGE_VERSION` constant.
 
-**Verificação pós-fix (Live recarregado):**
+**Post-fix verification (Live reloaded):**
 ```
 → system.hello
 ← {"version": "0.0.21", ...}
 ```
-✓ Confirmado live em 2026-06-09.
+✓ Confirmed live on 2026-06-09.
 
-### TD-047 — `system.hello` retorna `live_version: "0.0.0"` — ✅ FECHADO
+### TD-047 — `system.hello` returns `live_version: "0.0.0"` — ✅ CLOSED
 
-Fix: `_live_version()` tenta 3 paths: `get_major_version()/get_minor_version()/get_bugfix_version()` (Live 11+), `get_major_minor_patch_version()` (tupla), `get_version_string()` (fallback). Path 1 funcionou em Live 12.4.1.
+Fix: `_live_version()` tries 3 paths: `get_major_version()/get_minor_version()/get_bugfix_version()` (Live 11+), `get_major_minor_patch_version()` (tuple), `get_version_string()` (fallback). Path 1 worked on Live 12.4.1.
 
-**Verificação pós-fix:**
+**Post-fix verification:**
 ```
 → system.hello
 ← {"live_version": "12.4.1", ...}
 ```
-✓ Confirmado live em 2026-06-09.
+✓ Confirmed live on 2026-06-09.
 
-## TDs fechados / abertos
+## Closed / open TDs
 
-| ID | Status pré-smoke | Status pós-smoke |
+| ID | Pre-smoke status | Post-smoke status |
 |---|---|---|
-| TD-004 | ⚠ medium aberto | ✅ FECHADO |
+| TD-004 | ⚠ medium open | ✅ CLOSED |
 
-Abertos agora:
-- TD-005 (npm sandbox — não testado)
-- TD-030 (Push hardware — não testado)
+Open now:
+- TD-005 (npm sandbox — not tested)
+- TD-030 (Push hardware — not tested)
 - TD-046 (version stub) ⚠ trivial
 - TD-047 (live_version stub) ⚠ trivial
 
-## Métricas
+## Metrics
 
-- **8 RPC calls executados** contra Live real.
-- **6 notifications** emitidas (Phase 2 confirmado).
-- **0 erros, 0 timeouts.**
-- **Latência observada:** ~5s entre request e response (dispatcher queue + schedule_message 50ms). Aceitável para uso humano; testar carga em Phase 9.
+- **8 RPC calls executed** against real Live.
+- **6 notifications** emitted (Phase 2 confirmed).
+- **0 errors, 0 timeouts.**
+- **Observed latency:** ~5s between request and response (dispatcher queue + schedule_message 50ms). Acceptable for human use; test load in Phase 9.
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 21.** TD-004 fechado contra Live 12.4.1 real.
+**PASS Cycle 21.** TD-004 closed against real Live 12.4.1.
 
-**Próximo:**
+**Next:**
 
 ```bash
 git checkout -b release/0.1.0-rc.1
-# bump version 0.1.0-rc.1
+# bump version to 0.1.0-rc.1
 git commit -m "release: v0.1.0-rc.1 (TD-004 smoke PASS)"
 git tag v0.1.0-rc.1
 git push origin main v0.1.0-rc.1
 ```
 
-→ release.yml automático: ghcr.io push + GitHub Release + .mcpb attached.
+→ automatic release.yml: ghcr.io push + GitHub Release + .mcpb attached.

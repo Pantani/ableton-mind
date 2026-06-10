@@ -1,11 +1,11 @@
 /**
  * Recipe loader (ADR-0007).
  *
- * Carrega JSONs estáticos embarcados de `recipes/` na raiz do projeto.
- * Phase 5: 1 recipe seed (`drums/tech-house-kick`). Phase 6+ adiciona dezenas
- * por categoria.
+ * Loads static JSONs embedded from `recipes/` at the project root.
+ * Phase 5: 1 seed recipe (`drums/tech-house-kick`). Phase 6+ adds dozens
+ * per category.
  *
- * O runner (`runner.ts`) substitui placeholders e dispatcha steps via bridge.
+ * The runner (`runner.ts`) substitutes placeholders and dispatches steps via the bridge.
  */
 
 import { readFile, readdir } from "node:fs/promises";
@@ -33,9 +33,9 @@ const inputDefSchema = z.object({
 });
 
 const stepSchema = z.object({
-  op: z.string().describe("JSON-RPC method, e.g. 'track.upsert' ou 'clip.add_notes'."),
+  op: z.string().describe("JSON-RPC method, e.g. 'track.upsert' or 'clip.add_notes'."),
   args: z.record(z.unknown()),
-  let: z.string().optional().describe("Bind result em variável para steps seguintes."),
+  let: z.string().optional().describe("Bind result to a variable for subsequent steps."),
 });
 
 export const recipeSchema = z.object({
@@ -89,7 +89,7 @@ async function readJsonRecipe(relPath: string): Promise<Recipe> {
   return recipeSchema.parse(JSON.parse(raw));
 }
 
-/** Lista recursivamente todos os .json em `recipes/`. */
+/** Recursively lists all .json files under `recipes/`. */
 export async function listRecipes(): Promise<Recipe[]> {
   const all: Recipe[] = [];
   const root = await recipesRoot();
@@ -103,7 +103,7 @@ export async function listRecipes(): Promise<Recipe[]> {
         try {
           all.push(await readJsonRecipe(next));
         } catch {
-          // recipe inválida — skip silenciosamente; loader não derruba.
+          // invalid recipe — skip silently; loader doesn't blow up.
         }
       }
     }
@@ -112,7 +112,7 @@ export async function listRecipes(): Promise<Recipe[]> {
   return all;
 }
 
-/** Carrega 1 recipe por id (`drums/tech-house-kick`). */
+/** Loads 1 recipe by id (`drums/tech-house-kick`). */
 export async function loadRecipe(id: string): Promise<Recipe> {
   return await readJsonRecipe(`${id}.json`);
 }

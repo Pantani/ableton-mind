@@ -1,22 +1,22 @@
 /**
  * MCP SDK internals adapter (TD-019).
  *
- * Centraliza TODO o acesso a propriedades não-públicas do
- * `@modelcontextprotocol/sdk`. Se a forma do SDK mudar entre versões
- * (1.x → 2.x), só este arquivo precisa atualizar.
+ * Centralizes ALL access to non-public properties of
+ * `@modelcontextprotocol/sdk`. If the SDK shape changes between versions
+ * (1.x → 2.x), only this file needs updating.
  *
- * Tudo que aqui acessa via cast deve ter um teste correspondente (vê
- * `tests/server-notifications.test.ts`) — assim quebra cedo se o SDK mudar.
+ * Everything that accesses via cast here must have a matching test (see
+ * `tests/server-notifications.test.ts`) — so it breaks early if the SDK changes.
  */
 
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 /**
- * Função que envia notification do MCP server para o cliente.
+ * Function that sends a notification from the MCP server to the client.
  *
- * Em `@modelcontextprotocol/sdk` 1.x o `McpServer` (facade) NÃO expõe
- * `sendNotification` no top level — está no underlying `Server` instance
- * acessível via `.server`. Encapsulamos esse cast aqui.
+ * In `@modelcontextprotocol/sdk` 1.x, `McpServer` (facade) does NOT expose
+ * `sendNotification` at the top level — it's on the underlying `Server` instance
+ * accessible via `.server`. We encapsulate that cast here.
  */
 export type ServerNotifier = (method: string, params: unknown) => Promise<void>;
 
@@ -27,9 +27,9 @@ interface ServerInternals {
 }
 
 /**
- * Devolve um notifier — função que recebe `(method, params)` e dispara a
- * notification MCP. Lança Error se o SDK não expõe o caminho esperado
- * (proteção contra incompat futura).
+ * Returns a notifier — function that receives `(method, params)` and fires the
+ * MCP notification. Throws Error if the SDK doesn't expose the expected path
+ * (protection against future incompatibility).
  */
 export function getServerNotifier(server: McpServer): ServerNotifier {
   const internals = server as unknown as ServerInternals;
@@ -44,7 +44,7 @@ export function getServerNotifier(server: McpServer): ServerNotifier {
   };
 }
 
-/** Lançado quando o internal do SDK não é o esperado. */
+/** Thrown when the SDK internal isn't what's expected. */
 export class SdkIncompatibilityError extends Error {
   constructor(message: string) {
     super(message);

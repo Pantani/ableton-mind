@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Bus compressor modelado no SSL Quad Bus. Ideal para mix bus, drum bus, mastering leve.",
+  "description": "Bus compressor modeled after the SSL Quad Bus. Ideal for mix bus, drum bus and light mastering.",
   "source": "curated (Cycle 9)",
   "completeness": "complete",
   "parameters": [

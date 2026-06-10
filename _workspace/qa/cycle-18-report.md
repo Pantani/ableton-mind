@@ -1,27 +1,27 @@
 # QA Report — Cycle 18
 
-**Data:** 2026-06-09
-**Veredito:** **PASS**
+**Date:** 2026-06-09
+**Verdict:** **PASS**
 
-## Resumo
+## Summary
 
-MCP Prompts subsystem entregue (5 seed prompts + registry + wiring SDK + `list_prompts` tool + DXT manifest atualizado). Versão 0.0.18. **Total tools MCP: 32** (era 31).
+MCP Prompts subsystem delivered (5 seed prompts + registry + SDK wiring + `list_prompts` tool + updated DXT manifest). Version 0.0.18. **Total MCP tools: 32** (was 31).
 
 ## Tech debt
 
 | ID | Status |
 |---|---|
-| TD-004 | 🟡 PENDENTE (usuário) — BLOQUEIA rc.1 |
-| TD-005 | 🟡 PENDENTE (sandbox) |
-| TD-030 | 🟡 PENDENTE (Push hardware) |
+| TD-004 | 🟡 PENDING (user) — BLOCKS rc.1 |
+| TD-005 | 🟡 PENDING (sandbox) |
+| TD-030 | 🟡 PENDING (Push hardware) |
 
-3 itens abertos, todos não-resolvíveis em sandbox. **Estado idêntico ao Cycle 17 — Cycle 18 foi expansão produtiva, sem alterar tech debt.**
+3 items open, all non-resolvable in sandbox. **Identical state to Cycle 17 — Cycle 18 was productive expansion without altering tech debt.**
 
 ## ADR-0010 — MCP Prompts
 
-Shape decidido: `{name, description, arguments, argsSchema, handler}`. Handler retorna `PromptResult { messages: [...] }` que vira primeira mensagem da conversação no cliente MCP.
+Shape decided: `{name, description, arguments, argsSchema, handler}`. Handler returns `PromptResult { messages: [...] }` that becomes the first conversation message on the MCP client.
 
-## Prompts entregues — 5 seeds
+## Prompts delivered — 5 seeds
 
 | Prompt | Args |
 |---|---|
@@ -31,44 +31,44 @@ Shape decidido: `{name, description, arguments, argsSchema, handler}`. Handler r
 | `sound_design_session` | synth, target, track_index? |
 | `process_vocal_take` | track_index, style? |
 
-Cada prompt renderiza orientação estruturada referenciando tools existentes (`apply_recipe`, `device_set_parameter`, `session_snapshot/diff`) e recipes disponíveis. Geometria de incentivo: LLM tende a usar verify loop + knowledge enrichment quando guiado.
+Each prompt renders structured guidance referencing existing tools (`apply_recipe`, `device_set_parameter`, `session_snapshot/diff`) and available recipes. Incentive geometry: the LLM tends to use the verify loop + knowledge enrichment when guided.
 
-## Tool nova: `list_prompts`
+## New tool: `list_prompts`
 
-Read-only. Fallback discovery para clientes que não expõem `prompts/list` nativamente. Devolve `{name, description, arguments}` × 5.
+Read-only. Discovery fallback for clients that do not expose `prompts/list` natively. Returns `{name, description, arguments}` × 5.
 
 ## Total MCP — Cycle 18 final
 
 - **32 tools** (31 + list_prompts).
-- **5 prompts** (subsystem novo).
-- **30 métodos JSON-RPC no bridge** (sem mudança — prompts são puramente TS).
-- **55 devices** (sem mudança).
-- **14 recipes** (sem mudança).
+- **5 prompts** (new subsystem).
+- **30 JSON-RPC methods in the bridge** (unchanged — prompts are purely TS).
+- **55 devices** (unchanged).
+- **14 recipes** (unchanged).
 
 ## DXT manifest
 
-`dxt/manifest.json` lista os 5 prompts. Claude Desktop pode renderizar menu /prompts pós-install via `.mcpb`.
+`dxt/manifest.json` lists the 5 prompts. Claude Desktop can render a /prompts menu post-install via `.mcpb`.
 
-## Versão: 0.0.18
+## Version: 0.0.18
 
 `package.json` + `dxt/manifest.json` + CHANGELOG sync.
 
 ## Warnings
 
-### W1 — Prompts não testados (TS unit tests)
-Patterns conhecidos — handlers são puros (sem efeito colateral). Próximo ciclo escreve `tests/prompts.test.ts` se houver demanda. TD-044 (baixa).
+### W1 — Prompts untested (TS unit tests)
+Known patterns — handlers are pure (no side effect). Next cycle writes `tests/prompts.test.ts` if there is demand. TD-044 (low).
 
-### W2 — Prompt arguments são todos `string?` no handler
-SDK MCP 1.x recebe args como `Record<string, string>`. Coerção numérica (tempo, bars) ficou no handler. Funciona. Sem ação.
+### W2 — Prompt arguments are all `string?` in the handler
+MCP SDK 1.x receives args as `Record<string, string>`. Numeric coercion (tempo, bars) stayed in the handler. Works. No action.
 
-### W3 — TD-004 segue bloqueando rc.1
-Estado inalterado.
+### W3 — TD-004 still blocks rc.1
+State unchanged.
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 18.** Sistema agora exibe as 3 primitivas MCP (tools + prompts; resources Phase 8). Próximo:
+**PASS Cycle 18.** The system now exposes 2 of 3 MCP primitives (tools + prompts; resources Phase 8). Next:
 
 Cycle 19 / Release Window:
-- **TD-004 smoke real** ← BLOQUEIO.
-- TD-044 prompts tests (opcional).
-- Tag `v0.1.0-rc.1` (após smoke PASS).
+- **TD-004 real smoke** ← BLOCKER.
+- TD-044 prompts tests (optional).
+- Tag `v0.1.0-rc.1` (after smoke PASS).

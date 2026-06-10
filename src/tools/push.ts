@@ -1,8 +1,8 @@
 /**
  * Tools Phase 6 — Push 2/3 LED/pad control (ADR-0008).
  *
- * Bridge handler envia Sysex MIDI. Em headless ou sem Push detectado,
- * `-32000` com `detected: false`.
+ * Bridge handler sends MIDI Sysex. In headless or without Push detected,
+ * `-32000` with `detected: false`.
  */
 
 import { z } from "zod";

@@ -1,12 +1,13 @@
 """
-Handlers Phase 5 — session snapshot, session diff, render preview (stub).
+Phase 5 handlers — session snapshot, session diff, render preview (stub).
 
-`session.snapshot` é a base do verify loop "completo": LLM tira snapshot antes
-da mutação, depois chama `session.diff` com o snapshot anterior para descobrir
-o que realmente mudou no Live.
+`session.snapshot` is the base of the "full" verify loop: LLM takes a snapshot
+before the mutation, then calls `session.diff` with the previous snapshot to
+discover what actually changed in Live.
 
-`render.preview` Phase 5 só retorna snapshot (modo "snapshot"). Modo "bounce"
-fica para Cycle 10 — requer freeze + export, que tocam disco e levam segundos.
+`render.preview` in Phase 5 returns only a snapshot (mode "snapshot"). Mode
+"bounce" is deferred to Cycle 10 — it requires freeze + export, which touch
+disk and take seconds.
 """
 import time as _time
 
@@ -85,8 +86,8 @@ class SessionSnapshotHandler(Handler):
 
 
 def _diff_dicts(prev: dict, curr: dict, path: str = "") -> list:
-    """Diff recursivo simples — só primitivos + dicts + lists.
-    Cada change: { path, before, after, kind: "added" | "removed" | "changed" }."""
+    """Simple recursive diff — only primitives + dicts + lists.
+    Each change: { path, before, after, kind: "added" | "removed" | "changed" }."""
     changes: list = []
     if not isinstance(prev, dict) or not isinstance(curr, dict):
         if prev != curr:
@@ -118,7 +119,7 @@ class SessionDiffHandler(Handler):
         current = SessionSnapshotHandler(self.ctrl).execute(
             SessionSnapshotInput(include_clips=True, include_devices=True)
         )
-        # path ignora `ts` que sempre muda
+        # path ignores `ts` which always changes
         prev_no_ts = {k: v for k, v in params.previous.items() if k != "ts"}
         curr_no_ts = {k: v for k, v in current.items() if k != "ts"}
         changes = _diff_dicts(prev_no_ts, curr_no_ts)
@@ -132,8 +133,8 @@ class SessionDiffHandler(Handler):
 
 @register("render.preview")
 class RenderPreviewHandler(Handler):
-    """Phase 5 stub. `mode: snapshot` devolve session.snapshot enriquecido.
-    `mode: bounce` levanta NOT_IMPLEMENTED até Cycle 10."""
+    """Phase 5 stub. `mode: snapshot` returns enriched session.snapshot.
+    `mode: bounce` raises NOT_IMPLEMENTED until Cycle 10."""
 
     INPUT = RenderPreviewInput
 

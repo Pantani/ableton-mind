@@ -7,18 +7,18 @@
  *   2. system.ping
  *   3. transport.play  (handler responds even without Live via headless dispatch)
  *
- * NÃO precisa de Live — testa o cabo (NDJSON framing, JSON-RPC envelope,
- * dispatcher) que mocks de socket não exercitam.
+ * Does NOT require Live — tests the wire (NDJSON framing, JSON-RPC envelope,
+ * dispatcher) that socket mocks don't exercise.
  *
- * **OPT-IN.** Skipped unless `RUN_WIRE_SMOKE=1` in env, porque:
- *   - Requer Python 3 instalado (não garantido em CI default).
- *   - Aloca porta efêmera, levanta subprocess — ruidoso.
+ * **OPT-IN.** Skipped unless `RUN_WIRE_SMOKE=1` in env, because:
+ *   - Requires Python 3 installed (not guaranteed in default CI).
+ *   - Allocates ephemeral port, spawns subprocess — noisy.
  *
- * Para rodar local:
+ * To run locally:
  *   RUN_WIRE_SMOKE=1 npm test -- wire-smoke
  *
- * Em CI Phase 7+ (matriz Python já presente em ci.yml), basta setar
- * `RUN_WIRE_SMOKE: "1"` no env do job.
+ * In Phase 7+ CI (Python matrix already in ci.yml), just set
+ * `RUN_WIRE_SMOKE: "1"` in the job env.
  */
 
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
@@ -29,7 +29,7 @@ import { TcpJsonRpcClient, performHandshake } from "../src/live-client/index.js"
 
 const ENABLED = process.env.RUN_WIRE_SMOKE === "1";
 
-/** Acha uma porta livre. */
+/** Finds a free port. */
 function pickPort(): Promise<number> {
   return new Promise((resolve, reject) => {
     const sock = net.createServer();
@@ -47,7 +47,7 @@ function pickPort(): Promise<number> {
   });
 }
 
-/** Espera até a porta estar aceitando conexões (timeout 5s). */
+/** Waits until the port is accepting connections (5s timeout). */
 async function waitForPort(port: number, timeoutMs = 5000): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   let lastErr: Error | null = null;
@@ -123,7 +123,7 @@ describe.skipIf(!ENABLED)("wire-smoke (RUN_WIRE_SMOKE=1)", () => {
   });
 
   it("track.list returns -32000 (no Live song)", async () => {
-    // Em headless sem ControlSurface, `self.song` é None → handler levanta LIVE_NOT_RUNNING.
+    // In headless mode without ControlSurface, `self.song` is None, so the handler raises LIVE_NOT_RUNNING.
     await expect(
       client.call("track.list", { include_master: false, include_returns: false }),
     ).rejects.toMatchObject({ name: "JsonRpcRemoteError", code: -32000 });
@@ -133,6 +133,6 @@ describe.skipIf(!ENABLED)("wire-smoke (RUN_WIRE_SMOKE=1)", () => {
 describe("wire-smoke (disabled by default)", () => {
   it.skipIf(ENABLED)("note about enabling", () => {
     expect(true).toBe(true);
-    // Documento: para rodar real wire smoke local, `RUN_WIRE_SMOKE=1 npm test`.
+    // Docs: to run a real local wire smoke, use `RUN_WIRE_SMOKE=1 npm test`.
   });
 });

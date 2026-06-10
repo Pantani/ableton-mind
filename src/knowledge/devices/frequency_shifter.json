@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Frequency shifter + ring modulator. Modes (Shift / Ring) com drive, spread e fine tuning.",
+  "description": "Frequency shifter + ring modulator. Modes (Shift / Ring) with drive, spread and fine tuning.",
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [

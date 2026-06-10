@@ -1,54 +1,54 @@
 # Cycle 9 — 2026-06-09
 
-**Fase PLAN.md:** Phase 5 inicia (preview/snapshot/diff). Recipes (Trilha C) estreia.
+**PLAN.md Phase:** Phase 5 begins (preview/snapshot/diff). Recipes (Track C) debuts.
 
-**Objetivo:** TD-024/025, +5 devices, snapshot/diff handlers, recipe loader + 1ª recipe + `apply_recipe` tool, ADR-0007.
+**Goal:** TD-024/025, +5 devices, snapshot/diff handlers, recipe loader + 1st recipe + `apply_recipe` tool, ADR-0007.
 
-## Estratégia
+## Strategy
 
 Inline. Auto mode.
 
-## Atribuições
+## Assignments
 
-### Trilha A — Bridge
-1. TD-025: helper `live_api_with_listeners()` em `_fakes/` registra add_/remove_<prop>_listener para múltiplas props.
+### Track A — Bridge
+1. TD-025: `live_api_with_listeners()` helper in `_fakes/` registers add_/remove_<prop>_listener for multiple props.
 2. Phase 5 handlers:
    - `session.snapshot` — read deep state (tracks, clips meta, devices, tempo, transport).
-   - `session.diff` — recebe snapshot anterior + lê atual + devolve diff.
-   - `render.preview` — STUB (LiveAPI não tem render-to-file síncrono; usar `freeze_track` ou flatten; Cycle 10 vai integrar com export).
+   - `session.diff` — receives previous snapshot + reads current + returns diff.
+   - `render.preview` — STUB (LiveAPI has no synchronous render-to-file; use `freeze_track` or flatten; Cycle 10 will integrate with export).
 
-### Trilha A — Server TS
+### Track A — TS Server
 1. 3 tools: `session_snapshot`, `session_diff`, `render_preview`.
-2. Recipe trilha: `src/recipes/index.ts` loader, `src/tools/recipe.ts` com `apply_recipe`, `list_recipes`.
+2. Recipe track: `src/recipes/index.ts` loader, `src/tools/recipe.ts` with `apply_recipe`, `list_recipes`.
 
-### Trilha B — Knowledge
-1. TD-024: Sampler completo (~80 params via curadoria).
-2. +4 devices: Limiter, Glue Compressor, Bass, Drift (Hybrid Reverb fica Cycle 10 — é complexo).
+### Track B — Knowledge
+1. TD-024: complete Sampler (~80 params via curation).
+2. +4 devices: Limiter, Glue Compressor, Bass, Drift (Hybrid Reverb deferred to Cycle 10 — it is complex).
 
-### Trilha C — Recipes (estreia)
-1. `recipes/drums/tech-house-kick.json` — recipe seed: cria MIDI track "Kick", adiciona Drum Cell, set params (Tune low, Decay short, Saturation), insere notes 4-to-floor.
-2. ADR-0007 — formato canônico das recipes.
+### Track C — Recipes (debut)
+1. `recipes/drums/tech-house-kick.json` — seed recipe: creates a MIDI track "Kick", adds Drum Cell, sets params (low Tune, short Decay, Saturation), inserts 4-to-floor notes.
+2. ADR-0007 — canonical recipe format.
 
-## Contratos
+## Contracts
 
-`session.snapshot` → `{ tempo, is_playing, time_signature, tracks: [...], total }`. Não inclui audio.
+`session.snapshot` → `{ tempo, is_playing, time_signature, tracks: [...], total }`. Does not include audio.
 
 `session.diff` → `{ from_ts, to_ts, changes: [...] }`. Each change: `{ path, before, after, kind }`.
 
-`render.preview` Phase 5 stub: `{ mode: "snapshot" }` → retorna `session.snapshot` enriquecido. Phase 5 real: `{ mode: "bounce", bars }` → `freeze_track` + path do .wav.
+`render.preview` Phase 5 stub: `{ mode: "snapshot" }` → returns enriched `session.snapshot`. Phase 5 real: `{ mode: "bounce", bars }` → `freeze_track` + path of the .wav.
 
 `apply_recipe` (ADR-0007 simplified):
-- request: `{ recipe_id: string, params?: dict }` (ou `recipe: object`).
+- request: `{ recipe_id: string, params?: dict }` (or `recipe: object`).
 - response: `{ applied: true, steps: number, recipe_id }`.
 
-## Critérios de gate
+## Gate criteria
 
-- [ ] TD-024/025 fechados.
+- [ ] TD-024/025 closed.
 - [ ] Phase 5: 3 handlers + 3 tools.
 - [ ] Recipe loader + apply_recipe + 1 recipe.
 - [ ] 5 devices (19 total).
 - [ ] ADR-0007.
 
-## Próximo
+## Next
 
-Cycle 10: smoke real, render_preview real (freeze→export), screenshot_live, +5 devices, +5 recipes.
+Cycle 10: real smoke, real render_preview (freeze→export), screenshot_live, +5 devices, +5 recipes.

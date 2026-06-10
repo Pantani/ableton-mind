@@ -4,39 +4,100 @@
   "name": "Sidechain Rack",
   "category": "racks",
   "version": "0.1",
-  "description": "Compressor com sidechain do kick. Aplica em qualquer track — carrega Compressor com sidechain on e threshold pumping-ready.",
-  "tags": ["sidechain", "pumping", "kick-duck", "house", "techno"],
+  "description": "Compressor with kick sidechain. Applies to any track; loads Compressor with sidechain on and pumping-ready threshold.",
+  "tags": [
+    "sidechain",
+    "pumping",
+    "kick-duck",
+    "house",
+    "techno"
+  ],
   "inputs": {
-    "track_index": { "type": "int", "default": 0, "description": "Track destino onde o sidechain compressor entra." },
-    "threshold": { "type": "number", "default": -20, "min": -60, "max": 0 },
-    "ratio": { "type": "number", "default": 8, "min": 1, "max": 20 },
-    "attack_ms": { "type": "number", "default": 5, "min": 0.1, "max": 100 },
-    "release_ms": { "type": "number", "default": 150, "min": 10, "max": 1000 }
+    "track_index": {
+      "type": "int",
+      "default": 0,
+      "description": "Track destino onde o sidechain compressor entra."
+    },
+    "threshold": {
+      "type": "number",
+      "default": -20,
+      "min": -60,
+      "max": 0
+    },
+    "ratio": {
+      "type": "number",
+      "default": 8,
+      "min": 1,
+      "max": 20
+    },
+    "attack_ms": {
+      "type": "number",
+      "default": 5,
+      "min": 0.1,
+      "max": 100
+    },
+    "release_ms": {
+      "type": "number",
+      "default": 150,
+      "min": 10,
+      "max": 1000
+    }
   },
   "steps": [
     {
       "op": "browser.load_item",
-      "args": { "path": ["audio_effects", "Compressor", "Init"] }
+      "args": {
+        "path": [
+          "audio_effects",
+          "Compressor",
+          "Init"
+        ]
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Sidechain On", "value": 1 }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "Sidechain On",
+        "value": 1
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Threshold", "value": "{{threshold}}" }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "Threshold",
+        "value": "{{threshold}}"
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Ratio", "value": "{{ratio}}" }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "Ratio",
+        "value": "{{ratio}}"
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Attack", "value": "{{attack_ms}}" }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "Attack",
+        "value": "{{attack_ms}}"
+      }
     },
     {
       "op": "device.set_parameter",
-      "args": { "track_index": "{{track_index}}", "device_index": 0, "parameter_name": "Release", "value": "{{release_ms}}" }
+      "args": {
+        "track_index": "{{track_index}}",
+        "device_index": 0,
+        "parameter_name": "Release",
+        "value": "{{release_ms}}"
+      }
     }
   ]
 }

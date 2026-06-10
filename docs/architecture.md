@@ -1,170 +1,111 @@
-# Arquitetura — ableton-mind
+# Architecture
 
-> Documento da Fase 0 (Spike). Detalhe técnico mínimo para sustentar o contrato JSON-RPC, o cliente TS e o Remote Script Python. Fases seguintes expandem esta página.
+This page describes the technical split between the MCP server, the Live Remote Script and the embedded knowledge/recipe layer.
 
-## 1. Visão geral em 3 camadas
+## 1. Three Layers
 
 ```
-  ┌──────────────────────────────┐
-  │  LLM / IDE                   │
-  │  (Claude Desktop, Cursor,    │
-  │   Continue, ChatGPT etc.)    │
-  └─────────────┬────────────────┘
-                │  MCP stdio (JSON-RPC sobre stdin/stdout)
-                ▼
-  ┌──────────────────────────────┐
-  │  ableton-mind server         │   src/
-  │  TypeScript + Node 20+       │   - server/  (MCP plumbing)
-  │  @modelcontextprotocol/sdk   │   - tools/   (~180 planejadas)
-  │  Zod validation              │   - live-client/ (cliente TCP)
-  │  Knowledge + Recipes loader  │   - knowledge/ + recipes/
-  └─────────────┬────────────────┘
-                │  TCP NDJSON JSON-RPC 2.0
-                │  127.0.0.1:9876 (default)
-                ▼
-  ┌──────────────────────────────┐
-  │  AbletonMind Remote Script   │   live/AbletonMind/
-  │  Python 3.11 (Live 12)       │   - bridge.py (TCP server)
-  │  ou Python 3.7 (Live 11)     │   - handlers/{transport,track,…}
-  │  rodando DENTRO do Live      │   - listeners.py
-  │  Acesso direto à LiveAPI     │   - transactions.py
-  └─────────────┬────────────────┘
-                │  Live Object Model (LOM) — Python
-                ▼
-  ┌──────────────────────────────┐
-  │  Ableton Live 11 / 12        │
-  │  Song / Tracks / Clips / …   │
-  └──────────────────────────────┘
+LLM / IDE
+  -> MCP stdio (JSON-RPC over stdin/stdout)
+ableton-mind server
+  -> TCP NDJSON JSON-RPC 2.0 on 127.0.0.1:9876
+AbletonMind Remote Script
+  -> Live Object Model inside Ableton Live
 ```
 
-Detalhes:
-
-| Camada | Roda onde | Linguagem | Stack principal |
+| Layer | Runs where | Language | Main stack |
 |---|---|---|---|
-| MCP Server | Processo separado (lançado pelo cliente LLM) | TypeScript | `@modelcontextprotocol/sdk`, `zod`, `tsup`, `vitest`, `biome` |
-| Bridge (Remote Script) | DENTRO do Live, como Control Surface | Python 3.7/3.11 | stdlib + LiveAPI (`Live.Application.get_application()`) |
-| Knowledge | JSON estático embarcado no pacote npm | — | (sem runtime) |
+| MCP server | Separate process launched by the MCP client | TypeScript | `@modelcontextprotocol/sdk`, `zod`, `tsup`, `vitest`, `biome` |
+| Bridge / Remote Script | Inside Live as a Control Surface | Python 3.7/3.11 | stdlib + LiveAPI |
+| Knowledge + recipes | Embedded static package data | JSON | Zod-validated loaders |
 
-## 2. Por que esta divisão
+## 2. Why This Split
 
-1. **TS no server** dá tipagem Zod + ecossistema MCP mais ativo + paridade com `tdmcp`.
-2. **Python no bridge** é obrigatório: Remote Script só roda em Python, e LiveAPI só vive dentro do processo do Live.
-3. **TCP entre eles** isola crashes: bug no server não derruba o Live. JSON-RPC 2.0 traz tipagem, batching e erros estruturados que OSC raw não dá.
+1. TypeScript gives the server strong Zod validation and the most mature MCP SDK path.
+2. Python is required for the bridge because Remote Scripts and LiveAPI run inside Live.
+3. TCP isolates failures: a server bug should not crash Live. JSON-RPC gives structured requests, responses, notifications and errors.
 
-## 3. Protocolo bridge ↔ server
+## 3. Bridge Protocol
 
-Definido em [`_workspace/contracts/jsonrpc.md`](../_workspace/contracts/jsonrpc.md). Resumo:
+The canonical contract is in [`_workspace/contracts/jsonrpc.md`](../_workspace/contracts/jsonrpc.md).
 
-- **Transport:** TCP NDJSON. Cada mensagem é UMA linha JSON terminada em `\n`. UTF-8.
-- **Envelope:** JSON-RPC 2.0 — `{ jsonrpc, id, method, params }` request; `{ jsonrpc, id, result | error }` response; notification omite `id`.
-- **Método naming:** `{domain}.{verb}`. Phase 0 expõe `system.hello`, `system.ping`, `transport.{play,stop,set_tempo}`, `track.list`, `clip.create_midi`.
-- **Erros custom:** faixa `-32000..-32099`. `error.data` sempre carrega contexto acionável.
-- **Idempotência obrigatória:** toda mutação lê estado, compara, retorna `{ changed: bool, before?, after? }`.
-- **Transações:** mutações compostas envolvem `Song.begin_undo_step()` / `end_undo_step()` no lado Python para que o undo do Live seja unitário.
+- Transport: TCP NDJSON. Each message is one UTF-8 JSON line ending in `\n`.
+- Envelope: JSON-RPC 2.0 request, response or notification.
+- Method names: `{domain}.{verb}`, for example `transport.play` and `track.list`.
+- Custom errors: `-32000..-32099`, with actionable `error.data`.
+- Mutations are idempotent and return read-back data such as `{ changed, before, after }`.
+- Composite mutations use Live undo steps so Cmd+Z is unitary.
 
-### 3.1 Handshake
+## 4. Handshake
 
-Primeira mensagem do server após `connect()`:
+The server sends `system.hello` immediately after connecting:
 
-```jsonc
-→ { "jsonrpc": "2.0", "id": 1, "method": "system.hello",
-    "params": { "client": "ableton-mind/ts", "version": "0.0.1" } }
-← { "jsonrpc": "2.0", "id": 1, "result": {
-    "bridge": "ableton-mind/python", "version": "0.0.1",
-    "live_version": "12.0.10", "python_version": "3.11.6",
-    "protocol_version": "0.1" } }
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "system.hello",
+  "params": { "client": "ableton-mind/ts", "version": "0.0.21" }
+}
 ```
 
-Versões do protocolo são bumpadas SemVer-style nos contratos.
+The bridge responds with bridge version, Live version, Python version and protocol version.
 
-## 4. Fluxo de uma chamada `play` (sequência Phase 0)
+## 5. Tool Call Flow
 
-```
-LLM             MCP Server             TCP Client            Bridge (Python)         Live (LOM)
- │                  │                      │                      │                      │
- │ tools/call: play │                      │                      │                      │
- ├─────────────────▶│                      │                      │                      │
- │                  │ Zod validate input   │                      │                      │
- │                  │ ─┐                   │                      │                      │
- │                  │ ◀┘                   │                      │                      │
- │                  │ bridge.call(         │                      │                      │
- │                  │   "transport.play",  │                      │                      │
- │                  │   { from_beg: false })                      │                      │
- │                  ├─────────────────────▶│                      │                      │
- │                  │                      │ write NDJSON line    │                      │
- │                  │                      ├─────────────────────▶│                      │
- │                  │                      │                      │ dispatch handler     │
- │                  │                      │                      │ ─┐                   │
- │                  │                      │                      │ ◀┘                   │
- │                  │                      │                      │ Song.is_playing?     │
- │                  │                      │                      ├─────────────────────▶│
- │                  │                      │                      │  false               │
- │                  │                      │                      │◀─────────────────────┤
- │                  │                      │                      │ Song.start_playing() │
- │                  │                      │                      ├─────────────────────▶│
- │                  │                      │                      │  ok                  │
- │                  │                      │                      │◀─────────────────────┤
- │                  │                      │ JSON-RPC response    │                      │
- │                  │                      │◀─────────────────────┤                      │
- │                  │ result               │                      │                      │
- │                  │◀─────────────────────┤                      │                      │
- │                  │ format MCP envelope  │                      │                      │
- │                  │ { ok, verified,      │                      │                      │
- │                  │   changed, is_playing │                     │                      │
- │                  │   ... }              │                      │                      │
- │ result           │                      │                      │                      │
- │◀─────────────────┤                      │                      │                      │
-```
+For `play`:
 
-## 5. Layout de arquivos (estado Phase 0)
+1. The MCP client calls the `play` tool.
+2. The server validates input with Zod.
+3. The server calls the bridge method `transport.play`.
+4. The bridge schedules LiveAPI work on Live's main thread.
+5. The bridge reads state, starts playback only if needed, then reads back state.
+6. The server returns `{ ok, verified, changed, is_playing, current_song_time, diff }`.
 
-```
+## 6. File Layout
+
+```text
 ableton-mind/
-├─ src/                          # MCP server TS
-│  ├─ index.ts                   # entry stdio
-│  ├─ server/                    # MCP plumbing
-│  ├─ live-client/               # TCP NDJSON + handshake
-│  ├─ tools/                     # `play` (1ª tool)
-│  └─ utils/
-├─ live/AbletonMind/             # Remote Script Python
-│  ├─ __init__.py                # ControlSurface entry
-│  ├─ bridge.py                  # TCP server + dispatcher
-│  ├─ handlers/                  # transport, track, clip, system
-│  ├─ schemas.py                 # dataclasses I/O
-│  ├─ transactions.py            # begin/end_undo_step helper
-│  └─ tests/                     # unittest offline (LiveAPI mock)
-├─ docs/architecture.md          # este arquivo
-├─ _workspace/                   # estado do harness (não distribuído)
-└─ PLAN.md                       # fonte da verdade
+├─ src/                         # TypeScript MCP server
+│  ├─ index.ts                  # stdio entrypoint
+│  ├─ server/                   # MCP plumbing
+│  ├─ live-client/              # TCP NDJSON + handshake
+│  ├─ tools/                    # MCP tools
+│  ├─ resources/                # MCP resources
+│  ├─ prompts/                  # MCP prompts
+│  ├─ knowledge/                # embedded device/scales data
+│  └─ recipes/                  # recipe loader/runner
+├─ live/AbletonMind/            # Python Remote Script
+│  ├─ bridge.py                 # TCP server + dispatcher
+│  ├─ handlers/                 # transport, track, clip, system, ...
+│  ├─ listeners.py              # LiveAPI subscriptions
+│  ├─ transactions.py           # undo-step helpers
+│  └─ tests/                    # offline unittest coverage
+├─ docs/                        # VitePress English root
+├─ docs/pt/                     # localized VitePress pages
+├─ recipes/                     # runtime-distributed recipe JSON
+├─ dxt/                         # MCPB/DXT manifest
+└─ _workspace/                  # harness state, contracts, ADRs and QA
 ```
 
-Phase 1 adiciona `knowledge/`, `recipes/`, `scripts/`, `dxt/`, `tests/` E2E.
+## 7. Remote Script Install Paths
 
-## 6. Instalação do Remote Script
+- macOS: `~/Music/Ableton/User Library/Remote Scripts/AbletonMind/`
+- Windows: `~/Documents/Ableton/User Library/Remote Scripts/AbletonMind/`
 
-Caminhos exigidos pelo Live para ele enxergar Control Surfaces personalizados:
+After copying or symlinking the folder, enable `AbletonMind` in Live under Preferences -> Link, Tempo & MIDI -> Control Surface.
 
-- **macOS:** `~/Music/Ableton/User Library/Remote Scripts/AbletonMind/`
-- **Windows:** `~/Documents/Ableton/User Library/Remote Scripts/AbletonMind/`
+## 8. Threading
 
-Após copiar (ou symlink em dev):
-1. Abra **Preferences → Link, Tempo, MIDI → Control Surface**.
-2. Selecione `AbletonMind` na lista.
-3. Live carrega o script; bridge sobe TCP em `:9876`.
+LiveAPI must run on Live's main thread. The TCP server runs on a daemon thread, queues JSON-RPC work into the ControlSurface scheduler and sends the result back to the socket thread when complete.
 
-Phase 7 entrega isso via instalador `.mcpb` e CLI `ableton-mind doctor`.
+## 9. Design Invariants
 
-## 7. Threading no bridge
+Every tool follows the PLAN.md invariants:
 
-LiveAPI **só pode ser acessada do main thread do Live**. O TCP server roda em thread separada (daemon). Requests JSON-RPC são empacotados e despachados para o main thread via fila + `Live.Base.Timer.set_timer`/`schedule_message`. Resposta volta na thread de socket via Future.
-
-> Decisão do implementador (`python-bridge-engineer`) está em `_workspace/01_bridge_summary.md`. Se foi adotado dispatch direto na thread do socket por simplicidade, anotar como débito técnico em `_workspace/tech-debt.md`.
-
-## 8. Roadmap a partir daqui
-
-PLAN.md §12. Próximo:
-- **Phase 0 — fechamento:** smoke test contra Live real (Ciclo 2 ou 3).
-- **Phase 1 — paridade ahujasid:** 22 tools, transações, verify loop, browser tree.
-- **Phase 2 — paridade AbletonOSC:** todos getters/setters do LOM, listeners → MCP notifications.
-
-Acompanhar status atual em [`_workspace/PROGRESS.md`](../_workspace/PROGRESS.md).
+1. Idempotent.
+2. Transactional when it mutates multiple Live objects.
+3. Reversible for destructive operations.
+4. Read-before-write.
+5. Schema-aware for device parameters.
+6. Returns `{ ok, verified, diff }`, not just `ok`.

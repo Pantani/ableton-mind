@@ -1,71 +1,71 @@
-# ableton-mind — Planejamento do MCP definitivo para Ableton Live
+# ableton-mind — Plan for the definitive MCP for Ableton Live
 
-> "Crie um tech house de 128 BPM com kick four-on-the-floor, baixo rolling, hats off-beat, vocal chop com sidechain e abertura de filtro no drop."
+> "Create a tech house at 128 BPM with a four-on-the-floor kick, rolling bass, off-beat hats, vocal chop with sidechain, and a filter opening on the drop."
 >
-> …e o set aparece pronto dentro do Live: tracks, devices, clips, automation, mixer, racks. Tocando.
+> …and the set appears ready inside Live: tracks, devices, clips, automation, mixer, racks. Playing.
 
-Documento de planejamento para **ableton-mind**: um servidor MCP (Model Context Protocol) para o Ableton Live no mesmo padrão do `tdmcp` (TouchDesigner). Objetivo: ser **o** MCP de Ableton, de forma que ninguém precise escrever outro.
+Planning document for **ableton-mind**: an MCP (Model Context Protocol) server for Ableton Live following the same pattern as `tdmcp` (TouchDesigner). Goal: be **the** Ableton MCP, so that nobody needs to write another one.
 
 ---
 
-## 1. Por que outro MCP de Ableton
+## 1. Why another Ableton MCP
 
-Já existem dois projetos no espaço, e nenhum chega perto de "definitivo":
+There are already two projects in this space, and neither comes close to "definitive":
 
-| Projeto | O que é | Limitação principal |
+| Project | What it is | Main limitation |
 |---|---|---|
-| [`ahujasid/ableton-mcp`](https://github.com/ahujasid/ableton-mcp) | MCP server + Remote Script (TCP socket, JSON). 22 tools. | Cobre só criação básica de tracks/clips/MIDI. Sem automation, return/master, racks, modulation, recording, undo, routing, listeners, warping, browser navegável, Push, Max for Live. |
-| [`ideoforms/AbletonOSC`](https://github.com/ideoforms/AbletonOSC) | Remote Script que expõe ~95% do LOM via OSC (porta 11000/11001). | Não é MCP. Não tem knowledge base. Não tem recipes. Não tem feedback loop. Wrapper MCP existente (`nozomi-koborinai/ableton-osc-mcp`) é fino. |
+| [`ahujasid/ableton-mcp`](https://github.com/ahujasid/ableton-mcp) | MCP server + Remote Script (TCP socket, JSON). 22 tools. | Covers only basic creation of tracks/clips/MIDI. No automation, return/master, racks, modulation, recording, undo, routing, listeners, warping, navigable browser, Push, Max for Live. |
+| [`ideoforms/AbletonOSC`](https://github.com/ideoforms/AbletonOSC) | Remote Script that exposes ~95% of the LOM via OSC (ports 11000/11001). | Not MCP. No knowledge base. No recipes. No feedback loop. Existing MCP wrapper (`nozomi-koborinai/ableton-osc-mcp`) is thin. |
 
-**O que falta no mercado** (e é o que o ableton-mind vai entregar):
+**What is missing in the market** (and what ableton-mind will deliver):
 
-1. **Cobertura LOM total** — todo objeto, propriedade, método e listener da Live Object Model 12.x, não um subset.
-2. **Knowledge base embarcada** — todos os devices nativos do Live (Wavetable, Operator, Drift, Meld, Bass, Drum Sampler, Simpler, Sampler, todos os audio effects, MIDI effects), parâmetros, ranges, defaults, packs oficiais, Max for Live API. O LLM para de chutar.
-3. **Recipes musicais** — biblioteca de padrões prontos como JSON: drum patterns por gênero, basslines, progressões, arranjos, racks de drum, presets de mixagem. O equivalente aos "recipes" do tdmcp (`feedback_network_basic.json`, `particle_galaxy.json`).
-4. **Loop create → verify → preview** — depois de gerar, lê o estado de volta, valida (a track tem o device certo? o clip tem as notas certas?), e oferece preview (render parcial, screenshot da Session View, áudio bounce de 8 bars).
-5. **Listeners reativos** — o assistente pode "ouvir" o Live (beat atual, clipe tocando, parâmetro mudando) para gerar conteúdo em tempo real sincronizado.
-6. **Push & Move** — integração com Push 3 e Move (controladores Ableton), inclusive standalone mode.
-7. **Padrão tdmcp** — TS/Node MCP server + bridge Python no Live, DXT/MCPB pro Claude Desktop, npm/Smithery/Docker, CI, docs em PT-BR.
+1. **Total LOM coverage** — every object, property, method, and listener of the Live Object Model 12.x, not a subset.
+2. **Embedded knowledge base** — all native Live devices (Wavetable, Operator, Drift, Meld, Bass, Drum Sampler, Simpler, Sampler, every audio effect, MIDI effects), parameters, ranges, defaults, official packs, Max for Live API. The LLM stops guessing.
+3. **Music recipes** — a library of ready-made patterns as JSON: drum patterns by genre, basslines, progressions, arrangements, drum racks, mixing presets. The equivalent of tdmcp's "recipes" (`feedback_network_basic.json`, `particle_galaxy.json`).
+4. **create → verify → preview loop** — after generating, read state back, validate (does the track have the right device? does the clip have the right notes?), and offer preview (partial render, Session View screenshot, 8-bar audio bounce).
+5. **Reactive listeners** — the assistant can "listen" to Live (current beat, playing clip, parameter changing) to generate content in real time in sync.
+6. **Push & Move** — integration with Push 3 and Move (Ableton controllers), including standalone mode.
+7. **tdmcp pattern** — TS/Node MCP server + Python bridge in Live, DXT/MCPB for Claude Desktop, npm/Smithery/Docker, CI, English root docs plus `docs/pt` localization.
 
 ---
 
-## 2. Princípios de design
+## 2. Design principles
 
-| Princípio | O que significa na prática |
+| Principle | What it means in practice |
 |---|---|
-| **Cobertura total da LOM** | Nada de "ah isso não dá pra fazer". Se o Max for Live consegue, o ableton-mind consegue. |
-| **Idempotência** | `create_midi_track {index: 3, name: "Bass"}` chamado 2x não cria 2 tracks. Tools checam estado antes de mutar. |
-| **Transações** | Operações compostas (criar track + carregar device + tocar clip) são atômicas com undo unitário. Usa `Song.begin_undo_step()` / `end_undo_step()`. |
-| **Reversibilidade** | Toda tool destrutiva (delete_track, remove_notes) snapshota antes. `undo_last_operation` rola tudo de volta. |
-| **Read-before-write** | Antes de gerar, lê. Sabe que existe Track 3, sabe que é MIDI, sabe que devices ela tem. |
-| **Recipes > Prompts** | Para padrões repetitivos (drum kit techno, baixo D&B), recipes JSON > 200 linhas de prompt. |
-| **Knowledge > Guessing** | Todo device tem seu schema embarcado. LLM nunca precisa adivinhar que Wavetable tem `Osc 1 Position`. |
-| **Sem dependências externas pesadas** | Funciona com Live nativo. AbletonOSC virá como **opcional** para usuários que já têm. |
+| **Total LOM coverage** | No "ah, you can't do that". If Max for Live can, ableton-mind can. |
+| **Idempotency** | `create_midi_track {index: 3, name: "Bass"}` called twice does not create 2 tracks. Tools check state before mutating. |
+| **Transactions** | Composite operations (create track + load device + play clip) are atomic with a unitary undo. Uses `Song.begin_undo_step()` / `end_undo_step()`. |
+| **Reversibility** | Every destructive tool (delete_track, remove_notes) snapshots before acting. `undo_last_operation` rolls everything back. |
+| **Read-before-write** | Before generating, read. Know that Track 3 exists, know it is MIDI, know which devices it has. |
+| **Recipes > Prompts** | For repetitive patterns (techno drum kit, D&B bass), JSON recipes beat 200-line prompts. |
+| **Knowledge > Guessing** | Every device has its schema embedded. The LLM never needs to guess that Wavetable has `Osc 1 Position`. |
+| **No heavy external dependencies** | Works with native Live. AbletonOSC will come as **optional** for users who already have it. |
 
 ---
 
-## 3. Arquitetura
+## 3. Architecture
 
-Três peças conversando localmente, no mesmo padrão do tdmcp:
+Three pieces talking locally, in the same pattern as tdmcp:
 
 ```
-   Você + AI                ableton-mind                Ableton Live
-  (Claude/Cursor)    ─▶  (MCP server TS/Node)   ─▶  (Remote Script Python)
-   "techno 128 BPM,                                     cria tracks, devices,
+   You + AI                ableton-mind                Ableton Live
+  (Claude/Cursor)    ─▶  (TS/Node MCP server)   ─▶  (Python Remote Script)
+   "techno 128 BPM,                                     creates tracks, devices,
     kick + bass + pad"                                  clips, automation
 ```
 
-### 3.1 Camadas
+### 3.1 Layers
 
-| Camada | Stack | Responsabilidade |
+| Layer | Stack | Responsibility |
 |---|---|---|
-| **MCP Server** | TypeScript + Node 20+, SDK MCP oficial (`@modelcontextprotocol/sdk`) | Expõe tools/resources/prompts. Valida inputs com Zod. Roteia para o bridge. Carrega knowledge base + recipes. |
-| **Bridge** (Remote Script) | Python 3 dentro do Live (Live usa Python 3.11 desde a 12.x) | Roda dentro do Live como MIDI Remote Script. Servidor TCP local (porta 9876 por padrão, configurável). Recebe JSON-RPC, executa via LiveAPI, devolve estado. |
-| **Knowledge** | JSON + Markdown estático embutido no pacote | Schemas de devices, packs, MIDI ranges, escalas, escalas de groove, mapeamentos de drum kits. |
+| **MCP Server** | TypeScript + Node 20+, official MCP SDK (`@modelcontextprotocol/sdk`) | Exposes tools/resources/prompts. Validates input with Zod. Routes to the bridge. Loads knowledge base + recipes. |
+| **Bridge** (Remote Script) | Python 3 inside Live (Live uses Python 3.11 since 12.x) | Runs inside Live as a MIDI Remote Script. Local TCP server (port 9876 by default, configurable). Receives JSON-RPC, executes via LiveAPI, returns state. |
+| **Knowledge** | Static JSON + Markdown embedded in the package | Device schemas, packs, MIDI ranges, scales, groove scales, drum kit mappings. |
 
-### 3.2 Protocolo bridge ↔ server
+### 3.2 bridge ↔ server protocol
 
-JSON-RPC 2.0 sobre TCP socket local. Mensagens curtas e idempotentes:
+JSON-RPC 2.0 over a local TCP socket. Short, idempotent messages:
 
 ```jsonc
 // request
@@ -85,34 +85,34 @@ JSON-RPC 2.0 sobre TCP socket local. Mensagens curtas e idempotentes:
   "params": { "beat": 17, "bar": 5, "song_time": 17.0 } }
 ```
 
-Por que JSON-RPC em vez de OSC nativo:
-- **Tipado**: usa Zod no lado TS, dataclasses no lado Python.
-- **Erros estruturados**: AbletonOSC só responde "/live/error msg" — frustrante de debugar.
-- **Batch**: pode mandar 50 notas num clip numa única chamada.
-- **Bi-direcional**: listeners viram eventos JSON-RPC notification.
+Why JSON-RPC instead of native OSC:
+- **Typed**: uses Zod on the TS side, dataclasses on the Python side.
+- **Structured errors**: AbletonOSC only replies with "/live/error msg" — frustrating to debug.
+- **Batch**: can send 50 notes into a clip in a single call.
+- **Bidirectional**: listeners become JSON-RPC notification events.
 
-OSC fica disponível como **transport alternativo** para quem já roda AbletonOSC (`ABLETON_MIND_TRANSPORT=osc`).
+OSC remains available as an **alternative transport** for users already running AbletonOSC (`ABLETON_MIND_TRANSPORT=osc`).
 
-### 3.3 Layout de arquivos
+### 3.3 File layout
 
-Espelhando `tdmcp/src/`:
+Mirroring `tdmcp/src/`:
 
 ```
 ableton-mind/
 ├─ src/
-│  ├─ index.ts                    # entry MCP server
+│  ├─ index.ts                    # MCP server entry
 │  ├─ server/                     # MCP plumbing (tools, resources, prompts)
-│  ├─ live-client/                # cliente TCP/OSC → bridge
-│  ├─ tools/                      # ~150 MCP tools agrupadas por domínio
+│  ├─ live-client/                # TCP/OSC client → bridge
+│  ├─ tools/                      # ~150 MCP tools grouped by domain
 │  │  ├─ transport.ts             #   play/stop/tempo/quantization
 │  │  ├─ track.ts                 #   create/delete/mixer/routing
-│  │  ├─ clip.ts                  #   MIDI clips, notas, audio clips, warping
+│  │  ├─ clip.ts                  #   MIDI clips, notes, audio clips, warping
 │  │  ├─ scene.ts
 │  │  ├─ device.ts                #   built-in + VST/AU + M4L
 │  │  ├─ rack.ts                  #   drum/instrument/audio/MIDI racks, chains
-│  │  ├─ automation.ts            #   envelopes em arrangement + session
-│  │  ├─ modulation.ts            #   macros, MIDI/key map, modulators M4L
-│  │  ├─ browser.ts               #   navega library, busca devices/samples
+│  │  ├─ automation.ts            #   envelopes in arrangement + session
+│  │  ├─ modulation.ts            #   macros, MIDI/key map, M4L modulators
+│  │  ├─ browser.ts               #   browse library, search devices/samples
 │  │  ├─ arrangement.ts           #   timeline ops, regions, locators, fades
 │  │  ├─ recording.ts             #   session record, capture MIDI, arrange rec
 │  │  ├─ mixer.ts                 #   sends, returns, master, crossfader, EQ
@@ -120,13 +120,13 @@ ableton-mind/
 │  │  ├─ session.ts               #   load/save .als, export audio, freeze
 │  │  ├─ groove.ts                #   groove pool, time signature, swing
 │  │  ├─ midi.ts                  #   MIDI mapping, key mapping, CC learn
-│  │  ├─ push.ts                  #   Push 1/2/3 LEDs, pads, modos
-│  │  └─ introspection.ts         #   estado total, snapshot, diff
+│  │  ├─ push.ts                  #   Push 1/2/3 LEDs, pads, modes
+│  │  └─ introspection.ts         #   total state, snapshot, diff
 │  ├─ knowledge/
-│  │  ├─ devices/                 #   esquema por device (wavetable.json, etc)
-│  │  ├─ packs/                   #   índices dos packs oficiais
-│  │  ├─ scales.json              #   modos, escalas, root notes
-│  │  ├─ grooves.json             #   grooves do Live
+│  │  ├─ devices/                 #   per-device schema (wavetable.json, etc.)
+│  │  ├─ packs/                   #   indexes of official packs
+│  │  ├─ scales.json              #   modes, scales, root notes
+│  │  ├─ grooves.json             #   Live grooves
 │  │  └─ midi.json                #   ranges, CC standards
 │  ├─ recipes/
 │  │  ├─ drums/                   #   tech-house-kick.json, dnb-break.json…
@@ -135,30 +135,30 @@ ableton-mind/
 │  │  ├─ racks/                   #   sidechain-rack.json, parallel-comp.json…
 │  │  ├─ arrangements/            #   tech-house-7-min.json…
 │  │  └─ mixing/                  #   master-bus.json, vocal-chain.json…
-│  ├─ feedback/                   #   verify loop: lê estado, compara, diff
-│  ├─ prompts/                    #   templates para o assistente
-│  ├─ resources/                  #   MCP resources (estado vivo da sessão)
+│  ├─ feedback/                   #   verify loop: read state, compare, diff
+│  ├─ prompts/                    #   templates for the assistant
+│  ├─ resources/                  #   MCP resources (live session state)
 │  ├─ integrations/
-│  │  ├─ abletonosc/              #   transport OSC opcional
+│  │  ├─ abletonosc/              #   optional OSC transport
 │  │  ├─ push/                    #   Push device protocol
 │  │  └─ move/                    #   Ableton Move sync
 │  ├─ cli/
-│  │  ├─ agent.ts                 #   ableton-mind-agent (copilot local)
-│  │  └─ doctor.ts                #   ableton-mind doctor (diagnóstico)
+│  │  ├─ agent.ts                 #   ableton-mind-agent (local copilot)
+│  │  └─ doctor.ts                #   ableton-mind doctor (diagnostics)
 │  └─ utils/
-├─ live/                          # Remote Script Python (instala em Ableton/User Library/Remote Scripts)
+├─ live/                          # Python Remote Script (installs in Ableton/User Library/Remote Scripts)
 │  ├─ __init__.py
 │  ├─ AbletonMind/
 │  │  ├─ __init__.py              # entrypoint (class AbletonMind(ControlSurface))
 │  │  ├─ bridge.py                # TCP server + JSON-RPC dispatch
-│  │  ├─ handlers/                # um arquivo por domínio (transport, track, …)
-│  │  ├─ listeners.py             # subscriptions LiveAPI
+│  │  ├─ handlers/                # one file per domain (transport, track, …)
+│  │  ├─ listeners.py             # LiveAPI subscriptions
 │  │  ├─ transactions.py          # begin/end_undo_step wrappers
-│  │  └─ schemas.py               # dataclasses de I/O
-│  └─ tests/                      # unittest do bridge
-├─ docs/                          # VitePress, PT-BR + EN (igual tdmcp)
-├─ recipes/                       # cópia distribuída em runtime
-├─ dxt/                           # manifest p/ Claude Desktop .mcpb
+│  │  └─ schemas.py               # I/O dataclasses
+│  └─ tests/                      # bridge unittests
+├─ docs/                          # VitePress English root + docs/pt localization
+├─ recipes/                       # runtime-distributed copy
+├─ dxt/                           # manifest for Claude Desktop .mcpb
 ├─ scripts/
 ├─ tests/
 ├─ package.json
@@ -167,14 +167,14 @@ ableton-mind/
 ├─ Dockerfile
 ├─ CLAUDE.md
 ├─ AGENTS.md
-└─ README.md (PT-BR + EN)
+└─ README.md (English root)
 ```
 
 ---
 
-## 4. Mapa de features — o que vai estar coberto
+## 4. Feature map — what will be covered
 
-Agrupado por domínio LOM. Marcação: **✅** = no ableton-mcp (ahujasid), **🟡** = no AbletonOSC, **🆕** = só no ableton-mind.
+Grouped by LOM domain. Markers: **✅** = in ableton-mcp (ahujasid), **🟡** = in AbletonOSC, **🆕** = only in ableton-mind.
 
 ### 4.1 Transport & Song
 - ✅🟡 Play / Stop / Continue
@@ -190,15 +190,15 @@ Agrupado por domínio LOM. Marcação: **✅** = no ableton-mcp (ahujasid), **�
 - 🟡 Cue points (add, delete, rename, jump)
 - 🟡 Current song time (read/set)
 - 🟡 Root note, scale name
-- 🆕 Begin/end undo step (transação)
+- 🆕 Begin/end undo step (transaction)
 - 🆕 Save / save as / new set
 - 🆕 Export audio (range, format, normalization)
 - 🆕 Freeze / flatten track
-- 🆕 Tempo automation envelope no master
-- 🆕 Listen: is_playing, song_time, beat (com push assíncrono)
+- 🆕 Tempo automation envelope on master
+- 🆕 Listen: is_playing, song_time, beat (with async push)
 
 ### 4.2 Track (audio, MIDI, return, master, group)
-- ✅🟡 Create audio/MIDI track (com index)
+- ✅🟡 Create audio/MIDI track (with index)
 - 🟡 Create return track
 - 🟡 Delete track / delete return track
 - 🟡 Duplicate track
@@ -210,38 +210,38 @@ Agrupado por domínio LOM. Marcação: **✅** = no ableton-mcp (ahujasid), **�
 - 🟡 Output routing (type, channel, sub-channel)
 - 🟡 Monitoring state (In/Auto/Off)
 - 🟡 Group fold/unfold, is_foldable, is_grouped
-- 🟡 Available routing types/channels (descobre antes de setar)
+- 🟡 Available routing types/channels (discover before setting)
 - 🟡 Stop all clips on track
-- 🆕 Group / ungroup tracks (criar group track e mover children)
+- 🆕 Group / ungroup tracks (create group track and move children)
 - 🆕 Move track (reorder)
 - 🆕 Master track ops (volume, EQ, devices, fader curve)
 - 🆕 Crossfader assign (A/B/Off)
-- 🆕 Take lanes (Live 11+): listar, criar, comprimir
+- 🆕 Take lanes (Live 11+): list, create, compress
 - 🆕 Track delay (input/output)
 - 🆕 Track meta: time-stretched bytes, total CPU usage
-- 🆕 Listen: meter level (VU em tempo real → permite assistente reagir a peak)
+- 🆕 Listen: meter level (real-time VU → lets the assistant react to peak)
 
 ### 4.3 Clip — MIDI
 - ✅🟡 Create empty MIDI clip (track, slot, length)
 - ✅🟡 Add notes (batch: pitch, start, duration, velocity, mute)
-- 🟡 Get notes (filtro por pitch range + time range)
-- 🟡 Remove notes (filtro idem)
+- 🟡 Get notes (filter by pitch range + time range)
+- 🟡 Remove notes (same filter)
 - 🟡 Loop start/end, position, start_marker, end_marker
 - 🟡 Launch mode (Trigger/Gate/Toggle/Repeat)
 - 🟡 Launch quantization (Global / None / 8 Bars … 1/32)
 - 🟡 Legato, has_groove, velocity_amount
 - 🟡 Name, color, color_index, muted
-- 🆕 **MPE expression** por nota: pitch bend per-note, pressure, slide
-- 🆕 **Probability** por nota (Live 11+)
-- 🆕 **Release velocity** por nota
+- 🆕 **MPE expression** per note: pitch bend per-note, pressure, slide
+- 🆕 **Probability** per note (Live 11+)
+- 🆕 **Release velocity** per note
 - 🆕 Note groove value
 - 🆕 Apply scale (force notes to scale)
 - 🆕 Quantize notes (amount, swing, target grid)
 - 🆕 Humanize (random velocity/timing within range)
 - 🆕 Reverse / invert / transpose
 - 🆕 Generate from recipe (drum pattern, arpeggio, chord prog)
-- 🆕 Convert audio to MIDI (harmony/melody/drums) — usa o Live nativo
-- 🆕 Listen: playing_position (cabeçote do clip)
+- 🆕 Convert audio to MIDI (harmony/melody/drums) — uses Live native
+- 🆕 Listen: playing_position (clip playhead)
 
 ### 4.4 Clip — Audio
 - ✅🟡 Insert audio file in slot (path)
@@ -250,31 +250,31 @@ Agrupado por domínio LOM. Marcação: **✅** = no ableton-mcp (ahujasid), **�
 - 🟡 Ram mode
 - 🟡 Sample length, file_path
 - 🟡 Loop start/end, start/end marker
-- 🆕 **Warp markers**: get/add/move/delete (lista completa de markers de tempo)
+- 🆕 **Warp markers**: get/add/move/delete (full list of tempo markers)
 - 🆕 Detect transients (rebuild)
-- 🆕 Set BPM master clip (auto-warp para tempo da sessão)
+- 🆕 Set BPM master clip (auto-warp to session tempo)
 - 🆕 Slice to MIDI (Simpler/Drum Rack)
 - 🆕 Reverse audio clip
 - 🆕 Fade in/out (Arrangement)
-- 🆕 Crossfade entre clips adjacentes
+- 🆕 Crossfade between adjacent clips
 
 ### 4.5 Clip slot (Session View)
 - 🟡 Fire / stop
 - 🟡 Has clip, has_stop_button
 - 🟡 Create empty clip (length)
 - 🟡 Delete clip
-- 🟡 Duplicate clip para outro slot
-- 🆕 Copiar slot para Arrangement (com posição)
-- 🆕 Bulk operations: fire scene por filtro (todas com tag X)
+- 🟡 Duplicate clip to another slot
+- 🆕 Copy slot to Arrangement (with position)
+- 🆕 Bulk operations: fire scene by filter (all with tag X)
 
 ### 4.6 Scene
 - 🟡 Fire / fire_as_selected
-- 🟡 Create / delete / duplicate (por index)
+- 🟡 Create / delete / duplicate (by index)
 - 🟡 Name, color, color_index, is_empty, is_triggered
 - 🟡 Tempo + tempo_enabled
 - 🟡 Time signature + enabled
-- 🆕 Capture scene from playing clips (igual atalho)
-- 🆕 Mover scene (reorder)
+- 🆕 Capture scene from playing clips (same as the shortcut)
+- 🆕 Move scene (reorder)
 
 ### 4.7 Device (built-in + VST/AU + M4L)
 - ✅🟡 Load device by URI (browser path)
@@ -284,65 +284,65 @@ Agrupado por domínio LOM. Marcação: **✅** = no ableton-mcp (ahujasid), **�
 - 🟡 Set parameter value (single + batch)
 - 🟡 Listen: parameter value
 - 🆕 Delete device (track_id, device_index)
-- 🆕 Move device (reorder dentro da chain)
-- 🆕 Copy device entre tracks
+- 🆕 Move device (reorder within the chain)
+- 🆕 Copy device between tracks
 - 🆕 Toggle on/off (bypass)
 - 🆕 Get device preset list + load preset
 - 🆕 Save device as preset (.adv)
-- 🆕 **Schema-aware set**: "set device Wavetable Osc 1 Position to 0.7" — resolve nome do parâmetro via knowledge base, sem precisar saber index
-- 🆕 Mapeamento de devices nativos completos (Wavetable, Operator, Drift, Meld, Bass, Sampler, Simpler, Drum Sampler, EQ Eight, Glue Compressor, Drum Buss, Multiband Dynamics, Spectral Resonator, Roar, etc.)
-- 🆕 Sidechain config (kick→bass): roteia source + ativa sidechain no compressor
-- 🆕 M4L device: descobrir todos os Live API objects expostos
-- 🆕 Plugin VST/AU: detectar (vendor, name, version), abrir UI, listar parâmetros expostos
+- 🆕 **Schema-aware set**: "set device Wavetable Osc 1 Position to 0.7" — resolves the parameter name via the knowledge base, no need to know the index
+- 🆕 Full mapping of native devices (Wavetable, Operator, Drift, Meld, Bass, Sampler, Simpler, Drum Sampler, EQ Eight, Glue Compressor, Drum Buss, Multiband Dynamics, Spectral Resonator, Roar, etc.)
+- 🆕 Sidechain config (kick→bass): routes source + enables sidechain on the compressor
+- 🆕 M4L device: discover all exposed Live API objects
+- 🆕 VST/AU plugin: detect (vendor, name, version), open UI, list exposed parameters
 - 🆕 External Instrument / External Audio Effect setup
 
 ### 4.8 Racks (Instrument, Drum, Audio, MIDI Effect)
 - 🆕 Create rack (any type)
 - 🆕 Get chains (chain index, name, solo, mute, volume, pan, send)
 - 🆕 Add chain / delete chain
-- 🆕 Map chain key range / velocity range (zonas)
+- 🆕 Map chain key range / velocity range (zones)
 - 🆕 Set chain devices
 - 🆕 Drum rack: get/set pads (note 36-99), pad chains, pad device
-- 🆕 Drum rack: load sample para pad (path)
+- 🆕 Drum rack: load sample to pad (path)
 - 🆕 Drum rack: choke groups
-- 🆕 Macros (1-16 em Live 12): name, value, get/set, randomize
+- 🆕 Macros (1-16 in Live 12): name, value, get/set, randomize
 - 🆕 Macro variations (Live 12): list, snap, recall
-- 🆕 Mapeamento parameter → macro (com curve, min/max range, invert)
+- 🆕 parameter → macro mapping (with curve, min/max range, invert)
 - 🆕 Listen: chain solo/mute, macro value
 
 ### 4.9 Automation (Arrangement & Session)
-- 🆕 List automation lanes em uma track
-- 🆕 Get envelope para `(track, device, parameter)` em arrangement
-- 🆕 Add/remove/edit pontos do envelope (time, value, curve)
+- 🆕 List automation lanes on a track
+- 🆕 Get envelope for `(track, device, parameter)` in arrangement
+- 🆕 Add/remove/edit envelope points (time, value, curve)
 - 🆕 Clear automation
 - 🆕 Re-enable automation
-- 🆕 Clip envelopes (session): mesmo, mas no clipe
+- 🆕 Clip envelopes (session): same, but in the clip
 - 🆕 Automation modes (Latch/Touch/Read/Write)
-- 🆕 Bulk: "criar fade in de filter cutoff de 0 a 1 ao longo de 8 bars"
+- 🆕 Bulk: "create a filter cutoff fade-in from 0 to 1 over 8 bars"
 - 🆕 Listen: automation playback values
 
-### 4.10 Modulation (Modulators M4L do Live 12)
+### 4.10 Modulation (Live 12 M4L Modulators)
 - 🆕 List modulation sources (LFO, Envelope Follower, Shaper, Random)
 - 🆕 Map source → target parameter
 - 🆕 Set modulation depth, polarity, rate
 - 🆕 List active modulations
 
 ### 4.11 Browser & Library
-- ✅🟡 Get browser tree (categoria: instruments, drums, audio_effects, etc)
+- ✅🟡 Get browser tree (category: instruments, drums, audio_effects, etc.)
 - ✅🟡 Get items at path
 - 🆕 Search by name (fuzzy)
 - 🆕 Filter by tag (Sounds/Drums/Bass, etc.)
 - 🆕 Filter by pack
-- 🆕 Identificar packs instalados + versão
-- 🆕 Knowledge base de packs oficiais (Beat Tools, Skitter & Step, Drive & Glow, etc.) e seus conteúdos
-- 🆕 Resolve URI ambíguo ("808 kick" → top match com score)
-- 🆕 User Library navegação
+- 🆕 Identify installed packs + version
+- 🆕 Knowledge base of official packs (Beat Tools, Skitter & Step, Drive & Glow, etc.) and their contents
+- 🆕 Resolve ambiguous URI ("808 kick" → top match with score)
+- 🆕 User Library navigation
 - 🆕 Recently used devices/samples
 
 ### 4.12 Arrangement View
 - 🟡 Get arrangement clips (track) — names, lengths, start_times
-- ✅🟡 Duplicate session clip → arrangement (track, slot, destino)
-- 🆕 Place clip no arrangement (qualquer track + posição)
+- ✅🟡 Duplicate session clip → arrangement (track, slot, destination)
+- 🆕 Place clip in arrangement (any track + position)
 - 🆕 Move clip
 - 🆕 Resize / loop clip in arrangement
 - 🆕 Delete arrangement clip
@@ -356,12 +356,12 @@ Agrupado por domínio LOM. Marcação: **✅** = no ableton-mcp (ahujasid), **�
 - 🆕 Tempo automation (master)
 
 ### 4.13 Mixer
-- 🟡 Volume, pan, sends, solo, mute, arm (já em Track)
-- 🆕 Send count + criação de novo return
+- 🟡 Volume, pan, sends, solo, mute, arm (already on Track)
+- 🆕 Send count + creating a new return
 - 🆕 Master volume, master pan
 - 🆕 Crossfader value + curve
 - 🆕 Cue volume / Cue out routing (DJ booth)
-- 🆕 Channel EQ rápido (high/mid/low) sem precisar carregar EQ Three
+- 🆕 Quick Channel EQ (high/mid/low) without loading EQ Three
 - 🆕 Pre/post fader send mode
 
 ### 4.14 Recording
@@ -376,65 +376,65 @@ Agrupado por domínio LOM. Marcação: **✅** = no ableton-mcp (ahujasid), **�
 
 ### 4.15 View / UX
 - 🟡 Selected track / scene / clip / device (get/set)
-- 🟡 Show message no statusbar
+- 🟡 Show message in statusbar
 - ✅🟡 Switch session/arrangement view
 - 🆕 Show detail view (clip/device)
-- 🆕 Highlight track/clip (selecionar + scroll)
+- 🆕 Highlight track/clip (select + scroll)
 - 🆕 Close all device UIs
 - 🆕 Toggle browser
 - 🆕 Toggle Hot Swap
 
 ### 4.16 MIDI mapping / Remote control / Key map
-- 🟡 Map CC → parâmetro (channel, cc, track_id, device_id, param_id)
+- 🟡 Map CC → parameter (channel, cc, track_id, device_id, param_id)
 - 🆕 Unmap CC
-- 🆕 Map Note → parâmetro
-- 🆕 Key mapping (teclado computador → função)
+- 🆕 Map Note → parameter
+- 🆕 Key mapping (computer keyboard → function)
 - 🆕 List all MIDI mappings
 - 🆕 Map relative / absolute / takeover mode
 - 🆕 MIDI sync (in/out, send clock, song position)
 
 ### 4.17 Grooves
-- 🆕 Groove pool: listar grooves carregados
-- 🆕 Carregar groove (.agr) da library
-- 🆕 Aplicar groove a clip
-- 🆕 Set groove amount no clip + global
+- 🆕 Groove pool: list loaded grooves
+- 🆕 Load groove (.agr) from library
+- 🆕 Apply groove to clip
+- 🆕 Set groove amount on clip + global
 
 ### 4.18 Push & Move
-- 🆕 Push 1/2/3: pads, encoders, LEDs, modos
-- 🆕 Push 3 Standalone: enviar set, sync via Move
-- 🆕 Move: listar sets, transferir set, controlar transport remoto
+- 🆕 Push 1/2/3: pads, encoders, LEDs, modes
+- 🆕 Push 3 Standalone: send set, sync via Move
+- 🆕 Move: list sets, transfer set, remote transport control
 
 ### 4.19 Max for Live (M4L)
-- 🆕 Detectar devices M4L em qualquer track
+- 🆕 Detect M4L devices on any track
 - 🆕 Get exposed parameters (live.numbox, live.dial)
-- 🆕 Get device patcher metadata (devices internos para introspection)
-- 🆕 Carregar device M4L de path
-- 🆕 Acionar functions exposed via M4L API (hello-message)
+- 🆕 Get device patcher metadata (internal devices for introspection)
+- 🆕 Load M4L device from path
+- 🆕 Trigger functions exposed via M4L API (hello-message)
 
-### 4.20 Session-level introspection (resources MCP)
-- 🆕 `live://session/state` — snapshot completo (todas tracks, devices, params, clips, scenes)
-- 🆕 `live://session/timeline` — arrangement como JSON
+### 4.20 Session-level introspection (MCP resources)
+- 🆕 `live://session/state` — full snapshot (all tracks, devices, params, clips, scenes)
+- 🆕 `live://session/timeline` — arrangement as JSON
 - 🆕 `live://session/mixer` — mixer state
 - 🆕 `live://browser/tree` — browser tree
-- 🆕 `live://devices/catalog` — knowledge base de devices nativos
-- 🆕 `live://recipes/index` — lista de recipes disponíveis
+- 🆕 `live://devices/catalog` — knowledge base of native devices
+- 🆕 `live://recipes/index` — list of available recipes
 
-### 4.21 Reatividade (listeners → MCP notifications)
-- 🆕 Subscribe a property changes (tempo, is_playing, selected_clip, etc.)
-- 🆕 Subscribe a beat tick (cada batida)
-- 🆕 Subscribe a meter level (VU)
-- 🆕 Subscribe a parameter changes (automation playback)
-- 🆕 Server emite como MCP `notification/progress` ou via Server-Sent resource updates
+### 4.21 Reactivity (listeners → MCP notifications)
+- 🆕 Subscribe to property changes (tempo, is_playing, selected_clip, etc.)
+- 🆕 Subscribe to beat tick (every beat)
+- 🆕 Subscribe to meter level (VU)
+- 🆕 Subscribe to parameter changes (automation playback)
+- 🆕 Server emits as MCP `notification/progress` or via Server-Sent resource updates
 
 ---
 
-## 5. Knowledge base embarcada
+## 5. Embedded knowledge base
 
-Para o LLM **parar de chutar parâmetros**. Inspirado no que o tdmcp faz com os 629 operadores TouchDesigner.
+So the LLM **stops guessing parameters**. Inspired by what tdmcp does with the 629 TouchDesigner operators.
 
-### 5.1 Devices nativos (`src/knowledge/devices/`)
+### 5.1 Native devices (`src/knowledge/devices/`)
 
-Um JSON por device, com schema completo de parâmetros. Exemplo:
+One JSON per device, with the full parameter schema. Example:
 
 ```json
 // wavetable.json
@@ -458,48 +458,48 @@ Um JSON por device, com schema completo de parâmetros. Exemplo:
       "min": 0.0, "max": 1.0, "default": 0.0,
       "depends_on": "Osc 1 Mode"
     }
-    // ... ~150 parâmetros
+    // ... ~150 parameters
   ],
   "presets": ["Bass Wobble", "Lead Square", "Pad Ethereal", ...],
   "macro_targets": ["Filter Cutoff", "Osc 1 Position", "Sub Volume"]
 }
 ```
 
-**Devices cobertos** (Live 12 nativos):
+**Devices covered** (Live 12 native):
 
 - **Instruments**: Wavetable, Operator, Drift, Meld, Bass, Sampler, Simpler, Drum Sampler, Drum Rack, Instrument Rack, Impulse, Tension, Collision, Electric, Analog, External Instrument
 - **MIDI Effects**: Arpeggiator, Chord, Note Length, Pitch, Random, Scale, Velocity, MPE Control, MIDI Monitor
 - **Audio Effects**: EQ Eight, EQ Three, Glue Compressor, Compressor, Multiband Dynamics, Limiter, Gate, Drum Buss, Saturator, Roar, Pedal, Amp, Cabinet, Reverb, Hybrid Reverb, Echo, Delay, Filter Delay, Grain Delay, Auto Filter, Auto Pan, Frequency Shifter, Phaser-Flanger, Chorus-Ensemble, Vinyl Distortion, Erosion, Redux, Beat Repeat, Looper, Tuner, Spectrum, Spectral Resonator, Spectral Time, Channel EQ, Utility, Gated Delay, Shifter, Vocoder, Corpus
-- **Max for Live nativos**: LFO, Envelope Follower, Shaper, Expression Control, etc.
+- **Native Max for Live**: LFO, Envelope Follower, Shaper, Expression Control, etc.
 
-### 5.2 Packs oficiais (`src/knowledge/packs/`)
+### 5.2 Official packs (`src/knowledge/packs/`)
 
-Índice dos packs Ableton + Cycling '74. Para cada pack: nome, categoria, devices/samples principais, URIs. Permite "carregue um kick de techno do pack X".
+Index of Ableton + Cycling '74 packs. For each pack: name, category, main devices/samples, URIs. Enables "load a techno kick from pack X".
 
-### 5.3 Música teórica (`src/knowledge/`)
+### 5.3 Music theory (`src/knowledge/`)
 
-- `scales.json` — 38 escalas (Major, Minor natural/harmônica/melódica, Dorian, Phrygian, Lydian, Mixolydian, Locrian, Pentatônica major/minor, Blues, Hirajoshi, Ryukyu, Whole tone, Chromatic, etc.) com graus e tensões.
-- `chords.json` — voicings comuns por gênero (jazz, pop, neo-soul).
-- `grooves.json` — grooves nativos do Live indexados.
+- `scales.json` — 38 scales (Major, Natural/Harmonic/Melodic Minor, Dorian, Phrygian, Lydian, Mixolydian, Locrian, Major/Minor Pentatonic, Blues, Hirajoshi, Ryukyu, Whole tone, Chromatic, etc.) with degrees and tensions.
+- `chords.json` — common voicings by genre (jazz, pop, neo-soul).
+- `grooves.json` — native Live grooves indexed.
 - `midi.json` — General MIDI map, CC standards (modulation, expression, sustain), velocity curves.
 
-### 5.4 BPM/gênero/key reference
+### 5.4 BPM/genre/key reference
 
-Faixas usuais de BPM e key por gênero — house 120-128, techno 125-135, D&B 170-180, trap 130-150, etc.
+Usual BPM and key ranges per genre — house 120-128, techno 125-135, D&B 170-180, trap 130-150, etc.
 
 ---
 
 ## 6. Recipes (`recipes/`)
 
-JSON declarativos que o servidor expande em sequências de tools. Inspirado em `tdmcp/recipes/feedback_network_basic.json`.
+Declarative JSON the server expands into tool sequences. Inspired by `tdmcp/recipes/feedback_network_basic.json`.
 
-Exemplo:
+Example:
 
 ```jsonc
 // recipes/drums/tech-house-kit.json
 {
   "name": "Tech House Drum Kit",
-  "description": "Drum rack pré-configurado: kick punchy, clap analog, hat 909, ride open, perc shaker, sub kick.",
+  "description": "Pre-configured drum rack: punchy kick, analog clap, 909 hat, open ride, shaker perc, sub kick.",
   "tags": ["drums", "tech-house", "house"],
   "tempo_range": [120, 130],
   "steps": [
@@ -510,7 +510,7 @@ Exemplo:
         "pad": 36, "sample": "Live:Samples:Drums:Kick:HouseKick_01" } },
     { "tool": "drum_rack_load_sample", "params": {
         "pad": 38, "sample": "Live:Samples:Drums:Clap:AnalogClap_03" } },
-    // ... mais pads
+    // ... more pads
     { "tool": "load_device", "params": { "uri": "Live:AudioEffects:DrumBuss" } },
     { "tool": "device_set_param", "params": { 
         "device": "$last", "name": "Drive", "value": 0.3 } },
@@ -520,73 +520,73 @@ Exemplo:
 }
 ```
 
-**Categorias iniciais de recipes**:
+**Initial recipe categories**:
 
 - `drums/` — house, techno, tech-house, D&B (amen, halftime), trap, dembow, hip-hop boom-bap, garage, breaks
 - `bass/` — sub 808, reese, acid, rolling tech-house bass, jazz upright, slap bass
 - `chords/` — pop pads, jazz extended, neo-soul Rhodes, lo-fi chops, ambient pad layers
-- `racks/` — sidechain rack (kick→bus), parallel comp, vocal chain (de-ess + comp + EQ + reverb), mastering chain leve, lo-fi tape
-- `arrangements/` — esqueletos de 4/6/8 minutos por gênero (intro/build/drop/breakdown/outro com locators)
+- `racks/` — sidechain rack (kick→bus), parallel comp, vocal chain (de-ess + comp + EQ + reverb), light mastering chain, lo-fi tape
+- `arrangements/` — 4/6/8-minute skeletons per genre (intro/build/drop/breakdown/outro with locators)
 - `mixing/` — gain staging starter, master bus, drum bus, vocal bus
 - `live_performance/` — Push 3 standalone template, looper setup, DJ deck simulator
 
 ---
 
-## 7. Loop create → verify → preview
+## 7. create → verify → preview loop
 
-Mecanismo central que diferencia ableton-mind de wrappers OSC dumb.
+The central mechanism that sets ableton-mind apart from dumb OSC wrappers.
 
 ```
                 ┌────────────┐
-                │  LLM gera  │
+                │  LLM gens  │
                 └─────┬──────┘
-                      │ chama tool (criar track, carregar device…)
+                      │ calls tool (create track, load device…)
                       ▼
               ┌──────────────────┐
-              │ ableton-mind     │ executa via bridge
+              │ ableton-mind     │ executes via bridge
               └─────┬────────────┘
                     │
                     ▼
               ┌──────────────────┐
-              │ verify           │ re-lê estado (lista tracks, devices, clips)
+              │ verify           │ re-reads state (lists tracks, devices, clips)
               └─────┬────────────┘
-                    │  diff vs intenção
+                    │  diff vs intent
                     ▼
-                ┌──────────┐  ok? ─► segue
+                ┌──────────┐  ok? ─► proceed
                 │ Verdict  │  
-                └────┬─────┘  divergência? ─► re-tenta com correção
-                     │ (max N tentativas)
+                └────┬─────┘  divergence? ─► retry with correction
+                     │ (max N attempts)
                      ▼
               ┌──────────────────┐
-              │ preview          │ (opcional, on-demand)
+              │ preview          │ (optional, on-demand)
               └─────┬────────────┘
                     │
        ┌────────────┼────────────┐
        ▼            ▼            ▼
-  Session JSON  Render áudio  Screenshot UI
+  Session JSON  Render audio  Screenshot UI
    (snapshot)    8 bars WAV   via macOS
 ```
 
-**Verify** (sempre):
-- Após cada batch, lê o estado relevante e compara com schema esperado.
-- Detecta: device no slot errado, parâmetro fora do range, clip vazio quando deveria ter notas.
-- Tools devolvem `{ ok, verified, diff }` em vez de só `ok`.
+**Verify** (always):
+- After each batch, reads the relevant state and compares against the expected schema.
+- Detects: device in the wrong slot, parameter out of range, empty clip when it should have notes.
+- Tools return `{ ok, verified, diff }` instead of just `ok`.
 
-**Preview** (opcional, sob demanda):
-- `preview_session_state` — JSON enxuto da sessão para o LLM "ver".
-- `preview_render` — pede `Song.create_audio_track` temporária + bounce de N bars com `Song.export_audio` (Live 12.1+) ou usa freeze.
-- `preview_screenshot` — captura da janela do Live via macOS `screencapture -l <window-id>` (precisa do bridge identificar o pid).
-- Retorna como MCP resource (imagem ou áudio) para o LLM consumir.
+**Preview** (optional, on demand):
+- `preview_session_state` — lean session JSON for the LLM to "see".
+- `preview_render` — requests a temporary `Song.create_audio_track` + N-bar bounce via `Song.export_audio` (Live 12.1+) or uses freeze.
+- `preview_screenshot` — captures the Live window via macOS `screencapture -l <window-id>` (the bridge needs to identify the pid).
+- Returns as an MCP resource (image or audio) for the LLM to consume.
 
 ---
 
-## 8. Superfície MCP — tools, resources, prompts
+## 8. MCP surface — tools, resources, prompts
 
 ### 8.1 Tools (~150)
 
-Esboço por domínio (nomes finais TBD; padrão `snake_case`):
+Sketch by domain (final names TBD; convention `snake_case`):
 
-| Domínio | Exemplos | Qtd estimada |
+| Domain | Examples | Estimated count |
 |---|---|---|
 | Transport | `play`, `stop`, `set_tempo`, `set_time_signature`, `tap_tempo`, `set_metronome`, `set_loop`, `add_cue_point`, `undo`, `redo` | 15 |
 | Track | `create_midi_track`, `create_audio_track`, `create_return_track`, `delete_track`, `duplicate_track`, `group_tracks`, `move_track`, `set_track_name`, `set_track_color`, `set_track_mute`, `set_track_solo`, `set_track_arm`, `set_track_volume`, `set_track_pan`, `set_track_send`, `set_input_routing`, `set_output_routing`, `set_monitoring`, `freeze_track`, `flatten_track`, `get_track_info` | 25 |
@@ -610,178 +610,178 @@ Esboço por domínio (nomes finais TBD; padrão `snake_case`):
 | Preview | `render_preview`, `screenshot_live` | 2 |
 | **Total** | | **~180** |
 
-### 8.2 Resources MCP
+### 8.2 MCP Resources
 
-- `live://session/state` (live snapshot, atualiza a cada N segundos)
-- `live://session/timeline` (arrangement clips em JSON)
-- `live://browser/tree` (cached, invalidado por evento)
+- `live://session/state` (live snapshot, refreshes every N seconds)
+- `live://session/timeline` (arrangement clips as JSON)
+- `live://browser/tree` (cached, invalidated on event)
 - `live://devices/catalog` (knowledge base)
 - `live://recipes/index`
-- `live://transport/now` (push de tempo, beat, is_playing — server-side updates)
+- `live://transport/now` (push of tempo, beat, is_playing — server-side updates)
 
-### 8.3 Prompts MCP (templates)
+### 8.3 MCP Prompts (templates)
 
-- `compose_track` — "componha um track no estilo X com Y bars"
-- `mix_balance` — "balance os níveis das tracks"
-- `arrange_session` — "estenda essa loop em arrangement completo"
-- `sound_design` — "crie um patch de Wavetable estilo X"
-- `mastering_chain` — "monte uma cadeia de mastering leve"
+- `compose_track` — "compose a track in style X with Y bars"
+- `mix_balance` — "balance the levels of the tracks"
+- `arrange_session` — "extend this loop into a full arrangement"
+- `sound_design` — "create a Wavetable patch in style X"
+- `mastering_chain` — "set up a light mastering chain"
 
 ---
 
-## 9. Transport / instalação / distribuição
+## 9. Transport / install / distribution
 
-Igual ao tdmcp:
+Same as tdmcp:
 
-| Canal | Pacote | Quem usa |
+| Channel | Package | Audience |
 |---|---|---|
-| Claude Desktop | `.mcpb` (Claude Desktop Bundle, ex-`.dxt`) | Usuário não-técnico, 1 clique |
+| Claude Desktop | `.mcpb` (Claude Desktop Bundle, ex-`.dxt`) | Non-technical user, 1 click |
 | Claude Code / Cursor / Codex | npm `@dpantani/ableton-mind` | Devs |
-| Smithery | hosted | Multi-cliente cloud |
+| Smithery | hosted | Multi-client cloud |
 | Docker | container | CI / sandboxes |
-| GitHub release | binário direto | Air-gapped |
+| GitHub release | direct binary | Air-gapped |
 
-**Remote Script** instala em:
+**Remote Script** installs in:
 
 - macOS: `~/Music/Ableton/User Library/Remote Scripts/AbletonMind/`
 - Windows: `~/Documents/Ableton/User Library/Remote Scripts/AbletonMind/`
 
-Script setup (`ableton-mind setup`) cria symlink/cópia + abre o Live para ativar em Preferences → Link/Tempo/MIDI → Control Surface.
+Setup script (`ableton-mind setup`) creates a symlink/copy + opens Live to activate it under Preferences → Link/Tempo/MIDI → Control Surface.
 
 ---
 
-## 10. CLI complementar (`ableton-mind-agent`, `ableton-mind doctor`)
+## 10. Complementary CLI (`ableton-mind-agent`, `ableton-mind doctor`)
 
-Espelhando `tdmcp-agent`:
+Mirroring `tdmcp-agent`:
 
-- `ableton-mind doctor` — checa: Live rodando? Remote Script ativado? Porta livre? Versão do Live ≥ 11? Python dentro do Live OK?
-- `ableton-mind agent` — REPL local que usa a knowledge base + recipes sem precisar de Claude (suporte OpenAI/Anthropic key opcional).
-- `ableton-mind probe` — descobre Live aberto e dumpa snapshot.
+- `ableton-mind doctor` — checks: Live running? Remote Script enabled? Port free? Live version ≥ 11? Python inside Live OK?
+- `ableton-mind agent` — local REPL that uses the knowledge base + recipes without requiring Claude (optional OpenAI/Anthropic key support).
+- `ableton-mind probe` — discovers a running Live and dumps a snapshot.
 
 ---
 
-## 11. Riscos & limitações conhecidos
+## 11. Known risks & limitations
 
-| Risco | Mitigação |
+| Risk | Mitigation |
 |---|---|
-| Remote Scripts rodam single-threaded no thread de áudio. Operações longas (carregar pack 5GB) bloqueiam. | Bridge faz tudo via `Live.Application.get_application().get_document().schedule(...)` quando possível; tools longas marcadas como `async` no MCP com progress. |
-| Live 12 mudou Python para 3.11 — Live 10/11 usa 3.7. | Bridge mantém compatibilidade 3.7+ ou flag de "live12-only". Recomendar Live 11+. |
-| Plugins VST/AU expõem só params automáveis (até 128 em VST2). | Limite documentado, fallback: usa preset.fxp/.aupreset. |
-| Audio render via `Song.export_audio` só na Live 12.1+. | Para versões anteriores, usa freeze track + read frozen file. |
-| Push 3 standalone via WiFi tem latência. | Move sync recomendado para transferências. |
-| Carregar device via URI muda entre versões/packs. | Knowledge base tem URIs versionadas; `resolve_uri` faz fuzzy match. |
-| AbletonOSC e ableton-mind brigando pela mesma porta. | Detecta na startup, oferece migração. |
-| MCP protocol limites de payload — sessão com 200 tracks gera resource gigante. | Resource paginado: `live://session/state?tracks=10-20`. |
+| Remote Scripts run single-threaded on the audio thread. Long operations (loading a 5GB pack) block. | The bridge does everything via `Live.Application.get_application().get_document().schedule(...)` when possible; long tools marked as `async` in MCP with progress. |
+| Live 12 moved Python to 3.11 — Live 10/11 uses 3.7. | The bridge keeps 3.7+ compatibility or a "live12-only" flag. Recommend Live 11+. |
+| VST/AU plugins only expose automatable params (up to 128 in VST2). | Limit documented, fallback: uses preset.fxp/.aupreset. |
+| Audio render via `Song.export_audio` is Live 12.1+ only. | For previous versions, uses freeze track + read frozen file. |
+| Push 3 standalone over WiFi has latency. | Move sync recommended for transfers. |
+| Loading a device by URI changes between versions/packs. | The knowledge base has versioned URIs; `resolve_uri` does fuzzy matching. |
+| AbletonOSC and ableton-mind fighting over the same port. | Detected at startup, migration offered. |
+| MCP protocol payload limits — a session with 200 tracks produces a huge resource. | Paginated resource: `live://session/state?tracks=10-20`. |
 
 ---
 
-## 12. Roadmap por fases
+## 12. Phased roadmap
 
-### Fase 0 — Spike (1-2 semanas)
-- Repo scaffold copiando `tdmcp` (TS+Node, tsup, biome, vitest, MCP SDK).
-- Bridge Python mínimo: TCP server, dispatch JSON-RPC, 5 handlers (play, stop, tempo, list tracks, create midi clip).
-- Cliente TS no servidor MCP.
-- 1 tool MCP: `play` end-to-end.
+### Phase 0 — Spike (1-2 weeks)
+- Repo scaffold copying `tdmcp` (TS+Node, tsup, biome, vitest, MCP SDK).
+- Minimal Python bridge: TCP server, JSON-RPC dispatch, 5 handlers (play, stop, tempo, list tracks, create midi clip).
+- TS client in the MCP server.
+- 1 MCP tool: `play` end-to-end.
 - Doc `docs/architecture.md`.
 
-### Fase 1 — Paridade com ahujasid (2-3 semanas)
-- 22 tools do ahujasid funcionando + verify loop.
-- Transações com undo unitário.
+### Phase 1 — Parity with ahujasid (2-3 weeks)
+- ahujasid's 22 tools working + verify loop.
+- Transactions with unitary undo.
 - Browser tree.
-- Smoke tests rodando Live de verdade no CI (macOS runner).
+- Smoke tests running against real Live in CI (macOS runner).
 
-### Fase 2 — Paridade com AbletonOSC (3-4 semanas)
-- Todos os getters/setters/methods do LOM (Song, Track, Clip Slot, Clip, Scene, Device, View).
+### Phase 2 — Parity with AbletonOSC (3-4 weeks)
+- All LOM getters/setters/methods (Song, Track, Clip Slot, Clip, Scene, Device, View).
 - Listeners → MCP notifications.
-- Resource `live://session/state`.
+- `live://session/state` resource.
 
-### Fase 3 — Knowledge & Recipes (3-4 semanas)
-- Schemas dos 50+ devices nativos.
+### Phase 3 — Knowledge & Recipes (3-4 weeks)
+- Schemas for the 50+ native devices.
 - 30 recipes (drums, bass, chords, racks, mixing).
-- Tool `set_device_param_by_name` resolvendo via knowledge.
-- Tool `apply_recipe`.
+- `set_device_param_by_name` tool resolving via knowledge.
+- `apply_recipe` tool.
 
-### Fase 4 — Coberturas avançadas (4-6 semanas)
-- Automation completo (arrangement + clip envelopes).
+### Phase 4 — Advanced coverage (4-6 weeks)
+- Full automation (arrangement + clip envelopes).
 - Modulation (Live 12).
-- Racks profundos (drum, instrument, audio, MIDI).
-- MPE per-note, probability.
-- Warp markers granular.
+- Deep racks (drum, instrument, audio, MIDI).
+- Per-note MPE, probability.
+- Granular warp markers.
 - Take lanes.
 
-### Fase 5 — Preview & Feedback (2-3 semanas)
+### Phase 5 — Preview & Feedback (2-3 weeks)
 - `render_preview` (8-bar bounce).
 - `screenshot_live` (macOS + Windows).
-- Session diff (snapshot anterior vs atual).
+- Session diff (previous snapshot vs current).
 
-### Fase 6 — Push & Move (3-4 semanas)
-- Push 1/2/3 LEDs/pads/modos.
+### Phase 6 — Push & Move (3-4 weeks)
+- Push 1/2/3 LEDs/pads/modes.
 - Move sync.
 
-### Fase 7 — Distribuição & Docs (2-3 semanas)
+### Phase 7 — Distribution & Docs (2-3 weeks)
 - `.mcpb` (Claude Desktop).
 - Smithery listing.
 - Docker.
-- Docs VitePress PT-BR + EN.
+- VitePress docs with English root and `docs/pt` localization.
 - Prompt cookbook.
-- Recipe gallery com áudio renderizado.
+- Recipe gallery with rendered audio.
 
-### Fase 8 — Long tail
+### Phase 8 — Long tail
 - Max for Live patcher introspection.
-- VST3 sidecar (params expandidos).
-- Integração com DAW remoto (Live Link).
+- VST3 sidecar (expanded params).
+- Integration with remote DAW (Live Link).
 - Mobile Push companion.
 
-**Total estimado**: ~6 meses de uma pessoa em tempo integral para chegar a v1.0 sólido (Fases 0-5). Fases 6-8 são roadmap pós-1.0.
+**Total estimate**: ~6 months of one person full-time to reach a solid v1.0 (Phases 0-5). Phases 6-8 are post-1.0 roadmap.
 
 ---
 
-## 13. Decisões abertas (precisa input antes de começar)
+## 13. Open decisions (need input before starting)
 
-| Pergunta | Opções | Recomendação inicial |
+| Question | Options | Initial recommendation |
 |---|---|---|
-| Linguagem do MCP server | TypeScript (= tdmcp), Python (= ahujasid) | **TypeScript** — coerência com tdmcp, ecossistema MCP melhor em TS, melhor tooling Zod. |
-| Transport bridge↔server | TCP socket JSON-RPC, WebSocket, OSC | **TCP JSON-RPC** principal + OSC opcional. |
-| Versão mínima do Live | 10, 11, 12 | **Live 11** — corta poucos usuários, ganha take lanes / MPE / probability. |
-| Suporte AbletonOSC | Drop-in replace ou coexistir? | **Coexistir** — flag para usar OSC como transport. |
-| Nome final | `ableton-mind`, `abletonmcp`, `livemcp`, outro | **ableton-mind** já é o diretório. Bom nome (espelha tdmcp como "mind designer"). |
-| Licença | MIT (= tdmcp), AGPL, Apache 2.0 | **MIT** — alinhado com tdmcp. |
-| Suporte Windows | desde dia 1 ou Mac primeiro | **Mac primeiro** (Live é mais usado em Mac, dev mais rápido), Windows na Fase 1. |
-| Knowledge devices: scrape ou manual | Live tem `Default.adv` em XML, dá pra extrair; ou manual com docs Ableton | **Híbrido** — script `scripts/extract-device-schemas.mjs` pega base, manual completa. |
-| Renderização preview | Bounce real (lento) ou simulação MIDI/áudio (rápido, imperfeito) | **Bounce real** opt-in, default = snapshot JSON. |
+| MCP server language | TypeScript (= tdmcp), Python (= ahujasid) | **TypeScript** — coherence with tdmcp, better MCP ecosystem in TS, better Zod tooling. |
+| bridge↔server transport | TCP socket JSON-RPC, WebSocket, OSC | **TCP JSON-RPC** as primary + optional OSC. |
+| Minimum Live version | 10, 11, 12 | **Live 11** — drops few users, gains take lanes / MPE / probability. |
+| AbletonOSC support | Drop-in replacement or coexist? | **Coexist** — flag to use OSC as transport. |
+| Final name | `ableton-mind`, `abletonmcp`, `livemcp`, other | **ableton-mind** is already the directory. Good name (mirrors tdmcp as "mind designer"). |
+| License | MIT (= tdmcp), AGPL, Apache 2.0 | **MIT** — aligned with tdmcp. |
+| Windows support | day 1 or Mac first | **Mac first** (Live is more used on Mac, faster dev), Windows in Phase 1. |
+| Device knowledge: scrape or manual | Live has `Default.adv` in XML, extractable; or manual with Ableton docs | **Hybrid** — `scripts/extract-device-schemas.mjs` gets the base, manual completes. |
+| Preview rendering | Real bounce (slow) or MIDI/audio simulation (fast, imperfect) | **Real bounce** opt-in, default = JSON snapshot. |
 
 ---
 
-## 14. Comparativo final
+## 14. Final comparison
 
-| Capacidade | ahujasid/ableton-mcp | AbletonOSC + wrapper MCP | **ableton-mind** |
+| Capability | ahujasid/ableton-mcp | AbletonOSC + MCP wrapper | **ableton-mind** |
 |---|---|---|---|
-| Tools MCP | 22 | ~30 (wrapper raso) | **~180** |
-| Cobertura LOM | ~10% | ~95% | **~100%** |
-| Knowledge base | nenhuma | nenhuma | **50+ devices, scales, packs, grooves** |
-| Recipes | nenhuma | nenhuma | **30+ na v1, extensível** |
-| Verify loop | não | não | **sim, integrado** |
-| Preview (render/screenshot) | não | não | **sim** |
-| Listeners reativos | não | sim (OSC) | **sim (MCP notifications)** |
-| Transações (undo unitário) | não | não | **sim** |
-| Automation envelopes | não | parcial | **completo** |
-| Racks profundos | drum só (load) | leitura básica | **completo CRUD** |
-| Modulation (Live 12) | não | parcial | **completo** |
-| Push / Move | não | não | **sim** |
-| Docs PT-BR | não | não | **sim** |
-| DXT/MCPB 1-click | não | não | **sim** |
-| CLI + doctor | não | não | **sim** |
+| MCP tools | 22 | ~30 (shallow wrapper) | **~180** |
+| LOM coverage | ~10% | ~95% | **~100%** |
+| Knowledge base | none | none | **50+ devices, scales, packs, grooves** |
+| Recipes | none | none | **30+ in v1, extensible** |
+| Verify loop | no | no | **yes, integrated** |
+| Preview (render/screenshot) | no | no | **yes** |
+| Reactive listeners | no | yes (OSC) | **yes (MCP notifications)** |
+| Transactions (unitary undo) | no | no | **yes** |
+| Automation envelopes | no | partial | **complete** |
+| Deep racks | drum only (load) | basic read | **full CRUD** |
+| Modulation (Live 12) | no | partial | **complete** |
+| Push / Move | no | no | **yes** |
+| `docs/pt` localization | no | no | **yes** |
+| DXT/MCPB 1-click | no | no | **yes** |
+| CLI + doctor | no | no | **yes** |
 
 ---
 
-## 15. Próximos passos sugeridos
+## 15. Suggested next steps
 
-1. **Validar este plano** — você revisa, ajusta escopo (cortar Push/Move? cortar preview? incluir Live 10?).
-2. **Decidir as questões abertas** da seção 13 (principalmente: TS confirmado? Live 11+ confirmado?).
-3. **Spike Fase 0** — eu posso já começar a scaffoldar o repo copiando estrutura do tdmcp adaptada para Ableton, com 1 tool funcionando ponta a ponta (`play` / `stop` / `set_tempo`).
-4. **Inventário de packs** — você lista quais packs Ableton você tem instalado para eu priorizar URIs no knowledge base.
-5. **Recipes seed** — você lista os 5-10 gêneros/padrões que mais te interessam (techno? D&B? lo-fi? jazz?) pra eu começar pelos recipes que você vai usar.
+1. **Validate this plan** — you review, adjust scope (drop Push/Move? drop preview? include Live 10?).
+2. **Decide the open questions** from section 13 (mainly: TS confirmed? Live 11+ confirmed?).
+3. **Phase 0 spike** — I can already start scaffolding the repo by copying the tdmcp structure adapted to Ableton, with 1 tool working end-to-end (`play` / `stop` / `set_tempo`).
+4. **Pack inventory** — you list which Ableton packs you have installed so I can prioritize URIs in the knowledge base.
+5. **Seed recipes** — you list the 5-10 genres/patterns that interest you most (techno? D&B? lo-fi? jazz?) so I can start with the recipes you will actually use.
 
 ---
 
-*Documento de planejamento — ableton-mind v0.0.1-plan.*
+*Planning document — ableton-mind v0.0.1-plan.*

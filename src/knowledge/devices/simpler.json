@@ -5,7 +5,7 @@
   "category": "instrument",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Sample player com 3 modos (Classic / One-Shot / Slicing), filter, envelope, LFO.",
+  "description": "Sample player with 3 modes (Classic / One-Shot / Slicing), filter, envelope and LFO.",
   "source": "curated (Cycle 8)",
   "completeness": "complete",
   "parameters": [

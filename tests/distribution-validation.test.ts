@@ -1,8 +1,8 @@
 /**
- * TD-038 — validação de artefatos de distribuição (Phase 7).
+ * TD-038 — validation of distribution artifacts (Phase 7).
  *
- * Não roda os workflows reais — apenas valida que YAMLs/JSONs estão parseáveis,
- * referencias internas existem, e CHANGELOG tem formato esperado.
+ * Doesn't run the real workflows — just validates that YAMLs/JSONs are parseable,
+ * internal references exist, and CHANGELOG has the expected format.
  */
 
 import { existsSync, readFileSync } from "node:fs";
@@ -101,18 +101,19 @@ describe("Dockerfile + smithery.yaml + .npmignore", () => {
     expect(ig).toMatch(/^src\/$/m);
     expect(ig).toMatch(/^live\/$/m);
     expect(ig).toMatch(/^tests\/$/m);
-    // recipes/ é mantido (não está na ignore)
+    // recipes/ is kept (not in the ignore list)
     expect(ig).not.toMatch(/^recipes\/$/m);
   });
 });
 
 describe("README + docs", () => {
-  it("README.md (PT) e README.en.md (EN) ambos existem", () => {
+  it("keeps English README at root and localized docs under docs/pt", () => {
     expect(existsSync(join(REPO_ROOT, "README.md"))).toBe(true);
-    expect(existsSync(join(REPO_ROOT, "README.en.md"))).toBe(true);
+    expect(existsSync(join(REPO_ROOT, "README" + ".en.md"))).toBe(false);
+    expect(existsSync(join(REPO_ROOT, "docs/pt/index.md"))).toBe(true);
   });
 
-  it("docs/distribution.md cobre Docker Windows (TD-035) + secrets (TD-040)", () => {
+  it("docs/distribution.md covers Docker Windows (TD-035) + secrets (TD-040)", () => {
     const dd = read("docs/distribution.md");
     expect(dd).toContain("WSL2");
     expect(dd).toContain("host.docker.internal");

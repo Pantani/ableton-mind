@@ -1,11 +1,11 @@
 /**
- * Tools MCP do domínio Browser.
+ * MCP tools for the Browser domain.
  *
- * `browser_get_categories` — lista as categorias raiz do Live Browser
+ * `browser_get_categories` — lists the root categories of the Live Browser
  * (Audio Effects, MIDI Effects, Instruments, Drums, Samples, Sounds,
  * Current Project, User Library, Packs, Plug-ins).
  *
- * Phase 2 adiciona walk recursivo + filtros por tag.
+ * Phase 2 adds recursive walk + tag filters.
  */
 
 import { z } from "zod";
@@ -55,7 +55,7 @@ const loadItemInputSchema = z.object({
     .array(z.string().min(1))
     .min(1)
     .describe(
-      'Browser path como array de nomes. Ex: ["instruments", "Wavetable", "Pads", "Air Pad"].',
+      'Browser path as an array of names. Ex: ["instruments", "Wavetable", "Pads", "Air Pad"].',
     ),
 });
 

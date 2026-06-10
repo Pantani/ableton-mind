@@ -5,38 +5,162 @@
   "category": "drums",
   "version": "0.1",
   "description": "Classic amen-style jungle break em 1 bar — kick, snare ghost notes, open hat off-beat. Tempo 170 BPM.",
-  "tags": ["jungle", "dnb", "amen", "breaks", "170bpm"],
+  "tags": [
+    "jungle",
+    "dnb",
+    "amen",
+    "breaks",
+    "170bpm"
+  ],
   "inputs": {
-    "track_name": { "type": "string", "default": "Break" },
-    "tempo": { "type": "number", "default": 170, "min": 140, "max": 180 }
+    "track_name": {
+      "type": "string",
+      "default": "Break"
+    },
+    "tempo": {
+      "type": "number",
+      "default": 170,
+      "min": 140,
+      "max": 180
+    }
   },
   "steps": [
-    { "op": "transport.set_tempo", "args": { "bpm": "{{tempo}}" } },
-    { "op": "track.upsert", "args": { "name": "{{track_name}}", "type": "midi" }, "let": "drums" },
-    { "op": "browser.load_item", "args": { "path": ["drums", "Drum Rack", "Init"] } },
-    { "op": "clip.create_midi", "args": { "track_index": "{{drums.track.index}}", "clip_slot_index": 0, "length_beats": 4.0, "name": "Amen Break" } },
+    {
+      "op": "transport.set_tempo",
+      "args": {
+        "bpm": "{{tempo}}"
+      }
+    },
+    {
+      "op": "track.upsert",
+      "args": {
+        "name": "{{track_name}}",
+        "type": "midi"
+      },
+      "let": "drums"
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "drums",
+          "Drum Rack",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "clip.create_midi",
+      "args": {
+        "track_index": "{{drums.track.index}}",
+        "clip_slot_index": 0,
+        "length_beats": 4,
+        "name": "Amen Break"
+      }
+    },
     {
       "op": "clip.add_notes",
       "args": {
         "track_index": "{{drums.track.index}}",
         "clip_slot_index": 0,
         "notes": [
-          { "pitch": 36, "start": 0, "duration": 0.25, "velocity": 110 },
-          { "pitch": 36, "start": 0.75, "duration": 0.25, "velocity": 90 },
-          { "pitch": 38, "start": 1, "duration": 0.25, "velocity": 100 },
-          { "pitch": 38, "start": 1.5, "duration": 0.25, "velocity": 60, "mute": false },
-          { "pitch": 36, "start": 2, "duration": 0.25, "velocity": 108 },
-          { "pitch": 38, "start": 2.5, "duration": 0.25, "velocity": 50 },
-          { "pitch": 38, "start": 3, "duration": 0.25, "velocity": 100 },
-          { "pitch": 38, "start": 3.75, "duration": 0.25, "velocity": 80 },
-          { "pitch": 42, "start": 0, "duration": 0.125, "velocity": 60 },
-          { "pitch": 42, "start": 0.5, "duration": 0.125, "velocity": 65 },
-          { "pitch": 42, "start": 1, "duration": 0.125, "velocity": 60 },
-          { "pitch": 46, "start": 1.5, "duration": 0.25, "velocity": 80 },
-          { "pitch": 42, "start": 2, "duration": 0.125, "velocity": 60 },
-          { "pitch": 42, "start": 2.5, "duration": 0.125, "velocity": 65 },
-          { "pitch": 46, "start": 3, "duration": 0.25, "velocity": 80 },
-          { "pitch": 42, "start": 3.5, "duration": 0.125, "velocity": 60 }
+          {
+            "pitch": 36,
+            "start": 0,
+            "duration": 0.25,
+            "velocity": 110
+          },
+          {
+            "pitch": 36,
+            "start": 0.75,
+            "duration": 0.25,
+            "velocity": 90
+          },
+          {
+            "pitch": 38,
+            "start": 1,
+            "duration": 0.25,
+            "velocity": 100
+          },
+          {
+            "pitch": 38,
+            "start": 1.5,
+            "duration": 0.25,
+            "velocity": 60,
+            "mute": false
+          },
+          {
+            "pitch": 36,
+            "start": 2,
+            "duration": 0.25,
+            "velocity": 108
+          },
+          {
+            "pitch": 38,
+            "start": 2.5,
+            "duration": 0.25,
+            "velocity": 50
+          },
+          {
+            "pitch": 38,
+            "start": 3,
+            "duration": 0.25,
+            "velocity": 100
+          },
+          {
+            "pitch": 38,
+            "start": 3.75,
+            "duration": 0.25,
+            "velocity": 80
+          },
+          {
+            "pitch": 42,
+            "start": 0,
+            "duration": 0.125,
+            "velocity": 60
+          },
+          {
+            "pitch": 42,
+            "start": 0.5,
+            "duration": 0.125,
+            "velocity": 65
+          },
+          {
+            "pitch": 42,
+            "start": 1,
+            "duration": 0.125,
+            "velocity": 60
+          },
+          {
+            "pitch": 46,
+            "start": 1.5,
+            "duration": 0.25,
+            "velocity": 80
+          },
+          {
+            "pitch": 42,
+            "start": 2,
+            "duration": 0.125,
+            "velocity": 60
+          },
+          {
+            "pitch": 42,
+            "start": 2.5,
+            "duration": 0.125,
+            "velocity": 65
+          },
+          {
+            "pitch": 46,
+            "start": 3,
+            "duration": 0.25,
+            "velocity": 80
+          },
+          {
+            "pitch": 42,
+            "start": 3.5,
+            "duration": 0.125,
+            "velocity": 60
+          }
         ]
       }
     }

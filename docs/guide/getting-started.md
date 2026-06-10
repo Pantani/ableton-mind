@@ -1,70 +1,54 @@
-# Começando
+# Getting started
 
-`ableton-mind` é um servidor MCP que expõe o **Live Object Model** completo para LLMs. Esta página leva você do zero ao primeiro `play` no Live.
+`ableton-mind` is an MCP server exposing the full Live Object Model to LLMs. This page takes you from zero to your first `play` in Live.
 
-## Pré-requisitos
+## Prerequisites
 
 - **Node.js 20+**
-- **Ableton Live 12** (suporte 11 vem na Phase 1 final). macOS prioritário.
-- Um cliente MCP — **Claude Desktop**, **Cursor**, **Continue**, etc.
+- **Ableton Live 12** (11 support comes late in Phase 1). macOS first.
+- An MCP client — **Claude Desktop**, **Cursor**, **Continue**, etc.
 
-## 1. Instalar
+## 1. Install
 
-Veja [Instalação](./installation) para os 4 canais (DXT one-click, npm, Docker, Smithery). Para começar rápido:
+See [Installation](./installation) for all four channels. Quick path:
 
 ```bash
 npm install -g ableton-mind
 ```
 
-## 2. Instalar o Remote Script (bridge Python)
+## 2. Install the Remote Script (Python bridge)
 
-O Remote Script roda **dentro do Live** e expõe o LOM via TCP em `127.0.0.1:9876`.
+The Remote Script runs **inside Live** and exposes the LOM over TCP at `127.0.0.1:9876`.
 
 ```bash
 ableton-mind install:remote-script
 ```
 
-Ou manualmente, copie `live/AbletonMind/` para:
+Or manually copy `live/AbletonMind/` to:
 
 - **macOS:** `~/Music/Ableton/User Library/Remote Scripts/AbletonMind/`
 - **Windows:** `~/Documents/Ableton/User Library/Remote Scripts/AbletonMind/`
 
-## 3. Ativar no Live
+## 3. Activate in Live
 
 **Live → Preferences → Link/Tempo/MIDI → Control Surface → AbletonMind**.
 
-Confirme no Log da bridge que o TCP server subiu:
+## 4. Point your MCP client
 
-```
-[AbletonMind] TCP server listening on 127.0.0.1:9876
-```
-
-## 4. Apontar seu cliente MCP
-
-Exemplo `claude_desktop_config.json`:
+Example `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "ableton-mind": {
-      "command": "ableton-mind"
-    }
+    "ableton-mind": { "command": "ableton-mind" }
   }
 }
 ```
 
-## 5. Primeiro `play`
+## 5. First `play`
 
-No Claude/Cursor, peça:
+Ask Claude/Cursor:
 
-> "Toca o set."
+> "Play the set."
 
-O LLM chama `play`. A tool retorna `{ ok, verified: { is_playing: true }, diff: { is_playing: false → true } }`.
-
-## Próximos passos
-
-- [Arquitetura](../architecture) — entenda as 3 camadas.
-- [Tools](../tools/) — os 21 domínios LOM.
-- [Knowledge base](../knowledge/) — schemas de devices.
-- [Recipes](../recipes/) — drums/bass/racks por gênero.
-- [Smoke test](../smoke-test) — checklist end-to-end.
+The LLM calls `play`. The tool returns `{ ok, verified: { is_playing: true }, diff: { is_playing: false → true } }`.

@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Guitar cabinet IR simulator. Pareado com Amp para tom de guitarra/bass.",
+  "description": "Guitar cabinet IR simulator. Pair with Amp for guitar/bass tone.",
   "source": "curated (Cycle 15)",
   "completeness": "complete",
   "parameters": [

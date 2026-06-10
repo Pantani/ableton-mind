@@ -1,12 +1,12 @@
 """
-Handler `browser.get_categories` — lista as categorias raiz do Live Browser.
+`browser.get_categories` handler — lists the Live Browser root categories.
 
-Live 12 expõe `Application.browser` com nodes: `audio_effects`,
+Live 12 exposes `Application.browser` with nodes: `audio_effects`,
 `midi_effects`, `instruments`, `drums`, `samples`, `sounds`, `current_project`,
-`user_library`, `packs`, `plugins`. Cada um é um BrowserItem.
+`user_library`, `packs`, `plugins`. Each is a BrowserItem.
 
-Phase 1: só lista os nomes + se é folder (todos são). Phase 2 adiciona
-walk recursivo + filter por tag.
+Phase 1: lists only the names + whether it's a folder (all are). Phase 2
+adds recursive walk + filter by tag.
 """
 from ..errors import (
     INVALID_PARAMS,
@@ -19,9 +19,9 @@ from ..schemas import BrowserGetCategoriesInput, BrowserLoadItemInput
 from ._base import Handler, register
 
 
-# Lista canônica das categorias raiz. Algumas builds do Live não expõem todas
-# (ex: `drums` pode estar dentro de `instruments` em versões antigas). Filtramos
-# por `hasattr`.
+# Canonical list of root categories. Some Live builds don't expose them all
+# (e.g. `drums` may live inside `instruments` in older versions). We filter
+# via `hasattr`.
 ROOT_CATEGORIES = [
     "audio_effects",
     "midi_effects",
@@ -41,14 +41,14 @@ class BrowserGetCategoriesHandler(Handler):
     INPUT = BrowserGetCategoriesInput
 
     def execute(self, params: BrowserGetCategoriesInput) -> dict:
-        # Live browser não vem via Song; vem via Application. Em runtime real,
-        # `self.ctrl.application` ou similar. Phase 1: confiamos no
-        # `getattr(self.ctrl, "application", None)` ou fallback se headless.
+        # The Live browser doesn't come via Song; it comes via Application. In
+        # real runtime, `self.ctrl.application` or similar. Phase 1: rely on
+        # `getattr(self.ctrl, "application", None)` or fallback if headless.
         app = getattr(self.ctrl, "application", None) or getattr(self.ctrl, "_application", None)
         browser = getattr(app, "browser", None) if app is not None else None
 
         if browser is None:
-            # Em testes / headless: retorna lista vazia mas não erra.
+            # In tests / headless: return empty list but don't error.
             return {"categories": [], "available": False, "reason": "browser unavailable (headless/no app)"}
 
         out: list = []
@@ -69,14 +69,14 @@ class BrowserGetCategoriesHandler(Handler):
 
 
 def _browser(ctrl):
-    """Devolve `application.browser` ou None."""
+    """Returns `application.browser` or None."""
     app = getattr(ctrl, "application", None) or getattr(ctrl, "_application", None)
     return getattr(app, "browser", None) if app is not None else None
 
 
 def _walk_path(browser, path):
-    """Walk recursivo: começa em browser.<root>, desce por children buscando
-    por `name`. Retorna o BrowserItem final ou levanta RpcError com contexto."""
+    """Recursive walk: starts at browser.<root>, descends through children
+    matching by `name`. Returns the final BrowserItem or raises RpcError with context."""
     if not path:
         raise RpcError(INVALID_PARAMS, "path must be non-empty", {"got": path})
     root_key = path[0]
@@ -106,10 +106,10 @@ def _walk_path(browser, path):
 
 @register("browser.load_item")
 class BrowserLoadItemHandler(Handler):
-    """Carrega um BrowserItem na track selecionada/armada.
+    """Loads a BrowserItem onto the selected/armed track.
 
-    LiveAPI: `application.browser.load_item(item)`. Live escolhe a track
-    destino sozinho (geralmente a armada ou a última clicada).
+    LiveAPI: `application.browser.load_item(item)`. Live picks the target
+    track itself (usually the armed one or the last clicked).
     """
 
     INPUT = BrowserLoadItemInput

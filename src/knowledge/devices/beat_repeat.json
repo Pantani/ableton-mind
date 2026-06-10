@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "Repete slices do áudio em sync ao tempo. Glitch / stutter effect.",
+  "description": "Repeats audio slices in tempo sync. Glitch / stutter effect.",
   "source": "curated (Cycle 10)",
   "completeness": "complete",
   "parameters": [

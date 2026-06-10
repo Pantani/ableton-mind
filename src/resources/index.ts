@@ -1,8 +1,8 @@
 /**
  * MCP Resources registry (ADR-0011).
  *
- * Resources são URIs read-only que clientes MCP leem via `resources/read`.
- * Diferente de tools, NUNCA causam efeito colateral.
+ * Resources are read-only URIs that MCP clients read via `resources/read`.
+ * Unlike tools, they NEVER cause side effects.
  */
 
 import type { BridgeClient } from "../server/context.js";
@@ -22,15 +22,15 @@ export interface ResourceReadResult {
 }
 
 export interface ResourceDefinition {
-  /** URI canônico do resource (ex: `live://session/state`). */
+  /** Canonical URI of the resource (ex: `live://session/state`). */
   uri: string;
-  /** Nome amigável usado pelo cliente MCP. */
+  /** Friendly name used by the MCP client. */
   name: string;
   description: string;
   mimeType: string;
   /**
-   * Função read — recebe um `BridgeClient` opcional (para resources que
-   * consultam o Live). Resources estáticos podem ignorar.
+   * Read function — receives an optional `BridgeClient` (for resources that
+   * query Live). Static resources can ignore it.
    */
   read: (bridge: BridgeClient | null) => Promise<ResourceReadResult>;
 }
@@ -43,7 +43,7 @@ export const allResources: ResourceDefinition[] = [
   recipesIndexResource,
 ];
 
-/** Lookup por URI exato. */
+/** Lookup by exact URI. */
 export function loadResource(uri: string): ResourceDefinition | null {
   return allResources.find((r) => r.uri === uri) ?? null;
 }

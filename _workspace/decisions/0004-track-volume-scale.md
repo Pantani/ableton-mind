@@ -1,28 +1,28 @@
-# ADR 0004 — Escala de `track.set_volume`
+# ADR 0004 — `track.set_volume` scale
 
-**Data:** 2026-06-09
-**Status:** Aceito
-**Autor:** architect
+**Date:** 2026-06-09
+**Status:** Accepted
+**Author:** architect
 
-## Contexto
+## Context
 
-LiveAPI expõe `track.mixer_device.volume.value` como float 0.0..1.0 (normalized), onde 0.85 ~ 0 dB, 1.0 ~ +6 dB. dB não é linear no slider.
+LiveAPI exposes `track.mixer_device.volume.value` as a float 0.0..1.0 (normalized), where 0.85 ~ 0 dB, 1.0 ~ +6 dB. dB is not linear on the slider.
 
-Wrappers de DAW (Reaper, Pro Tools API) costumam expor dB. ahujasid/ableton-mcp usa 0..1.
+DAW wrappers (Reaper, Pro Tools API) typically expose dB. ahujasid/ableton-mcp uses 0..1.
 
-## Decisão
+## Decision
 
-`track.set_volume` recebe `volume: number` em 0.0..1.0. **Não** aceita dB diretamente.
+`track.set_volume` receives `volume: number` in 0.0..1.0. **Does not** accept dB directly.
 
-Adicional: tool retorna `volume_db_approx: number` calculado via conversão padrão (-inf, -60, ..., +6 dB) para LLM ter referência.
+Additional: the tool returns `volume_db_approx: number` computed via standard conversion (-inf, -60, ..., +6 dB) so the LLM has a reference.
 
-## Por quê
+## Why
 
-- Espelha LiveAPI 1:1 (sem conversão server-side dá precisão).
-- Acordo de simplicidade do contrato JSON-RPC: 1 unidade por param.
-- LLM pode pedir helper futuro `vol_from_db(-6)` em recipe — não bloqueante.
+- Mirrors LiveAPI 1:1 (no server-side conversion gives precision).
+- Simplicity agreement for the JSON-RPC contract: 1 unit per param.
+- LLM can request a future `vol_from_db(-6)` helper in a recipe — non-blocking.
 
-## Conversão `volume → dB` aproximada (Live curve)
+## Approximate `volume → dB` conversion (Live curve)
 
 | volume | dB    |
 |--------|-------|
@@ -34,10 +34,10 @@ Adicional: tool retorna `volume_db_approx: number` calculado via conversão padr
 | 0.850  |  0    |
 | 1.000  | +6    |
 
-Curva real do Live é piecewise (3 segmentos). Implementação Python aproxima com tabela + interpolação linear; aceita erro <0.5 dB. Phase 4 pode trocar por curva exata se necessário.
+Live's real curve is piecewise (3 segments). The Python implementation approximates with a table + linear interpolation; accepts error <0.5 dB. Phase 4 may swap for the exact curve if necessary.
 
-## Como aplicar
+## How to apply
 
-- `bridge/handlers/track.py::set_volume` clama 0..1, calcula dB aprox, chama `track.mixer_device.volume.value = v`.
+- `bridge/handlers/track.py::set_volume` clamps 0..1, computes approx dB, calls `track.mixer_device.volume.value = v`.
 - TS tool: Zod `z.number().min(0).max(1)`.
 - Output: `{ ok, verified, changed, before: number, after: number, before_db: number, after_db: number }`.

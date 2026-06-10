@@ -154,7 +154,7 @@ class TestTrackSetVolume(unittest.TestCase):
             h.execute(TrackSetVolumeInput(index=0, volume=1.5))
 
     def test_volume_to_db_curve(self):
-        # Pontos âncora da tabela ADR-0004
+        # Anchor points from the ADR-0004 table
         self.assertEqual(_volume_to_db(0.0), float("-inf"))
         self.assertAlmostEqual(_volume_to_db(0.85), 0.0, places=2)
         self.assertAlmostEqual(_volume_to_db(1.0), 6.0, places=2)
@@ -282,7 +282,7 @@ class TestSessionGetInfo(unittest.TestCase):
 class TestBrowserGetCategories(unittest.TestCase):
     def test_unavailable_when_no_application(self):
         song = _seed_song()
-        ctrl = FakeCtrl(song)  # sem application
+        ctrl = FakeCtrl(song)  # no application
         h = BrowserGetCategoriesHandler(ctrl)
         r = h.execute(BrowserGetCategoriesInput())
         self.assertFalse(r["available"])
@@ -314,8 +314,8 @@ class TestTrackGetInfo(unittest.TestCase):
         self.assertEqual(r["name"], "Drums")
         self.assertTrue(r["is_midi"])
         self.assertEqual(r["num_clip_slots"], 8)
-        self.assertEqual(r["num_clips"], 1)  # criamos 1 clip no slot 0
-        # Volume default no FakeMixerDevice é 0.85 (= 0 dB).
+        self.assertEqual(r["num_clips"], 1)  # we created 1 clip in slot 0
+        # Default volume on FakeMixerDevice is 0.85 (= 0 dB).
         self.assertAlmostEqual(r["volume"], 0.85, places=2)
         self.assertAlmostEqual(r["volume_db"], 0.0, places=2)
 
@@ -383,7 +383,7 @@ class TestClipSetLoop(unittest.TestCase):
 
 
 # ============================================================================
-# Smoke registry — todos os 19 métodos esperados registrados
+# Smoke registry — all 19 expected methods registered
 # ============================================================================
 
 
@@ -413,7 +413,7 @@ class TestRegistry(unittest.TestCase):
         }
         actual = set(REGISTRY.keys())
         missing = expected - actual
-        self.assertFalse(missing, f"métodos faltando no REGISTRY: {missing}")
+        self.assertFalse(missing, f"methods missing from REGISTRY: {missing}")
 
 
 if __name__ == "__main__":

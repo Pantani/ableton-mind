@@ -1,16 +1,16 @@
 """
 CLI entry: `python -m AbletonMind --headless --port <p>`.
 
-Roda o `BridgeServer` em modo headless (sem ControlSurface / sem Live), útil para:
-  - Smoke tests TS que precisam de socket real (`tests/wire-smoke.test.ts`).
-  - Validação local manual de framing NDJSON e error codes.
+Runs `BridgeServer` in headless mode (no ControlSurface / no Live), useful for:
+  - TS smoke tests that need a real socket (`tests/wire-smoke.test.ts`).
+  - Local manual validation of NDJSON framing and error codes.
 
-NÃO use isto dentro do Live — o Live carrega via Control Surface direto na
-classe `AbletonMind` em `__init__.py`.
+DO NOT use this inside Live — Live loads it via Control Surface directly into
+the `AbletonMind` class in `__init__.py`.
 
 Usage:
-  python -m AbletonMind                       # porta 9876
-  python -m AbletonMind --port 9999           # porta custom
+  python -m AbletonMind                       # port 9876
+  python -m AbletonMind --port 9999           # custom port
   python -m AbletonMind --host 0.0.0.0
 """
 import argparse
@@ -29,7 +29,7 @@ def main() -> int:
         "--headless",
         action="store_true",
         default=True,
-        help="Modo headless (default).",
+        help="Headless mode (default).",
     )
     args = parser.parse_args()
 

@@ -1,13 +1,13 @@
 /**
- * `defineTool` — factory tipada para uma tool MCP do ableton-mind.
+ * `defineTool` — typed factory for an ableton-mind MCP tool.
  *
- * Centraliza:
- * - Schema Zod de input e output.
- * - Handler async com `ctx` injetado (bridge client + logger).
+ * Centralizes:
+ * - Zod input and output schemas.
+ * - Async handler with injected `ctx` (bridge client + logger).
  * - Metadata (name, description, enabled).
  *
- * O server bootstrap (`src/server/index.ts`) consome ToolDefinition[] e
- * registra cada uma no `@modelcontextprotocol/sdk`.
+ * The server bootstrap (`src/server/index.ts`) consumes ToolDefinition[] and
+ * registers each one with `@modelcontextprotocol/sdk`.
  */
 
 import type { z } from "zod";
@@ -15,38 +15,38 @@ import type { z } from "zod";
 import type { ToolContext } from "./context.js";
 
 /**
- * Schema mínimo aceito como input/output: qualquer ZodTypeAny.
- * Forçamos `output` a ser objeto (z.object) para combinar com convenção
- * `{ ok, verified, ... }`. Mas aceitamos ZodTypeAny no tipo para flex.
+ * Minimum schema accepted as input/output: any ZodTypeAny.
+ * We force `output` to be an object (z.object) to match the
+ * `{ ok, verified, ... }` convention. But we accept ZodTypeAny in the type for flexibility.
  */
 export interface ToolDefinition<
   TInput extends z.ZodTypeAny = z.ZodTypeAny,
   TOutput extends z.ZodTypeAny = z.ZodTypeAny,
 > {
-  /** Nome MCP visível ao LLM (snake_case). */
+  /** MCP name visible to the LLM (snake_case). */
   name: string;
-  /** Descrição clara para o LLM saber quando invocar. */
+  /** Clear description so the LLM knows when to invoke. */
   description: string;
-  /** Schema Zod do input. */
+  /** Zod input schema. */
   input: TInput;
-  /** Schema Zod do output. */
+  /** Zod output schema. */
   output: TOutput;
   /**
-   * Handler async. Recebe input já validado pelo Zod e contexto
-   * com bridge client. Retorno deve passar pelo `output` schema.
+   * Async handler. Receives Zod-validated input and a context
+   * with bridge client. Return must pass the `output` schema.
    */
   handler: (input: z.infer<TInput>, ctx: ToolContext) => Promise<z.infer<TOutput>>;
   /**
-   * Se `false`, tool é registrada mas marcada como `disabled` no manifest.
-   * Phase 0: outras tools além de `play` podem ficar disabled.
+   * If `false`, tool is registered but marked as `disabled` in the manifest.
+   * Phase 0: tools other than `play` may stay disabled.
    * Default: `true`.
    */
   enabled?: boolean;
 }
 
 /**
- * Identidade. Existe só para dar autocomplete + checagem de tipos no
- * call site sem perder a inferência de `TInput` / `TOutput`.
+ * Identity function. Exists only to give autocomplete + type checking at the
+ * call site without losing inference of `TInput` / `TOutput`.
  */
 export function defineTool<TInput extends z.ZodTypeAny, TOutput extends z.ZodTypeAny>(
   def: ToolDefinition<TInput, TOutput>,

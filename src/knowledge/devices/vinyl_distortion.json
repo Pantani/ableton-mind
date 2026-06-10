@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "Distortion estilo vinil — tracing distortion + crackle simulation. Modela imperfeições mecânicas de turntable.",
+  "description": "Vinyl-style distortion: tracing distortion + crackle simulation. Models mechanical turntable imperfections.",
   "source": "curated (Cycle 13)",
   "completeness": "complete",
   "parameters": [

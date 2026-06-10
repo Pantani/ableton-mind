@@ -1,10 +1,10 @@
-# Phase 0 — Métodos do Spike
+# Phase 0 — Spike Methods
 
-**Escopo:** 5 handlers + handshake. O suficiente para 1 tool MCP `play` ponta a ponta.
+**Scope:** 5 handlers + handshake. Enough for 1 end-to-end MCP `play` tool.
 
 ## 1. `system.hello`
 
-Handshake obrigatório. Bridge não responde nenhum outro método antes.
+Mandatory handshake. The bridge does not respond to any other method before.
 
 **Request params:**
 ```ts
@@ -24,14 +24,14 @@ Handshake obrigatório. Bridge não responde nenhum outro método antes.
 
 ## 2. `system.ping`
 
-Health check. Server deve responder rápido (<10ms).
+Health check. The server must respond quickly (<10ms).
 
 **Request params:** `{}`
 **Response result:** `{ pong: true, ts: number /* unix epoch ms */ }`
 
 ## 3. `transport.play`
 
-Inicia playback. Idempotente: se já tocando, retorna `changed: false`.
+Starts playback. Idempotent: if already playing, returns `changed: false`.
 
 **Request params:**
 ```ts
@@ -42,17 +42,17 @@ Inicia playback. Idempotente: se já tocando, retorna `changed: false`.
 ```ts
 {
   changed: boolean;
-  is_playing: boolean;       // sempre true após op
-  current_song_time: number; // em beats
+  is_playing: boolean;       // always true after op
+  current_song_time: number; // in beats
 }
 ```
 
-**Erros:**
+**Errors:**
 - `-32000` Live not running
 
 ## 4. `transport.stop`
 
-Para playback. Idempotente.
+Stops playback. Idempotent.
 
 **Request params:** `{}`
 **Response result:**
@@ -66,43 +66,43 @@ Para playback. Idempotente.
 
 ## 5. `transport.set_tempo`
 
-Muda tempo global. Idempotente.
+Changes global tempo. Idempotent.
 
 **Request params:**
 ```ts
-{ bpm: number }   // 20.0–999.0 (faixa Live)
+{ bpm: number }   // 20.0–999.0 (Live range)
 ```
 
 **Response result:**
 ```ts
 {
   changed: boolean;
-  before: number;   // bpm anterior
-  after: number;    // bpm atual (= bpm se applied)
+  before: number;   // previous bpm
+  after: number;    // current bpm (= bpm if applied)
 }
 ```
 
-**Erros:**
+**Errors:**
 - `-32004` Out of range. `error.data = { min: 20, max: 999, got: <input> }`
 
 ## 6. `track.list`
 
-> **ATUALIZADO em Cycle 2 por [ADR-0002](../decisions/0002-track-list-shape.md)** —
-> shape antigo (`tracks` único com indexes negativos) substituído por coleções
-> separadas. O bloco abaixo já é a versão atual.
+> **UPDATED in Cycle 2 by [ADR-0002](../decisions/0002-track-list-shape.md)** —
+> old shape (single `tracks` with negative indexes) replaced by separate
+> collections. The block below is already the current version.
 
-Lista tracks separando regular, return e master. Read-only.
+Lists tracks separating regular, return and master. Read-only.
 
 **Request params:**
 ```ts
-{ include_master?: boolean; include_returns?: boolean }   // ambos default true
+{ include_master?: boolean; include_returns?: boolean }   // both default true
 ```
 
 **Response result:**
 ```ts
 {
   tracks: Array<{
-    index: number;       // posição em song.tracks (0..N-1)
+    index: number;       // position in song.tracks (0..N-1)
     name: string;
     color_index: number;
     is_midi: boolean;
@@ -114,7 +114,7 @@ Lista tracks separando regular, return e master. Read-only.
     arm: boolean;
   }>;
   return_tracks: Array<{
-    index: number;       // posição em song.return_tracks (0..M-1)
+    index: number;       // position in song.return_tracks (0..M-1)
     name: string;
     color_index: number;
     mute: boolean;
@@ -123,21 +123,21 @@ Lista tracks separando regular, return e master. Read-only.
   master_track: {
     name: string;
     color_index: number;
-  } | null;              // null em testes; em runtime real sempre presente
+  } | null;              // null in tests; always present in real runtime
   total: number;          // tracks + return_tracks + (master ? 1 : 0)
 }
 ```
 
 ## 7. `clip.create_midi`
 
-Cria MIDI clip vazio num slot. Transacional (begin/end_undo_step).
+Creates an empty MIDI clip in a slot. Transactional (begin/end_undo_step).
 
 **Request params:**
 ```ts
 {
-  track_index: number;     // index de track MIDI
-  clip_slot_index: number; // index do slot
-  length_beats: number;    // ex 4.0 = 1 bar a 4/4
+  track_index: number;     // MIDI track index
+  clip_slot_index: number; // slot index
+  length_beats: number;    // e.g. 4.0 = 1 bar at 4/4
   name?: string;
 }
 ```
@@ -155,33 +155,33 @@ Cria MIDI clip vazio num slot. Transacional (begin/end_undo_step).
 }
 ```
 
-**Erros:**
-- `-32002` Track não existe. `data = { num_tracks: N }`
-- `-32003` Track não é MIDI. `data = { expected: "midi", actual: "audio" }`
-- `-32005` Slot já ocupado. `data = { existing_clip_name: "..." }`
+**Errors:**
+- `-32002` Track does not exist. `data = { num_tracks: N }`
+- `-32003` Track is not MIDI. `data = { expected: "midi", actual: "audio" }`
+- `-32005` Slot already occupied. `data = { existing_clip_name: "..." }`
 
-## 8. (opcional) `event.beat` — notification
+## 8. (optional) `event.beat` — notification
 
-Bridge MAY push beat events. Phase 0 NÃO obriga. Se implementar:
+The bridge MAY push beat events. Phase 0 does NOT require it. If implemented:
 
 ```ts
 {
-  beat: number;        // beat number absoluto
+  beat: number;        // absolute beat number
   bar: number;         // bar number
   song_time: number;   // beats from start
 }
 ```
 
-## 9. `track.create` (adicionado em Cycle 2 — primeira tool além de Phase 0 strict)
+## 9. `track.create` (added in Cycle 2 — first tool beyond strict Phase 0)
 
-Cria audio ou MIDI track. Não idempotente: chamadas repetidas criam várias tracks.
+Creates an audio or MIDI track. Not idempotent: repeated calls create multiple tracks.
 
 **Request params:**
 ```ts
 {
   type: "midi" | "audio";
-  index?: number;     // posição em song.tracks após criação; omitido = append no fim
-  name?: string;      // se omitido, Live usa nome default ("X MIDI N" / "X Audio N")
+  index?: number;     // position in song.tracks after creation; omitted = append at end
+  name?: string;      // if omitted, Live uses default name ("X MIDI N" / "X Audio N")
 }
 ```
 
@@ -198,15 +198,15 @@ Cria audio ou MIDI track. Não idempotente: chamadas repetidas criam várias tra
 }
 ```
 
-**Erros:**
-- `-32002` `type` desconhecido. `data = { expected: ["midi","audio"], got: <input> }`
-- `-32004` `index` fora de `[0, num_tracks]`. `data = { min, max, got }`
+**Errors:**
+- `-32002` unknown `type`. `data = { expected: ["midi","audio"], got: <input> }`
+- `-32004` `index` outside `[0, num_tracks]`. `data = { min, max, got }`
 
-Transacional: envolve em `undo_step("track.create", song)`.
+Transactional: wraps in `undo_step("track.create", song)`.
 
-## 10. `track.upsert` (Cycle 3) — idempotente por nome
+## 10. `track.upsert` (Cycle 3) — idempotent by name
 
-Cria track só se nenhuma com `name=X` existir. Idempotente.
+Creates a track only if none with `name=X` exists. Idempotent.
 
 **Request:** `{ name: string; type: "midi" | "audio"; index?: number }`
 **Response:**
@@ -216,19 +216,19 @@ Cria track só se nenhuma com `name=X` existir. Idempotente.
   track: { index: number; name: string; is_midi: boolean; is_audio: boolean };
 }
 ```
-**Erros:** `-32002` se `name` vazio ou `type` inválido; `-32004` se `index > num_tracks`.
+**Errors:** `-32002` if `name` empty or `type` invalid; `-32004` if `index > num_tracks`.
 
 ## 11. `track.set_name` (Cycle 3)
 
-Renomeia track regular. Idempotente.
+Renames a regular track. Idempotent.
 
 **Request:** `{ index: number; name: string }`
 **Response:** `{ changed: boolean; before: string; after: string }`
-**Erros:** `-32002` se `index` fora.
+**Errors:** `-32002` if `index` out of range.
 
 ## 12. `track.set_volume` (Cycle 3) — ADR-0004
 
-Volume normalized 0..1. Idempotente em 1e-4.
+Volume normalized 0..1. Idempotent at 1e-4.
 
 **Request:** `{ index: number; volume: number /* 0..1 */ }`
 **Response:**
@@ -237,15 +237,15 @@ Volume normalized 0..1. Idempotente em 1e-4.
   changed: boolean;
   before: number;     // 0..1
   after: number;
-  before_db: number;  // aprox piecewise tabela ADR-0004
+  before_db: number;  // approx piecewise table ADR-0004
   after_db: number;
 }
 ```
-**Erros:** `-32002` track não existe; `-32004` volume fora.
+**Errors:** `-32002` track does not exist; `-32004` volume out of range.
 
 ## 13. `clip.add_notes` (Cycle 3) — ADR-0003
 
-Adiciona notas MIDI a clip existente. NÃO idempotente (acumula).
+Adds MIDI notes to an existing clip. NOT idempotent (accumulates).
 
 **Request:**
 ```ts
@@ -265,11 +265,11 @@ Adiciona notas MIDI a clip existente. NÃO idempotente (acumula).
 ```ts
 { changed: true; added: number; track_index: number; clip_slot_index: number }
 ```
-**Erros:** `-32002` slot vazio; `-32003` clip não é MIDI; `-32602` notes mal-formadas; `-32004` valor fora de range em nota individual (com `index` da nota culpada em `error.data.index`).
+**Errors:** `-32002` empty slot; `-32003` clip is not MIDI; `-32602` malformed notes; `-32004` value out of range in individual note (with the culprit note's `index` in `error.data.index`).
 
 ## 14. `clip.fire` / `clip.stop` (Cycle 3)
 
-Dispara / para um clip. Idempotente.
+Triggers / stops a clip. Idempotent.
 
 **Request:** `{ track_index: number; clip_slot_index: number }`
 **Response:**
@@ -279,14 +279,14 @@ Dispara / para um clip. Idempotente.
 
 ## 15. `clip.set_name` (Cycle 3)
 
-Renomeia clip. Idempotente.
+Renames a clip. Idempotent.
 
 **Request:** `{ track_index: number; clip_slot_index: number; name: string }`
 **Response:** `{ changed: boolean; before: string; after: string }`
 
 ## 16. `session.get_info` (Cycle 3)
 
-Snapshot top-level read-only.
+Top-level read-only snapshot.
 
 **Request:** `{}`
 **Response:**
@@ -308,7 +308,7 @@ Snapshot top-level read-only.
 
 ## 17. `browser.get_categories` (Cycle 3)
 
-Lista categorias raiz do Live Browser.
+Lists the root categories of the Live Browser.
 
 **Request:** `{}`
 **Response:**
@@ -316,13 +316,13 @@ Lista categorias raiz do Live Browser.
 {
   categories: Array<{ key: string; name: string; is_folder: boolean; is_loadable: boolean }>;
   available: boolean;
-  reason?: string;   // presente quando available=false (ex: headless)
+  reason?: string;   // present when available=false (e.g. headless)
 }
 ```
 
 ## 18. `track.get_info` (Cycle 4)
 
-Read-only, detalhado por track regular.
+Read-only, detailed per regular track.
 
 **Request:** `{ index: number }`
 **Response:**
@@ -341,22 +341,22 @@ Read-only, detalhado por track regular.
   panning: number;         // -1..1
   num_sends: number;
   num_clip_slots: number;
-  num_clips: number;       // slots com has_clip
+  num_clips: number;       // slots with has_clip
   num_devices: number;
 }
 ```
 
 ## 19. `scene.fire` (Cycle 4)
 
-Dispara uma cena por index.
+Triggers a scene by index.
 
 **Request:** `{ index: number }`
 **Response:** `{ changed: true; index: number; name: string }`
-**Erros:** `-32002` se `index` fora; `-32000` se Live não disponível.
+**Errors:** `-32002` if `index` out of range; `-32000` if Live unavailable.
 
 ## 20. `clip.set_loop` (Cycle 4)
 
-Configura loop do clip. Idempotente em 1e-4.
+Configures clip loop. Idempotent at 1e-4.
 
 **Request:**
 ```ts
@@ -379,11 +379,11 @@ Configura loop do clip. Idempotente em 1e-4.
 
 ## 21. `browser.load_item` (Cycle 5)
 
-Carrega um BrowserItem na track selecionada/armada. LiveAPI: `application.browser.load_item(item)` (Live escolhe a track destino sozinho).
+Loads a BrowserItem on the selected/armed track. LiveAPI: `application.browser.load_item(item)` (Live chooses the destination track itself).
 
 **Request:**
 ```ts
-{ path: string[] }   // ex: ["instruments", "Wavetable", "Pads", "Air Pad"]
+{ path: string[] }   // e.g.: ["instruments", "Wavetable", "Pads", "Air Pad"]
 ```
 
 **Response:**
@@ -391,16 +391,16 @@ Carrega um BrowserItem na track selecionada/armada. LiveAPI: `application.browse
 { loaded: true; name: string; path: string[] }
 ```
 
-**Erros:**
+**Errors:**
 - `-32000` browser unavailable (headless).
-- `-32602` path vazio.
-- `-32002` root category não existe (`error.data.valid` lista válidos) OU item não achado em algum nível (`error.data.path`, `missing_at`, `missing`, `available`).
-- `-32005` item é folder, não loadável (`error.data.is_folder=true`).
-- `-32001` load_item raised exception no Live (`error.data.reason`).
+- `-32602` empty path.
+- `-32002` root category does not exist (`error.data.valid` lists valid ones) OR item not found at some level (`error.data.path`, `missing_at`, `missing`, `available`).
+- `-32005` item is a folder, not loadable (`error.data.is_folder=true`).
+- `-32001` load_item raised exception in Live (`error.data.reason`).
 
 ## 22. `device.get_parameters` (Cycle 5)
 
-Read-only. Lista os parameters de UM device em `(track_index, device_index)`.
+Read-only. Lists the parameters of ONE device at `(track_index, device_index)`.
 
 **Request:**
 ```ts
@@ -419,20 +419,20 @@ Read-only. Lista os parameters de UM device em `(track_index, device_index)`.
     min: number;
     max: number;
     is_quantized: boolean;
-    value_items: string[];     // valores discretos (enum) quando is_quantized
+    value_items: string[];     // discrete values (enum) when is_quantized
     automation_state: number;  // 0=none, 1=arrangement, 2=session
   }>;
   total: number;
 }
 ```
 
-**Erros:** `-32002` track ou device fora.
+**Errors:** `-32002` track or device out of range.
 
-> Lado TS: tool `device_get_parameters` enriquece o response com `knowledge` (`{unit, description, automatable, modulatable}`) quando o device é encontrado na knowledge base + adiciona `knowledge_matched: boolean`.
+> TS side: the `device_get_parameters` tool enriches the response with `knowledge` (`{unit, description, automatable, modulatable}`) when the device is found in the knowledge base + adds `knowledge_matched: boolean`.
 
 ## 23. `device.set_parameter` (Cycle 5)
 
-Set por **index** (resolução name→index é responsabilidade do lado TS, que faz 1 round-trip de `device.get_parameters`). Idempotente em 1e-4 (ou igualdade exata para `is_quantized`).
+Set by **index** (name→index resolution is the TS side's responsibility, which does 1 round-trip of `device.get_parameters`). Idempotent at 1e-4 (or exact equality for `is_quantized`).
 
 **Request:**
 ```ts
@@ -449,24 +449,24 @@ Set por **index** (resolução name→index é responsabilidade do lado TS, que 
 }
 ```
 
-**Erros:**
-- `-32002` track/device/parameter fora.
-- `-32004` value fora de `[min, max]`. `data = { min, max, got, param_name }`.
+**Errors:**
+- `-32002` track/device/parameter out of range.
+- `-32004` value outside `[min, max]`. `data = { min, max, got, param_name }`.
 
-Transacional: envolve em `undo_step("device.set_parameter", song)`.
+Transactional: wraps in `undo_step("device.set_parameter", song)`.
 
 ## 24. Notifications (`event.*`) — Phase 2 (ADR-0005)
 
-Bridge envia notifications JSON-RPC 2.0 **sem `id`** para todos os clientes conectados via `BridgeServer.broadcast(method, params)`. Naming: `event.<domain>_<property>_changed`.
+The bridge sends JSON-RPC 2.0 notifications **without `id`** to all connected clients via `BridgeServer.broadcast(method, params)`. Naming: `event.<domain>_<property>_changed`.
 
-Shape padrão:
+Standard shape:
 ```ts
 {
   jsonrpc: "2.0",
   method: "event.<name>",
   params: {
-    value: T;          // estado atual
-    previous?: T;      // valor anterior quando rastreado
+    value: T;          // current state
+    previous?: T;      // previous value when tracked
     ts: number;        // unix epoch ms (server wall clock)
     track_index?: number;
     clip_slot_index?: number;
@@ -475,20 +475,20 @@ Shape padrão:
 }
 ```
 
-### Eventos ativos em Cycle 5/6
+### Events active in Cycle 5/6
 
-| Method | `params` extras | Trigger |
+| Method | extra `params` | Trigger |
 |---|---|---|
 | `event.transport_tempo_changed` | `{ value: number; previous: number; ts: number }` | `Song.add_tempo_listener` |
 | `event.transport_is_playing_changed` | `{ value: boolean; previous: boolean; ts: number }` | `Song.add_is_playing_listener` |
 
-Phase 2 segue expandindo com listeners de track (`name`, `mute`, `solo`, `volume`) e clip (`name`, `is_playing`, `loop`).
+Phase 2 continues expanding with track listeners (`name`, `mute`, `solo`, `volume`) and clip listeners (`name`, `is_playing`, `loop`).
 
-Lado TS: `attachNotificationForwarder` no server bootstrap repassa apenas methods `event.*` para `McpServer.server.notification(...)`. Notifications fora do prefixo são logadas e descartadas.
+TS side: `attachNotificationForwarder` in the server bootstrap forwards only `event.*` methods to `McpServer.server.notification(...)`. Notifications outside the prefix are logged and dropped.
 
 ## 25. `clip.envelope_set_points` (Cycle 7 — Phase 4, ADR-0006)
 
-Substitui TODOS os pontos de um clip automation envelope. Transacional. Idempotente em sentido fraco (mesma lista produz mesmo resultado).
+Replaces ALL points of a clip automation envelope. Transactional. Idempotent in a weak sense (same list produces the same result).
 
 **Request:**
 ```ts
@@ -510,28 +510,28 @@ Substitui TODOS os pontos de um clip automation envelope. Transacional. Idempote
 {
   changed: true;
   replaced: true;
-  points: number;        // quantidade inserida
+  points: number;        // amount inserted
   track_index: number;
   clip_slot_index: number;
 }
 ```
 
-**Erros:**
-- `-32002` slot vazio ou clip não existe.
-- `-32602` `points` inválido (cada point precisa `time` e `value`).
-- `-32008` `parameter_locator` inválido (kind desconhecido, send_index/device_index fora).
-- `-32602` clip sem `create_automation_envelope` (Live antigo).
+**Errors:**
+- `-32002` empty slot or clip does not exist.
+- `-32602` invalid `points` (each point requires `time` and `value`).
+- `-32008` invalid `parameter_locator` (unknown kind, send_index/device_index out of range).
+- `-32602` clip without `create_automation_envelope` (old Live).
 
 ## 26. `arrangement.add_automation_point` (Cycle 7 — Phase 4)
 
-Adiciona UM ponto a um automation envelope no arrangement view. NÃO idempotente.
+Adds ONE point to an automation envelope in the arrangement view. NOT idempotent.
 
 **Request:**
 ```ts
 {
   track_index: number;
-  parameter_locator: { kind, ... };       // mesmo shape de §25
-  time: number;                            // beats desde t=0 da song
+  parameter_locator: { kind, ... };       // same shape as §25
+  time: number;                            // beats since t=0 of the song
   value: number;
   curve_type?: "linear" | "ramp" | "hold"; // default "linear"
 }
@@ -542,42 +542,42 @@ Adiciona UM ponto a um automation envelope no arrangement view. NÃO idempotente
 { added: true; track_index: number; time: number; value: number; curve_type: string }
 ```
 
-**Erros:**
-- `-32002` track fora.
-- `-32008` locator inválido.
-- `-32602` track sem `create_or_get_automation_envelope` (Live antigo).
+**Errors:**
+- `-32002` track out of range.
+- `-32008` invalid locator.
+- `-32602` track without `create_or_get_automation_envelope` (old Live).
 
 ## 27. `session.snapshot` (Cycle 9, Phase 5)
 
-Deep read-only snapshot. Request `{ include_clips?, include_devices? }` defaults true. Response inclui tempo, transport, signature, tracks com clips/devices metadata.
+Deep read-only snapshot. Request `{ include_clips?, include_devices? }` defaults true. Response includes tempo, transport, signature, tracks with clips/devices metadata.
 
 ## 28. `session.diff` (Cycle 9, Phase 5)
 
-Recursive diff entre snapshot anterior e atual. Ignora `ts`. Response: `{ from_ts, to_ts, changes: Array<{path,before,after,kind}>, count }`.
+Recursive diff between previous and current snapshot. Ignores `ts`. Response: `{ from_ts, to_ts, changes: Array<{path,before,after,kind}>, count }`.
 
 ## 29. `render.preview` (Cycle 9, Phase 5)
 
-Modo `"snapshot"` retorna deep state. Modo `"bounce"` Cycle 11+.
+`"snapshot"` mode returns deep state. `"bounce"` mode Cycle 11+.
 
-## 30. Recipes (Cycle 9, Trilha C, ADR-0007)
+## 30. Recipes (Cycle 9, Track C, ADR-0007)
 
-`list_recipes { category? }` e `apply_recipe { recipe_id, overrides? }`. Implementados puro TS sobre `recipes/*.json` embarcadas. Não fala com bridge para listing; `apply_recipe` chama bridge via runner.
+`list_recipes { category? }` and `apply_recipe { recipe_id, overrides? }`. Implemented pure TS over embedded `recipes/*.json`. Does not talk to the bridge for listing; `apply_recipe` calls the bridge via runner.
 
 ## 31. `push.set_pad_color` / `push.set_button_led` (Cycle 10, Phase 6, ADR-0008)
 
-Sysex MIDI para Push 2/3 LEDs.
+MIDI Sysex for Push 2/3 LEDs.
 - pad: 0..63 (8x8 grid). color: 0..127.
 - button: enum (`Play`, `Record`, `Stop`, `Tap Tempo`, `Metronome`, `Mute`, `Solo`, etc). mode: `"solid"` | `"blink"` | `"pulse"`.
 
-`-32000` quando Push não detectado (`detected: false`).
+`-32000` when Push is not detected (`detected: false`).
 
-## Resumo (após Cycle 10)
+## Summary (after Cycle 10)
 
-30 métodos JSON-RPC request/response no bridge (28 expostos + 2 system) + 7 notifications `event.*` (track/clip listeners).
+30 request/response JSON-RPC methods in the bridge (28 exposed + 2 system) + 7 `event.*` notifications (track/clip listeners).
 
-Server MCP TS expõe **30 tools**:
+The TS MCP server exposes **30 tools**:
 
-| Categoria | Tools MCP |
+| Category | MCP Tools |
 |---|---|
 | transport | play, stop, set_tempo |
 | track | track_list, track_get_info, track_create, track_upsert, track_set_name, track_set_volume |
@@ -588,6 +588,6 @@ Server MCP TS expõe **30 tools**:
 | device | device_get_parameters, device_set_parameter |
 | arrangement (Phase 4) | arrangement_add_automation_point |
 | preview (Phase 5) | session_snapshot, session_diff, render_preview |
-| recipes (Trilha C) | list_recipes, apply_recipe |
+| recipes (Track C) | list_recipes, apply_recipe |
 | push (Phase 6) | push_set_pad_color, push_set_button_led |
 | arrangement | arrangement_add_automation_point |

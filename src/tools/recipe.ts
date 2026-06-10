@@ -1,8 +1,8 @@
 /**
- * Tools MCP para recipes (Trilha C estreia em Cycle 9).
+ * MCP tools for recipes (Track C debuts in Cycle 9).
  *
- * `list_recipes` (read-only) — devolve metadata de todas as recipes embarcadas.
- * `apply_recipe` — executa recipe por id, com overrides opcionais.
+ * `list_recipes` (read-only) — returns metadata for all embedded recipes.
+ * `apply_recipe` — executes recipe by id, with optional overrides.
  */
 
 import { z } from "zod";
@@ -67,7 +67,7 @@ const applyInputSchema = z.object({
   overrides: z
     .record(z.unknown())
     .optional()
-    .describe("Substituição de inputs declarados na recipe."),
+    .describe("Override of inputs declared in the recipe."),
 });
 
 const applyOutputSchema = z.object({

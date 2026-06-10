@@ -3,8 +3,8 @@
   "name": "ableton-mind",
   "display_name": "Ableton Mind",
   "version": "0.0.21",
-  "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
-  "long_description": "ableton-mind expõe o Live Object Model completo para LLMs (Claude, Cursor, etc.) com tool calls idempotentes, transações (undo unitário), verify loop integrado, knowledge base embutida de 50+ devices nativos do Live e recipes musicais declarativas (drums, basslines, racks). Diferente de wrappers MCP rasos, cobre ~100% do LOM (~180 tools planejadas) e foi desenhado para que o LLM nunca chute parâmetros — devices são sempre endereçados por nome via knowledge base.",
+  "description": "Definitive MCP server for Ableton Live: complete LOM coverage, embedded knowledge base and music recipes.",
+  "long_description": "ableton-mind exposes the complete Live Object Model to LLMs (Claude, Cursor, etc.) through idempotent tool calls, transactions (single-step undo), an integrated verify loop, an embedded knowledge base for 50+ native Live devices and declarative music recipes for drums, basslines and racks. Unlike thin MCP wrappers, it targets near-total LOM coverage and is designed so the LLM never guesses parameters: devices are addressed by name through the knowledge base.",
   "author": {
     "name": "ableton-mind contributors",
     "url": "https://github.com/Pantani/ableton-mind"
@@ -41,14 +41,14 @@
     "host": {
       "type": "string",
       "title": "Bridge host",
-      "description": "Endereço do Remote Script Python rodando dentro do Live.",
+      "description": "Address of the Python Remote Script running inside Live.",
       "default": "127.0.0.1",
       "required": false
     },
     "port": {
       "type": "string",
       "title": "Bridge port",
-      "description": "Porta TCP do Remote Script. Default 9876.",
+      "description": "TCP port of the Remote Script. Default 9876.",
       "default": "9876",
       "required": false
     },

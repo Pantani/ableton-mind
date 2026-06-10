@@ -1,38 +1,38 @@
 # QA Report — Cycle 16
 
-**Data:** 2026-06-09
-**Veredito:** **PASS-WITH-WARNINGS** 🎯 **Knowledge 100%**
+**Date:** 2026-06-09
+**Verdict:** **PASS-WITH-WARNINGS** 🎯 **Knowledge 100%**
 
-## Resumo
+## Summary
 
-TD-042 fechado. **Knowledge atinge 50/50 = 100%** PLAN.md §5 target. Recipes 14. Versão 0.0.16.
+TD-042 closed. **Knowledge reaches 50/50 = 100%** PLAN.md §5 target. Recipes 14. Version 0.0.16.
 
-**Bloqueio para tag v0.1.0-rc.1: TD-004 (smoke real) — depende do usuário.**
+**Blocker for tag v0.1.0-rc.1: TD-004 (real smoke) — depends on user.**
 
 ## Tech debt
 
 | ID | Status |
 |---|---|
-| TD-004 | 🟡 PENDENTE (usuário) — BLOQUEIA rc.1 |
-| TD-005 | 🟡 PENDENTE (sandbox) |
-| TD-030 | 🟡 PENDENTE (Push hardware) |
-| TD-042 (curve re-anotação) | ✅ FECHADO |
+| TD-004 | 🟡 PENDING (user) — BLOCKS rc.1 |
+| TD-005 | 🟡 PENDING (sandbox) |
+| TD-030 | 🟡 PENDING (Push hardware) |
+| TD-042 (curve re-annotation) | ✅ CLOSED |
 
-**1 fechado. Aberto: TD-004/005/030 (todos de ambiente real).**
+**1 closed. Open: TD-004/005/030 (all real-environment).**
 
-## TD-042 — Curve re-anotação
+## TD-042 — Curve re-annotation
 
-Params Drive/Amount/Compression em devices antigos agora usam `unit: "curve"` (vs `linear`) quando engine é não-linear:
+Drive/Amount/Compression params in earlier devices now use `unit: "curve"` (vs `linear`) when the engine is non-linear:
 - Drum Buss: Drive, Crunch, Compression, Boom.
 - Pedal: Gain.
 - Roar: Stage 1/2/3 Amount, Feedback Amount, Compressor Amount.
-- Saturator Drive permanece `dB` mas com description aclarando dependência de Type.
+- Saturator Drive remains `dB` but with a description clarifying the dependency on Type.
 
-LLM agora recebe sinal correto: 0.5 nesses params ≠ "metade audível".
+The LLM now gets the correct signal: 0.5 on these params ≠ "audible half".
 
 ## Knowledge — 50 devices (100%) 🎯
 
-| Categoria | Devices |
+| Category | Devices |
 |---|---|
 | instruments | Wavetable, Operator, Sampler, Simpler, Drum Cell, Bass, Drift, Meld |
 | audio_effect (saturation/dist) | Saturator, Pedal, Roar, Vinyl Distortion, Dynamic Tube, Redux |
@@ -46,13 +46,13 @@ LLM agora recebe sinal correto: 0.5 nesses params ≠ "metade audível".
 | midi_effect | Pitch, Arpeggiator |
 | drum_rack | Drum Rack |
 
-50 devices / ~700 parameters indexados + drum_rack metadata + modulation_matrix em instrumentos.
+50 devices / ~700 indexed parameters + drum_rack metadata + modulation_matrix on instruments.
 
-**Falta para 100% de cobertura nativa real:** External Instrument, Compressor (DAT), Hybrid Reverb (acima coberta) — alguns MIDI effects raros (Chord, Note Length, Random, Scale, Velocity) — ficam para Cycle 17+.
+**Missing for true 100% native coverage:** External Instrument, Compressor (DAT), Hybrid Reverb (covered above) — some rare MIDI effects (Chord, Note Length, Random, Scale, Velocity) — deferred to Cycle 17+.
 
-## Recipes — 14 / 7 categorias
+## Recipes — 14 / 7 categories
 
-| Categoria | Count |
+| Category | Count |
 |---|---|
 | drums | 3 (tech-house-kick, jungle-break, lofi-kit) |
 | bass | 2 (sub-808, reese) |
@@ -62,28 +62,28 @@ LLM agora recebe sinal correto: 0.5 nesses params ≠ "metade audível".
 | mixing | 3 (master-bus, vocal-chain, bass-glue) |
 | live_performance | 1 (launchpad-rig) |
 
-## Versão: 0.0.16
+## Version: 0.0.16
 
 `package.json` + `dxt/manifest.json` + CHANGELOG sync.
 
-## Total tools MCP: 31 (sem mudança)
+## Total MCP tools: 31 (unchanged)
 
 ## Warnings
 
-### W1 — TD-004 ainda bloqueia rc.1
-Único bloqueio para release. Sem smoke real, não há rc.1 oficial.
+### W1 — TD-004 still blocks rc.1
+Only blocker for release. Without real smoke, there is no official rc.1.
 
-### W2 — MIDI effects parciais
-2/8 MIDI effects nativos cobertos (Pitch, Arpeggiator). Chord, Note Length, Random, Scale, Velocity ficam carry-over baixo. TD-043 (baixa).
+### W2 — Partial MIDI effects
+2/8 native MIDI effects covered (Pitch, Arpeggiator). Chord, Note Length, Random, Scale, Velocity carry-over low. TD-043 (low).
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 16.** PLAN.md §5 ✅ 100%. Sistema completo em código + knowledge.
+**PASS Cycle 16.** PLAN.md §5 ✅ 100%. System complete in code + knowledge.
 
-Cycle 17 (próximo):
-- TD-004 smoke (BLOQUEIO).
-- TD-043 MIDI effects restantes.
-- Tag `v0.1.0-rc.1` (após smoke PASS).
+Cycle 17 (next):
+- TD-004 smoke (BLOCKER).
+- TD-043 remaining MIDI effects.
+- Tag `v0.1.0-rc.1` (after smoke PASS).
 - Polish + bug fixes.
-- README PT atualizado.
-- Eventual rumo a v0.1.0 final.
+- Updated PT README.
+- Eventually heading to final v0.1.0.

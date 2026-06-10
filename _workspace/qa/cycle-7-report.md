@@ -1,42 +1,42 @@
 # QA Report — Cycle 7
 
-**Data:** 2026-06-09
-**Veredito:** **PASS-WITH-WARNINGS**
+**Date:** 2026-06-09
+**Verdict:** **PASS-WITH-WARNINGS**
 **QA:** architect inline.
 
-## Resumo
+## Summary
 
-Cycle 7 fechou TD-020, avançou TD-016 (10/21 → 10/23 tools com verify), expandiu listeners para track + clip (5 novos eventos), iniciou Phase 4 com automation envelopes (2 handlers + 2 tools + ADR-0006) e dobrou cobertura de knowledge para **10 devices / 310+ parameters**.
+Cycle 7 closed TD-020, advanced TD-016 (10/21 → 10/23 tools with verify), expanded listeners to track + clip (5 new events), started Phase 4 with automation envelopes (2 handlers + 2 tools + ADR-0006) and doubled knowledge coverage to **10 devices / 310+ parameters**.
 
 ## Tech debt status
 
-| ID | Status | Onde |
+| ID | Status | Where |
 |---|---|---|
-| TD-004 (smoke real) | 🟡 PENDENTE | depende do usuário |
-| TD-005 (npm install) | 🟡 PENDENTE | máquina real |
-| TD-016 (verify carry-over) | 🟡 PARCIAL | 10/23 tools migradas (era 4/21) |
-| TD-019 (SDK internals) | 🟡 PENDENTE | monitoring |
-| TD-020 (FakeDeviceParameter) | ✅ FECHADO | construtor recebe name/is_quantized/value_items/automation_state |
+| TD-004 (real smoke) | 🟡 PENDING | depends on user |
+| TD-005 (npm install) | 🟡 PENDING | real machine |
+| TD-016 (verify carry-over) | 🟡 PARTIAL | 10/23 tools migrated (was 4/21) |
+| TD-019 (SDK internals) | 🟡 PENDING | monitoring |
+| TD-020 (FakeDeviceParameter) | ✅ CLOSED | constructor receives name/is_quantized/value_items/automation_state |
 
-**1 fechado, 4 abertos (todos baixos ou progressivos).**
+**1 closed, 4 open (all low or progressive).**
 
 ## Phase 4 — Automation envelopes (PLAN.md §4.7)
 
-ADR-0006 fixa formato: `parameter_path` string (`mixer.volume` | `mixer.panning` | `mixer.send.<i>` | `device.<i>.parameter.<n>`) → `parameter_locator` dict para o bridge.
+ADR-0006 fixes the format: `parameter_path` string (`mixer.volume` | `mixer.panning` | `mixer.send.<i>` | `device.<i>.parameter.<n>`) → `parameter_locator` dict for the bridge.
 
-Entregue:
-- `src/tools/_locator.ts` — `parseParameterLocator()` + Zod schema compartilhado.
-- `src/tools/clip.ts::clipSetEnvelopeTool` — replace all points num clip envelope.
+Delivered:
+- `src/tools/_locator.ts` — `parseParameterLocator()` + shared Zod schema.
+- `src/tools/clip.ts::clipSetEnvelopeTool` — replace all points in a clip envelope.
 - `src/tools/arrangement.ts::arrangementAddAutomationPointTool` NEW file.
-- `live/AbletonMind/handlers/clip.py::ClipEnvelopeSetPointsHandler` — usa `clip.create_automation_envelope` + `envelope.clear()` + `insert_step`.
+- `live/AbletonMind/handlers/clip.py::ClipEnvelopeSetPointsHandler` — uses `clip.create_automation_envelope` + `envelope.clear()` + `insert_step`.
 - `live/AbletonMind/handlers/arrangement.py` NEW — `arrangement.add_automation_point` via `track.create_or_get_automation_envelope`.
-- Helper compartilhado `_resolve_parameter_locator(track, locator)` em `clip.py` (reusado por arrangement).
+- Shared helper `_resolve_parameter_locator(track, locator)` in `clip.py` (reused by arrangement).
 
-Phase 5 vai expandir: curve types reais (curva exponencial), batch operations, snap-to-grid.
+Phase 5 will expand: real curve types (exponential curve), batch operations, snap-to-grid.
 
 ## Verify loop — TD-016 progress
 
-| Tool | Verify field | Antes |
+| Tool | Verify field | Before |
 |---|---|---|
 | set_tempo | tempo (tol 1e-3) | Cycle 5 |
 | track_set_volume | volume (tol 1e-4) | Cycle 5 |
@@ -44,35 +44,35 @@ Phase 5 vai expandir: curve types reais (curva exponencial), batch operations, s
 | clip_set_name | name | Cycle 5 |
 | **track_create** | is_midi vs intent.type | Cycle 7 |
 | **track_upsert** | name | Cycle 7 |
-| **create_midi_clip** | length + name (combinado) | Cycle 7 |
-| **clip_set_loop** | loop_start/loop_end/looping (todos os fields passados) | Cycle 7 |
+| **create_midi_clip** | length + name (combined) | Cycle 7 |
+| **clip_set_loop** | loop_start/loop_end/looping (all passed fields) | Cycle 7 |
 | **scene_fire** | UNVERIFIABLE (async clip start) | Cycle 7 |
 | **device_set_parameter** | value (tol 1e-4) | Cycle 7 |
 | **clip_set_envelope** | points count | Cycle 7 |
 
-10 tools com verify. 13 ainda sem (Phase 1/2 reads + arrangement_add_automation_point que é NOT idempotent).
+10 tools with verify. 13 still without (Phase 1/2 reads + arrangement_add_automation_point which is NOT idempotent).
 
-`verifyAll(...checks)` introduzido em `clip_set_loop` e `create_midi_clip` para combinar múltiplas verificações.
+`verifyAll(...checks)` introduced in `clip_set_loop` and `create_midi_clip` to combine multiple verifications.
 
-## Listeners expansão
+## Listeners expansion
 
-Phase 2 (Cycle 5) tinha 2 eventos: tempo + is_playing.
+Phase 2 (Cycle 5) had 2 events: tempo + is_playing.
 
-Phase 2 (Cycle 7) adiciona 5:
-- `event.track_name_changed` (com `track_index`)
+Phase 2 (Cycle 7) adds 5:
+- `event.track_name_changed` (with `track_index`)
 - `event.track_mute_changed`
 - `event.track_solo_changed`
-- `event.track_volume_changed` (listener no `mixer_device.volume`)
-- `event.clip_name_changed` (com `track_index`, `clip_slot_index`)
+- `event.track_volume_changed` (listener on `mixer_device.volume`)
+- `event.clip_name_changed` (with `track_index`, `clip_slot_index`)
 - `event.clip_is_playing_changed`
 
-`setup()` registra dinamicamente para TODAS as tracks/clips existentes. Re-chamar `setup()` re-registra (idempotente).
+`setup()` dynamically registers for ALL existing tracks/clips. Re-calling `setup()` re-registers (idempotent).
 
-**Limitação conhecida:** novas tracks/clips criadas DEPOIS do setup não ganham listeners automaticamente. Phase 3 vai adicionar listener no `song.tracks` para detectar add/remove e re-setup automático.
+**Known limitation:** new tracks/clips created AFTER setup do not gain listeners automatically. Phase 3 will add a listener on `song.tracks` to detect add/remove and re-setup automatically.
 
-## Knowledge expansão — 10 devices
+## Knowledge expansion — 10 devices
 
-| Device | Params | Categoria |
+| Device | Params | Category |
 |---|---|---|
 | Wavetable | 60 | instrument (Cycle 5) |
 | Operator | 53 | instrument (Cycle 6) |
@@ -85,46 +85,46 @@ Phase 2 (Cycle 7) adiciona 5:
 | **Delay** | 18 | audio_effect (Cycle 7) |
 | **Drum Rack** | 10 + drum_pads metadata | drum_rack (Cycle 7) |
 
-**Total: 292 parameters indexados + drum_rack metadata** (MIDI ranges, kit layout 36..51, chain routing).
+**Total: 292 indexed parameters + drum_rack metadata** (MIDI ranges, kit layout 36..51, chain routing).
 
-`drum_rack.json` carrega campos extras (`drum_pads`, `chain_routing`) preservados via `.passthrough()` no Zod schema.
+`drum_rack.json` loads extra fields (`drum_pads`, `chain_routing`) preserved via `.passthrough()` in the Zod schema.
 
 PLAN.md §5 target: 50+ devices → **20% done**.
 
 ## Contract drift
 
-`phase0-methods.md` precisa de §25 (clip.envelope_set_points) e §26 (arrangement.add_automation_point). **Não atualizado neste ciclo** — TD-021 (baixa).
+`phase0-methods.md` needs §25 (clip.envelope_set_points) and §26 (arrangement.add_automation_point). **Not updated this cycle** — TD-021 (low).
 
-## Testes
+## Tests
 
-**Não foram escritos testes para Cycle 7** (Phase 4 handlers, listeners expansion, locator parser). Patterns existem. TD-022 (medium).
+**No tests were written for Cycle 7** (Phase 4 handlers, listeners expansion, locator parser). Patterns exist. TD-022 (medium).
 
 ## Warnings
 
 ### W1 — TD-021: contract doc §25..§26
-`clip.envelope_set_points` e `arrangement.add_automation_point` não documentados. Baixa.
+`clip.envelope_set_points` and `arrangement.add_automation_point` undocumented. Low.
 
-### W2 — TD-022: testes Cycle 7
-Phase 4 + listeners expansion + locator parser sem cobertura. Medium.
+### W2 — TD-022: Cycle 7 tests
+Phase 4 + listeners expansion + locator parser without coverage. Medium.
 
-### W3 — `clipSetEnvelopeTool` shape de point ignora curve_type
-Bridge atual usa `insert_step(time, length=0, value)` que é point puro. `curve_type` aceito no schema mas dropado no handler. Documentar como design Phase 4-strict; Phase 5 implementa curve. TD-023 (baixa).
+### W3 — `clipSetEnvelopeTool` point shape ignores curve_type
+Current bridge uses `insert_step(time, length=0, value)` which is a pure point. `curve_type` accepted in the schema but dropped in the handler. Documented as Phase 4-strict design; Phase 5 implements curves. TD-023 (low).
 
-### W4 — Bridge clip envelope handler assume `envelope.clear()` existe
-`Live.ClipEnvelope` deveria expor `clear()` (Live 11+). Em versões antigas é `value_at_time` modify. Smoke real vai confirmar.
+### W4 — Bridge clip envelope handler assumes `envelope.clear()` exists
+`Live.ClipEnvelope` should expose `clear()` (Live 11+). On older versions it is `value_at_time` modify. Real smoke will confirm.
 
-### W5 — Listeners expansion: track/clip criados depois do setup não ganham listener
-Mencionado acima. Limitação documentada. Phase 3 endereça.
+### W5 — Listeners expansion: track/clip created after setup do not gain listener
+Mentioned above. Limitation documented. Phase 3 addresses it.
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 7.** Próximo:
+**PASS Cycle 7.** Next:
 
 Cycle 8:
-- TD-004 smoke real.
+- TD-004 real smoke.
 - TD-021 contract doc.
-- TD-022 testes Cycle 7.
-- TD-016 finish — migrar últimas 13 tools (a maior parte read-only, então maioria fica UNVERIFIABLE).
-- Phase 4 cont: curve_type real (TD-023), track_create_return, scene_create, more arrangement tools.
-- Phase 2 evolução: meta-listener para detectar add/remove de tracks/clips.
+- TD-022 Cycle 7 tests.
+- TD-016 finish — migrate last 13 tools (mostly read-only, so most remain UNVERIFIABLE).
+- Phase 4 cont: real curve_type (TD-023), track_create_return, scene_create, more arrangement tools.
+- Phase 2 evolution: meta-listener to detect add/remove of tracks/clips.
 - Knowledge: +5 devices (Drum Cell, Wavetable Player, Sampler, Simpler, Tuner).

@@ -1,8 +1,8 @@
 /**
- * Handshake `system.hello` — primeira mensagem na conexão.
+ * `system.hello` handshake — first message on the connection.
  *
- * Contrato em `_workspace/contracts/phase0-methods.md` §1.
- * Bridge não responde nenhum outro método até receber hello.
+ * Contract in `_workspace/contracts/phase0-methods.md` §1.
+ * The bridge does not respond to any other method until it receives hello.
  */
 
 import { z } from "zod";
@@ -25,10 +25,10 @@ export const helloResultSchema = z.object({
 });
 export type HelloResult = z.infer<typeof helloResultSchema>;
 
-/** Versão TS client publicada no handshake. Mantém sync com package.json. */
+/** TS client version published in the handshake. Stays in sync with package.json. */
 export const TS_CLIENT_VERSION = "0.0.1";
 
-/** Versão de protocolo esperada (frozen Phase 0). */
+/** Expected protocol version (frozen Phase 0). */
 export const EXPECTED_PROTOCOL_VERSION = "0.1";
 
 export class ProtocolMismatchError extends Error {
@@ -44,9 +44,9 @@ export class ProtocolMismatchError extends Error {
 }
 
 /**
- * Roda o handshake. Valida result com Zod. Loga banner com versões.
- * NÃO falha em mismatch de protocol_version por enquanto (Phase 0 = warn);
- * Phase 1 pode promover para erro hard.
+ * Runs the handshake. Validates the result with Zod. Logs a banner with versions.
+ * Does NOT fail on protocol_version mismatch for now (Phase 0 = warn);
+ * Phase 1 may promote it to a hard error.
  */
 export async function performHandshake(
   client: TcpJsonRpcClient,

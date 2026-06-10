@@ -4,21 +4,76 @@
   "name": "Launchpad Performance Rig",
   "category": "live_performance",
   "version": "0.1",
-  "description": "Cria 4 tracks (Drums / Bass / Synth / FX) com 8 cenas vazias prontas para launchpad clip launching. Tempo + master setup incluído.",
-  "tags": ["live", "performance", "launchpad", "clip-launching", "session-view"],
+  "description": "Creates 4 tracks (Drums / Bass / Synth / FX) with 8 empty scenes ready for launchpad clip launching. Includes tempo + master setup.",
+  "tags": [
+    "live",
+    "performance",
+    "launchpad",
+    "clip-launching",
+    "session-view"
+  ],
   "inputs": {
-    "tempo": { "type": "number", "default": 128, "min": 70, "max": 180 },
-    "scenes": { "type": "int", "default": 8, "min": 4, "max": 16 }
+    "tempo": {
+      "type": "number",
+      "default": 128,
+      "min": 70,
+      "max": 180
+    },
+    "scenes": {
+      "type": "int",
+      "default": 8,
+      "min": 4,
+      "max": 16
+    }
   },
   "steps": [
-    { "op": "transport.set_tempo", "args": { "bpm": "{{tempo}}" } },
-    { "op": "track.upsert", "args": { "name": "Drums", "type": "midi" }, "let": "drums" },
-    { "op": "track.upsert", "args": { "name": "Bass", "type": "midi" }, "let": "bass" },
-    { "op": "track.upsert", "args": { "name": "Synth", "type": "midi" }, "let": "synth" },
-    { "op": "track.upsert", "args": { "name": "FX", "type": "audio" }, "let": "fx" },
+    {
+      "op": "transport.set_tempo",
+      "args": {
+        "bpm": "{{tempo}}"
+      }
+    },
+    {
+      "op": "track.upsert",
+      "args": {
+        "name": "Drums",
+        "type": "midi"
+      },
+      "let": "drums"
+    },
+    {
+      "op": "track.upsert",
+      "args": {
+        "name": "Bass",
+        "type": "midi"
+      },
+      "let": "bass"
+    },
+    {
+      "op": "track.upsert",
+      "args": {
+        "name": "Synth",
+        "type": "midi"
+      },
+      "let": "synth"
+    },
+    {
+      "op": "track.upsert",
+      "args": {
+        "name": "FX",
+        "type": "audio"
+      },
+      "let": "fx"
+    },
     {
       "op": "browser.load_item",
-      "args": { "path": ["audio_effects", "Limiter", "Init"] }
+      "args": {
+        "path": [
+          "audio_effects",
+          "Limiter",
+          "Init"
+        ]
+      }
     }
   ]
 }

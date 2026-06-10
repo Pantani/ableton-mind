@@ -3,11 +3,11 @@ import { loadAllDevices } from "../knowledge/index.js";
 import type { ResourceDefinition } from "./index.js";
 
 /**
- * `live://knowledge/devices` — índice estático de todos os 55 devices da
- * knowledge base. Não consulta o Live; lê os JSONs embarcados.
+ * `live://knowledge/devices` — static index of all 55 devices in the
+ * knowledge base. Does not query Live; reads the embedded JSONs.
  *
- * Útil para LLM se orientar sobre quais devices têm schema disponível antes
- * de chamar `device_get_parameters`.
+ * Useful for the LLM to orient itself about which devices have a schema
+ * available before calling `device_get_parameters`.
  */
 export const knowledgeDevicesResource: ResourceDefinition = {
   uri: "live://knowledge/devices",

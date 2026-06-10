@@ -1,113 +1,113 @@
 # QA Report — Cycle 5
 
-**Data:** 2026-06-09
-**Veredito:** **PASS-WITH-WARNINGS**
+**Date:** 2026-06-09
+**Verdict:** **PASS-WITH-WARNINGS**
 **QA:** architect inline.
 
-## Resumo
+## Summary
 
-Cycle 5 fechou **paridade ahujasid 22/22** com 3 tools knowledge-aware, fechou TD-012 (Wavetable 60 params com `completeness: complete`) e TD-013 (verify loop integrado em 4 tools), e ligou Phase 2 (listeners scaffold + ADR-0005).
+Cycle 5 closed **ahujasid parity 22/22** with 3 knowledge-aware tools, closed TD-012 (Wavetable 60 params with `completeness: complete`) and TD-013 (verify loop integrated in 4 tools), and enabled Phase 2 (listeners scaffold + ADR-0005).
 
 ## Tech debt status
 
-| ID | Status | Onde |
+| ID | Status | Where |
 |---|---|---|
-| TD-004 (smoke real) | 🟡 PENDENTE | depende de execução manual via `docs/smoke-test.md` |
-| TD-005 (npm install) | 🟡 PENDENTE | depende de máquina real |
-| TD-012 (Wavetable completo) | ✅ FECHADO | 60 params em `src/knowledge/devices/wavetable.json` |
-| TD-013 (verify integration) | ✅ FECHADO | `set_tempo`, `track_set_volume`, `track_set_name`, `clip_set_name` agora emitem `verified` real + `diff` |
+| TD-004 (real smoke) | 🟡 PENDING | depends on manual execution via `docs/smoke-test.md` |
+| TD-005 (npm install) | 🟡 PENDING | depends on real machine |
+| TD-012 (full Wavetable) | ✅ CLOSED | 60 params in `src/knowledge/devices/wavetable.json` |
+| TD-013 (verify integration) | ✅ CLOSED | `set_tempo`, `track_set_volume`, `track_set_name`, `clip_set_name` now emit real `verified` + `diff` |
 
-5 fechados em 5 ciclos. 2 carry-over (TD-004/005 ambos não-resolvíveis em sandbox).
+5 closed in 5 cycles. 2 carry-over (TD-004/005 both non-resolvable in sandbox).
 
-## Paridade ahujasid — 22/22 ✅
+## ahujasid parity — 22/22 ✅
 
-Novas tools Cycle 5:
-| Método | Handler | Tool |
+New Cycle 5 tools:
+| Method | Handler | Tool |
 |---|---|---|
 | `browser.load_item` | `handlers/browser.py::BrowserLoadItemHandler` | `browserLoadItemTool` |
 | `device.get_parameters` | `handlers/device.py::DeviceGetParametersHandler` NEW file | `deviceGetParametersTool` (knowledge-aware) |
-| `device.set_parameter` | `handlers/device.py::DeviceSetParameterHandler` | `deviceSetParameterTool` (resolve name→index) |
+| `device.set_parameter` | `handlers/device.py::DeviceSetParameterHandler` | `deviceSetParameterTool` (resolves name→index) |
 
-Knowledge-aware significa:
-- `device_get_parameters` enriquece o response com `unit/description/automatable/modulatable` quando o device é encontrado em `src/knowledge/devices/`.
-- `device_set_parameter` aceita `parameter_name` (LLM-friendly) e resolve via 1 round-trip de `device.get_parameters` antes de chamar o setter — lookup vai pro live, não pra knowledge (LiveAPI é authoritative).
+Knowledge-aware means:
+- `device_get_parameters` enriches the response with `unit/description/automatable/modulatable` when the device is found in `src/knowledge/devices/`.
+- `device_set_parameter` accepts `parameter_name` (LLM-friendly) and resolves via 1 round-trip of `device.get_parameters` before calling the setter — lookup goes to live, not to knowledge (LiveAPI is authoritative).
 
-**21 tools MCP registradas / 23 métodos JSON-RPC no bridge** (21 expostos + 2 system).
+**21 MCP tools registered / 23 JSON-RPC methods in the bridge** (21 exposed + 2 system).
 
 ## Phase 2 — listeners
 
-ADR-0005 fixa naming `event.<domain>_<property>_changed` + shape `{value, previous?, ts, ...}`.
+ADR-0005 fixes naming `event.<domain>_<property>_changed` + shape `{value, previous?, ts, ...}`.
 
 Bridge:
-- `live/AbletonMind/listeners.py` NEW — `ListenerManager` registra `add_tempo_listener` e `add_is_playing_listener`. Callbacks chamam `broadcast(method, params)`.
-- **Falta:** `BridgeServer.broadcast` em `bridge.py` — escrita NDJSON para todos os clientes conectados. Registrado como TD-014 (cycle 6).
+- `live/AbletonMind/listeners.py` NEW — `ListenerManager` registers `add_tempo_listener` and `add_is_playing_listener`. Callbacks call `broadcast(method, params)`.
+- **Missing:** `BridgeServer.broadcast` in `bridge.py` — NDJSON write to all connected clients. Recorded as TD-014 (cycle 6).
 
 TS:
-- Cliente TCP já emite `notification` event desde Cycle 1 (não precisou tocar).
-- **Falta:** server bootstrap repassar `notification` → MCP `server.sendNotification`. TD-015.
+- TCP client already emits `notification` event since Cycle 1 (no touch needed).
+- **Missing:** server bootstrap to forward `notification` → MCP `server.sendNotification`. TD-015.
 
-Mesmo sem broadcast/repasse, ListenerManager testa em isolado: callback executado → broadcast chamado.
+Even without broadcast/forward, ListenerManager tests in isolation: callback executed → broadcast called.
 
 ## Verify loop — TD-013
 
-4 tools migradas:
+4 tools migrated:
 
-| Tool | Verify field | Tolerância |
+| Tool | Verify field | Tolerance |
 |---|---|---|
 | `set_tempo` | tempo | 1e-3 |
 | `track_set_volume` | volume | 1e-4 |
 | `track_set_name` | name (string equality) | — |
 | `clip_set_name` | name | — |
 
-Output ganha `verified: boolean` (era `literal(true)`) e `diff: VerifyDiff | null`. **Breaking change** no shape, mas pré-1.0 — aceito.
+Output gains `verified: boolean` (was `literal(true)`) and `diff: VerifyDiff | null`. **Breaking change** in shape, but pre-1.0 — accepted.
 
-Os outros 17 tools continuam com `verified: true` literal — migração progressiva ciclo a ciclo (TD-016 carry-over baixa).
+The other 17 tools continue with literal `verified: true` — progressive cycle-by-cycle migration (TD-016 carry-over low).
 
 ## Wavetable — TD-012
 
-60 params curados manualmente, alinhados com Live 12.x:
-- Osc 1 (9 params), Osc 2 (9), Sub (3), Filter 1 (6), Filter 2 (5+routing), Env 1/2/3 (4 cada), LFO 1/2 (3 cada), Global/Voicing (10).
-- `modulation_matrix.slots = 16` + `sources` listados.
+60 manually curated params, aligned with Live 12.x:
+- Osc 1 (9 params), Osc 2 (9), Sub (3), Filter 1 (6), Filter 2 (5+routing), Env 1/2/3 (4 each), LFO 1/2 (3 each), Global/Voicing (10).
+- `modulation_matrix.slots = 16` + listed `sources`.
 - `completeness: "complete"`, `todo: []`.
 
-Loader `src/knowledge/index.ts` extendido para aceitar `modulation_matrix` no schema.
+Loader `src/knowledge/index.ts` extended to accept `modulation_matrix` in the schema.
 
 ## Parity check
 
 ```
-21 tools TS  ←→  21 handlers MCP-expostos no bridge  ←→  20 métodos documentados em phase0-methods.md
+21 TS tools  ←→  21 MCP-exposed handlers in the bridge  ←→  20 methods documented in phase0-methods.md
 ```
 
-**Drift detectado:** contract doc (`phase0-methods.md`) cobre até §20; precisa §21..§23 para `browser.load_item`, `device.get_parameters`, `device.set_parameter`. Registrado como TD-017 (baixa).
+**Drift detected:** contract doc (`phase0-methods.md`) covers up to §20; needs §21..§23 for `browser.load_item`, `device.get_parameters`, `device.set_parameter`. Recorded as TD-017 (low).
 
-## Testes
+## Tests
 
-**Não foram escritos testes para os 3 handlers/tools novos do Cycle 5 nem para o ListenerManager.** Patterns existem (Cycles 3-4) — só escrever. TD-018 (medium).
+**No tests were written for the 3 new Cycle 5 handlers/tools nor for the ListenerManager.** Patterns exist (Cycles 3-4) — just write them. TD-018 (medium).
 
 ## Warnings
 
-### W1 — TD-014: bridge.broadcast() não implementado
-`listeners.py` chama `broadcast(method, params)` que tem que ser passado pelo `__init__.py` AbletonMind ao instanciar o manager. O método em `bridge.py` que escreve NDJSON pra todos os sockets não foi escrito neste ciclo. Cycle 6.
+### W1 — TD-014: bridge.broadcast() not implemented
+`listeners.py` calls `broadcast(method, params)` which must be passed by `__init__.py` AbletonMind when instantiating the manager. The method in `bridge.py` that writes NDJSON to all sockets was not written this cycle. Cycle 6.
 
-### W2 — TD-015: server bootstrap não repassa notifications para MCP
-Cliente emite `notification` event; precisa wiring em `src/server/index.ts` que chama o equivalente de `server.sendNotification({method, params})`. Cycle 6.
+### W2 — TD-015: server bootstrap does not forward notifications to MCP
+Client emits `notification` event; needs wiring in `src/server/index.ts` that calls the equivalent of `server.sendNotification({method, params})`. Cycle 6.
 
-### W3 — TD-016: 17 tools sem verify integration
-Migração progressiva. Sem urgência — `verified: true` literal não mente quando o handler já lê estado pós-mutação no bridge.
+### W3 — TD-016: 17 tools without verify integration
+Progressive migration. No urgency — literal `verified: true` does not lie when the handler already reads post-mutation state in the bridge.
 
-### W4 — TD-017: contract doc desatualizado
-3 métodos novos não documentados em `phase0-methods.md`. Cycle 6.
+### W4 — TD-017: contract doc outdated
+3 new methods undocumented in `phase0-methods.md`. Cycle 6.
 
-### W5 — TD-018: testes do Cycle 5 não escritos
-Patterns conhecidos. Cycle 6.
+### W5 — TD-018: Cycle 5 tests not written
+Known patterns. Cycle 6.
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 5.** Phase 1 fechada em código. Próximo:
+**PASS Cycle 5.** Phase 1 closed in code. Next:
 
 Cycle 6:
-- Smoke real (TD-004) — gate Phase 0 oficial.
-- TD-014/015 — fechar pipeline de notifications end-to-end.
-- TD-017/018 — doc + testes.
-- Phase 2 expansão: listeners de track (name, volume, mute, solo) e clip (name, is_playing).
-- Knowledge: 4 devices novos (Operator, EQ Eight, Compressor, Reverb) — extract real + curadoria.
+- Real smoke (TD-004) — official Phase 0 gate.
+- TD-014/015 — close end-to-end notifications pipeline.
+- TD-017/018 — doc + tests.
+- Phase 2 expansion: track (name, volume, mute, solo) and clip (name, is_playing) listeners.
+- Knowledge: 4 new devices (Operator, EQ Eight, Compressor, Reverb) — real extract + curation.

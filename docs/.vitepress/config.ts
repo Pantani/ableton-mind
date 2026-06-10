@@ -1,61 +1,61 @@
 import { defineConfig } from "vitepress";
 
-const ptSidebar = [
-  {
-    text: "Guia",
-    items: [
-      { text: "Visão geral", link: "/" },
-      { text: "Começando", link: "/guide/getting-started" },
-      { text: "Instalação", link: "/guide/installation" },
-      { text: "Smoke test", link: "/smoke-test" },
-    ],
-  },
-  {
-    text: "Referência",
-    items: [
-      { text: "Arquitetura", link: "/architecture" },
-      { text: "Tools (21 domínios LOM)", link: "/tools/" },
-      { text: "Knowledge base", link: "/knowledge/" },
-      { text: "Recipes", link: "/recipes/" },
-      { text: "Distribuição", link: "/distribution" },
-    ],
-  },
-  {
-    text: "Projeto",
-    items: [{ text: "Changelog", link: "/changelog" }],
-  },
-];
-
 const enSidebar = [
   {
     text: "Guide",
     items: [
-      { text: "Overview", link: "/en/" },
-      { text: "Getting started", link: "/en/guide/getting-started" },
-      { text: "Installation", link: "/en/guide/installation" },
-      { text: "Smoke test", link: "/en/smoke-test" },
+      { text: "Overview", link: "/" },
+      { text: "Getting started", link: "/guide/getting-started" },
+      { text: "Installation", link: "/guide/installation" },
+      { text: "Smoke test", link: "/smoke-test" },
     ],
   },
   {
     text: "Reference",
     items: [
-      { text: "Architecture", link: "/en/architecture" },
-      { text: "Tools (21 LOM domains)", link: "/en/tools/" },
-      { text: "Knowledge base", link: "/en/knowledge/" },
-      { text: "Recipes", link: "/en/recipes/" },
-      { text: "Distribution", link: "/en/distribution" },
+      { text: "Architecture", link: "/architecture" },
+      { text: "Tools (21 LOM domains)", link: "/tools/" },
+      { text: "Knowledge base", link: "/knowledge/" },
+      { text: "Recipes", link: "/recipes/" },
+      { text: "Distribution", link: "/distribution" },
     ],
   },
   {
     text: "Project",
-    items: [{ text: "Changelog", link: "/en/changelog" }],
+    items: [{ text: "Changelog", link: "/changelog" }],
+  },
+];
+
+const ptSidebar = [
+  {
+    text: "Guide",
+    items: [
+      { text: "Overview", link: "/pt/" },
+      { text: "Getting started", link: "/pt/guide/getting-started" },
+      { text: "Installation", link: "/pt/guide/installation" },
+      { text: "Smoke test", link: "/pt/smoke-test" },
+    ],
+  },
+  {
+    text: "Reference",
+    items: [
+      { text: "Architecture", link: "/pt/architecture" },
+      { text: "Tools (21 LOM domains)", link: "/pt/tools/" },
+      { text: "Knowledge base", link: "/pt/knowledge/" },
+      { text: "Recipes", link: "/pt/recipes/" },
+      { text: "Distribution", link: "/pt/distribution" },
+    ],
+  },
+  {
+    text: "Project",
+    items: [{ text: "Changelog", link: "/pt/changelog" }],
   },
 ];
 
 export default defineConfig({
   title: "ableton-mind",
   description:
-    "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
+    "Definitive MCP server for Ableton Live — full LOM coverage, embedded knowledge base, music recipes.",
   base: "/ableton-mind/",
   cleanUrls: true,
   lastUpdated: true,
@@ -89,46 +89,46 @@ export default defineConfig({
 
   locales: {
     root: {
-      label: "Português",
-      lang: "pt-BR",
-      title: "ableton-mind",
-      description: "Servidor MCP definitivo para Ableton Live.",
-      themeConfig: {
-        nav: [
-          { text: "Guia", link: "/guide/getting-started" },
-          { text: "Arquitetura", link: "/architecture" },
-          { text: "Tools", link: "/tools/" },
-          { text: "Knowledge", link: "/knowledge/" },
-          { text: "Recipes", link: "/recipes/" },
-          { text: "Distribuição", link: "/distribution" },
-          { text: "Changelog", link: "/changelog" },
-        ],
-        sidebar: ptSidebar,
-        outline: { label: "Nesta página" },
-        docFooter: { prev: "Anterior", next: "Próximo" },
-        lastUpdatedText: "Atualizado em",
-        darkModeSwitchLabel: "Tema",
-        sidebarMenuLabel: "Menu",
-        returnToTopLabel: "Voltar ao topo",
-      },
-    },
-    en: {
       label: "English",
       lang: "en-US",
-      link: "/en/",
       title: "ableton-mind",
       description: "Definitive MCP server for Ableton Live.",
       themeConfig: {
         nav: [
-          { text: "Guide", link: "/en/guide/getting-started" },
-          { text: "Architecture", link: "/en/architecture" },
-          { text: "Tools", link: "/en/tools/" },
-          { text: "Knowledge", link: "/en/knowledge/" },
-          { text: "Recipes", link: "/en/recipes/" },
-          { text: "Distribution", link: "/en/distribution" },
-          { text: "Changelog", link: "/en/changelog" },
+          { text: "Guide", link: "/guide/getting-started" },
+          { text: "Architecture", link: "/architecture" },
+          { text: "Tools", link: "/tools/" },
+          { text: "Knowledge", link: "/knowledge/" },
+          { text: "Recipes", link: "/recipes/" },
+          { text: "Distribution", link: "/distribution" },
+          { text: "Changelog", link: "/changelog" },
         ],
         sidebar: enSidebar,
+      },
+    },
+    pt: {
+      label: "pt",
+      lang: "pt",
+      link: "/pt/",
+      title: "ableton-mind",
+      description: "Definitive MCP server for Ableton Live.",
+      themeConfig: {
+        nav: [
+          { text: "Guide", link: "/pt/guide/getting-started" },
+          { text: "Architecture", link: "/pt/architecture" },
+          { text: "Tools", link: "/pt/tools/" },
+          { text: "Knowledge", link: "/pt/knowledge/" },
+          { text: "Recipes", link: "/pt/recipes/" },
+          { text: "Distribution", link: "/pt/distribution" },
+          { text: "Changelog", link: "/pt/changelog" },
+        ],
+        sidebar: ptSidebar,
+        outline: { label: "On this page" },
+        docFooter: { prev: "Previous", next: "Next" },
+        lastUpdatedText: "Updated at",
+        darkModeSwitchLabel: "Theme",
+        sidebarMenuLabel: "Menu",
+        returnToTopLabel: "Return to top",
       },
     },
   },

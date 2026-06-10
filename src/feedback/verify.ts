@@ -1,15 +1,15 @@
 /**
- * Verify loop genérico.
+ * Generic verify loop.
  *
- * Conceito (PLAN.md §2, §7): toda mutação devolve `{ ok, verified, diff }`.
- * O `verified` vem do read-after-write — depois de mutar, o handler lê o
- * estado novamente e compara com o que o LLM pediu. Se bate, `verified=true`.
- * Se não, `verified=false` e `diff` carrega a discrepância.
+ * Concept (PLAN.md §2, §7): every mutation returns `{ ok, verified, diff }`.
+ * `verified` comes from read-after-write — after mutating, the handler reads
+ * the state again and compares it to what the LLM requested. If it matches,
+ * `verified=true`. If not, `verified=false` and `diff` carries the discrepancy.
  *
- * Este módulo expõe primitivos para os tools comporem isso. Cycle 4 entrega
- * a foundation; tools individuais vão sendo migradas em Cycles seguintes.
+ * This module exposes primitives for tools to compose. Cycle 4 ships the
+ * foundation; individual tools migrate in subsequent cycles.
  *
- * Uso típico num tool:
+ * Typical use in a tool:
  * ```ts
  * const before = await ctx.bridge.call("track.get_info", { index });
  * const result = await ctx.bridge.call("track.set_volume", { index, volume });
@@ -20,9 +20,9 @@
  */
 
 export interface VerifyResult<T = unknown> {
-  /** O valor lido pós-mutação bate com o intent. */
+  /** The post-mutation read value matches the intent. */
   ok: boolean;
-  /** Detalhe da discrepância quando `ok=false`. */
+  /** Discrepancy detail when `ok=false`. */
   diff: VerifyDiff<T> | null;
 }
 
@@ -34,15 +34,15 @@ export interface VerifyDiff<T = unknown> {
 }
 
 export interface VerifyOptions {
-  /** Tolerância numérica. Default 0 (igualdade estrita). */
+  /** Numeric tolerance. Default 0 (strict equality). */
   tolerance?: number;
-  /** Nome do campo para reportar em `diff.field`. Default "value". */
+  /** Field name to report in `diff.field`. Default "value". */
   field?: string;
 }
 
 /**
- * Compara `intent` com `actual` aplicando tolerância (para floats).
- * Para strings/booleans usa `Object.is`.
+ * Compares `intent` with `actual` applying tolerance (for floats).
+ * For strings/booleans uses `Object.is`.
  */
 export function verifyField<T>(intent: T, actual: T, opts: VerifyOptions = {}): VerifyResult<T> {
   const field = opts.field ?? "value";
@@ -64,7 +64,7 @@ export function verifyField<T>(intent: T, actual: T, opts: VerifyOptions = {}): 
 }
 
 /**
- * Combina N verificações. `ok` é AND, `diff` é o primeiro falho.
+ * Combines N verifications. `ok` is AND, `diff` is the first failure.
  */
 export function verifyAll(...results: VerifyResult<unknown>[]): VerifyResult<unknown> {
   for (const r of results) {
@@ -74,8 +74,8 @@ export function verifyAll(...results: VerifyResult<unknown>[]): VerifyResult<unk
 }
 
 /**
- * Marker leve para tools que NÃO conseguem verificar (ex: clip.fire — o
- * is_playing pode oscilar conforme o transport). Usar em vez de mentir com
- * `verified: true`.
+ * Lightweight marker for tools that CANNOT verify (e.g. clip.fire — the
+ * is_playing flag may oscillate with the transport). Use this instead of
+ * lying with `verified: true`.
  */
 export const UNVERIFIABLE: VerifyResult = { ok: true, diff: null };

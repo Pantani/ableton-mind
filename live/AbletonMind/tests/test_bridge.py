@@ -1,18 +1,18 @@
 """
-Testes end-to-end do BridgeServer em modo headless.
+BridgeServer end-to-end tests in headless mode.
 
-Sobe servidor TCP em porta efêmera (porta 0 → kernel escolhe), conecta um
-cliente sintético, manda NDJSON e valida envelopes JSON-RPC.
+Spins up a TCP server on an ephemeral port (port 0 → kernel picks), connects
+a synthetic client, sends NDJSON and validates the JSON-RPC envelopes.
 
-Cobre:
+Covers:
 - handshake (system.hello)
 - ping
-- método inválido → -32601
-- params malformados → -32602
-- JSON inválido → -32700
-- fluxo idempotente do transport.set_tempo
-- track.list contra song populada
-- clip.create_midi com idempotência (segunda tentativa no mesmo slot)
+- invalid method → -32601
+- malformed params → -32602
+- invalid JSON → -32700
+- idempotent transport.set_tempo flow
+- track.list against a populated song
+- clip.create_midi with idempotency (second attempt on the same slot)
 """
 import json
 import socket
@@ -47,7 +47,7 @@ class BridgeFixture:
 
     def start(self) -> None:
         self.server.start()
-        # Espera até o socket aceitar conexões.
+        # Wait until the socket accepts connections.
         deadline = time.time() + 2.0
         while time.time() < deadline:
             try:
@@ -62,7 +62,7 @@ class BridgeFixture:
 
     def stop(self) -> None:
         self.server.stop()
-        # Pequena espera para liberar a porta.
+        # Small wait to release the port.
         time.sleep(0.05)
 
 
@@ -124,7 +124,7 @@ class TestBridgeEndToEnd(unittest.TestCase):
         self.assertEqual(resp["error"]["data"]["method"], "does.not.exist")
 
     def test_invalid_params(self):
-        # set_tempo só aceita {bpm}; "foo" é unknown
+        # set_tempo only accepts {bpm}; "foo" is unknown
         resp = _rpc(self.sock, "transport.set_tempo", {"foo": 1})
         self.assertEqual(resp["error"]["code"], -32602)
 
@@ -168,7 +168,7 @@ class TestBridgeEndToEnd(unittest.TestCase):
             id_=30,
         )
         self.assertTrue(r1["result"]["changed"])
-        # segunda vez no mesmo slot deve falhar com INVALID_STATE
+        # second time on the same slot must fail with INVALID_STATE
         r2 = _rpc(
             self.sock,
             "clip.create_midi",

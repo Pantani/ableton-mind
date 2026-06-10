@@ -4,41 +4,195 @@
   "name": "Lo-Fi Drum Kit",
   "category": "drums",
   "version": "0.1",
-  "description": "Drum Rack com Drum Bus (drive 0.4) + Vinyl Distortion + Redux (12 bits). Boom-bap / lo-fi hip-hop pattern em 1 bar 90 BPM.",
-  "tags": ["lo-fi", "boom-bap", "hip-hop", "90bpm", "drums"],
+  "description": "Drum Rack with Drum Bus (drive 0.4) + Vinyl Distortion + Redux (12 bits). Boom-bap / lo-fi hip-hop pattern in 1 bar at 90 BPM.",
+  "tags": [
+    "lo-fi",
+    "boom-bap",
+    "hip-hop",
+    "90bpm",
+    "drums"
+  ],
   "inputs": {
-    "tempo": { "type": "number", "default": 90, "min": 70, "max": 100 },
-    "track_name": { "type": "string", "default": "LoFi Drums" }
+    "tempo": {
+      "type": "number",
+      "default": 90,
+      "min": 70,
+      "max": 100
+    },
+    "track_name": {
+      "type": "string",
+      "default": "LoFi Drums"
+    }
   },
   "steps": [
-    { "op": "transport.set_tempo", "args": { "bpm": "{{tempo}}" } },
-    { "op": "track.upsert", "args": { "name": "{{track_name}}", "type": "midi" }, "let": "drums" },
-    { "op": "browser.load_item", "args": { "path": ["drums", "Drum Rack", "Init"] } },
-    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Drum Buss", "Init"] } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{drums.track.index}}", "device_index": 1, "parameter_name": "Drive", "value": 0.4 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{drums.track.index}}", "device_index": 1, "parameter_name": "Crunch", "value": 0.3 } },
-    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Vinyl Distortion", "Init"] } },
-    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Redux", "Init"] } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{drums.track.index}}", "device_index": 3, "parameter_name": "Bit Depth", "value": 12 } },
-    { "op": "clip.create_midi", "args": { "track_index": "{{drums.track.index}}", "clip_slot_index": 0, "length_beats": 4.0, "name": "Boom Bap" } },
+    {
+      "op": "transport.set_tempo",
+      "args": {
+        "bpm": "{{tempo}}"
+      }
+    },
+    {
+      "op": "track.upsert",
+      "args": {
+        "name": "{{track_name}}",
+        "type": "midi"
+      },
+      "let": "drums"
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "drums",
+          "Drum Rack",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "audio_effects",
+          "Drum Buss",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{drums.track.index}}",
+        "device_index": 1,
+        "parameter_name": "Drive",
+        "value": 0.4
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{drums.track.index}}",
+        "device_index": 1,
+        "parameter_name": "Crunch",
+        "value": 0.3
+      }
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "audio_effects",
+          "Vinyl Distortion",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "audio_effects",
+          "Redux",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{drums.track.index}}",
+        "device_index": 3,
+        "parameter_name": "Bit Depth",
+        "value": 12
+      }
+    },
+    {
+      "op": "clip.create_midi",
+      "args": {
+        "track_index": "{{drums.track.index}}",
+        "clip_slot_index": 0,
+        "length_beats": 4,
+        "name": "Boom Bap"
+      }
+    },
     {
       "op": "clip.add_notes",
       "args": {
         "track_index": "{{drums.track.index}}",
         "clip_slot_index": 0,
         "notes": [
-          { "pitch": 36, "start": 0, "duration": 0.25, "velocity": 110 },
-          { "pitch": 36, "start": 2.5, "duration": 0.25, "velocity": 100 },
-          { "pitch": 38, "start": 1, "duration": 0.25, "velocity": 100 },
-          { "pitch": 38, "start": 3, "duration": 0.25, "velocity": 100 },
-          { "pitch": 42, "start": 0, "duration": 0.125, "velocity": 70 },
-          { "pitch": 42, "start": 0.5, "duration": 0.125, "velocity": 60 },
-          { "pitch": 42, "start": 1, "duration": 0.125, "velocity": 75 },
-          { "pitch": 42, "start": 1.5, "duration": 0.125, "velocity": 60 },
-          { "pitch": 42, "start": 2, "duration": 0.125, "velocity": 70 },
-          { "pitch": 42, "start": 2.5, "duration": 0.125, "velocity": 60 },
-          { "pitch": 42, "start": 3, "duration": 0.125, "velocity": 75 },
-          { "pitch": 42, "start": 3.5, "duration": 0.125, "velocity": 60 }
+          {
+            "pitch": 36,
+            "start": 0,
+            "duration": 0.25,
+            "velocity": 110
+          },
+          {
+            "pitch": 36,
+            "start": 2.5,
+            "duration": 0.25,
+            "velocity": 100
+          },
+          {
+            "pitch": 38,
+            "start": 1,
+            "duration": 0.25,
+            "velocity": 100
+          },
+          {
+            "pitch": 38,
+            "start": 3,
+            "duration": 0.25,
+            "velocity": 100
+          },
+          {
+            "pitch": 42,
+            "start": 0,
+            "duration": 0.125,
+            "velocity": 70
+          },
+          {
+            "pitch": 42,
+            "start": 0.5,
+            "duration": 0.125,
+            "velocity": 60
+          },
+          {
+            "pitch": 42,
+            "start": 1,
+            "duration": 0.125,
+            "velocity": 75
+          },
+          {
+            "pitch": 42,
+            "start": 1.5,
+            "duration": 0.125,
+            "velocity": 60
+          },
+          {
+            "pitch": 42,
+            "start": 2,
+            "duration": 0.125,
+            "velocity": 70
+          },
+          {
+            "pitch": 42,
+            "start": 2.5,
+            "duration": 0.125,
+            "velocity": 60
+          },
+          {
+            "pitch": 42,
+            "start": 3,
+            "duration": 0.125,
+            "velocity": 75
+          },
+          {
+            "pitch": 42,
+            "start": 3.5,
+            "duration": 0.125,
+            "velocity": 60
+          }
         ]
       }
     }

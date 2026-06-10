@@ -1,8 +1,8 @@
 /**
- * Cobertura consolidada das tools do Cycle 3 + Cycle 4 que ficaram sem teste
- * em ciclos anteriores (TD-010).
+ * Consolidated coverage for the Cycle 3 + Cycle 4 tools that were left
+ * untested in previous cycles (TD-010).
  *
- * Tools cobertas aqui:
+ * Tools covered here:
  *   Cycle 3:
  *     - trackUpsertTool, trackSetNameTool, trackSetVolumeTool
  *     - clipAddNotesTool, clipFireTool, clipStopTool, clipSetNameTool
@@ -10,7 +10,7 @@
  *   Cycle 4:
  *     - trackGetInfoTool, sceneFireTool, clipSetLoopTool
  *
- * Padrão: BridgeClient mockado via vi.fn. Sem rede real.
+ * Pattern: BridgeClient mocked via vi.fn. No real network.
  */
 
 import { describe, expect, it, vi } from "vitest";

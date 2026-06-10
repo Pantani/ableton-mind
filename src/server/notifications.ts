@@ -1,21 +1,21 @@
 /**
  * Notification forwarder bridge → MCP (TD-015).
  *
- * O `TcpJsonRpcClient` emite `notification` (method, params) sempre que recebe
- * uma mensagem JSON-RPC sem `id`. Nós encaminhamos para o MCP client conforme
+ * The `TcpJsonRpcClient` emits `notification` (method, params) whenever it
+ * receives a JSON-RPC message without `id`. We forward to the MCP client per
  * ADR-0005:
  *
- * - Apenas métodos com prefixo `event.` são repassados.
- * - O resto é logado e descartado (proteção contra drift).
- * - Erros do MCP `sendNotification` são logados e engolidos — não derrubam a
- *   conexão com a bridge.
+ * - Only methods with the `event.` prefix are forwarded.
+ * - The rest is logged and discarded (protection against drift).
+ * - Errors from MCP `sendNotification` are logged and swallowed — they don't
+ *   tear down the connection with the bridge.
  *
- * O MCP SDK 1.x expõe `server.server.notification(...)` (a propriedade
- * `.server` é o underlying `Server` instance). Usamos isso porque `McpServer`
- * (a facade `1.x`) ainda não tem `sendNotification` público no top level.
+ * MCP SDK 1.x exposes `server.server.notification(...)` (the `.server`
+ * property is the underlying `Server` instance). We use this because `McpServer`
+ * (the `1.x` facade) doesn't yet expose `sendNotification` publicly at the top level.
  *
- * Se a API quebrar entre SDK versões, isolamos a chamada num adapter
- * (`sendNotification(method, params)`) — testes mockam só esse adapter.
+ * If the API breaks between SDK versions, we isolate the call in an adapter
+ * (`sendNotification(method, params)`) — tests mock only that adapter.
  */
 
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -26,22 +26,22 @@ import { getServerNotifier } from "./_mcp-internals.js";
 const EVENT_PREFIX = "event.";
 
 /**
- * Função pequena que sabe como enviar notification via MCP SDK. Trocar aqui
- * se o SDK evoluir. Injetável para testes.
+ * Small function that knows how to send a notification via the MCP SDK. Change
+ * here if the SDK evolves. Injectable for tests.
  */
 export type McpNotifier = (method: string, params: unknown) => Promise<void> | void;
 
-/** Default notifier que delega para o SDK internals adapter (TD-019). */
+/** Default notifier that delegates to the SDK internals adapter (TD-019). */
 export function createMcpNotifier(server: McpServer): McpNotifier {
-  // Centraliza o acesso a internals num módulo dedicado (`_mcp-internals.ts`).
+  // Centralizes internals access in a dedicated module (`_mcp-internals.ts`).
   return getServerNotifier(server);
 }
 
 /**
- * Recebe `(method, params)` vindos do bridge. Repassa se for `event.*`,
- * descarta caso contrário.
+ * Receives `(method, params)` from the bridge. Forwards if `event.*`,
+ * discards otherwise.
  *
- * Retorna `true` se repassou, `false` se ignorou.
+ * Returns `true` if forwarded, `false` if ignored.
  */
 export async function forwardNotification(
   notifier: McpNotifier,
@@ -53,12 +53,12 @@ export async function forwardNotification(
     return false;
   }
   try {
-    // Para integração com clientes MCP, mapeamos `event.foo_bar_changed` →
-    // `notifications/event.foo_bar_changed` (spec MCP usa namespace
-    // `notifications/*`). Mas como o subjacente `Server.notification` aceita
-    // qualquer method string, deixamos o caller decidir adicionar prefix se
-    // for útil. Por enquanto repassamos o method original — clientes MCP
-    // veem `event.foo_bar_changed` direto.
+    // For MCP client integration, we map `event.foo_bar_changed` →
+    // `notifications/event.foo_bar_changed` (MCP spec uses the
+    // `notifications/*` namespace). But since the underlying `Server.notification`
+    // accepts any method string, we let the caller decide whether to add a prefix
+    // if useful. For now we forward the original method — MCP clients
+    // see `event.foo_bar_changed` directly.
     await notifier(method, params);
     return true;
   } catch (err) {
@@ -73,8 +73,8 @@ export async function forwardNotification(
 /**
  * Wire helper: anexa o forwarder ao client TCP.
  *
- * Retorna função `dispose()` para remover o listener (útil em shutdown ou
- * testes).
+ * Returns a `dispose()` function to remove the listener (useful at shutdown or
+ * in tests).
  */
 export function attachNotificationForwarder(
   client: {

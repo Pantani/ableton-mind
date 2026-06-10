@@ -1,16 +1,16 @@
 """
-Handlers do domínio Arrangement (Phase 4 start).
+Arrangement-domain handlers (Phase 4 start).
 
-`arrangement.add_automation_point` — adiciona um ponto a um automation envelope
-no arrangement view. NÃO idempotente (chamadas duplicadas adicionam vários).
+`arrangement.add_automation_point` — appends a point to an automation envelope
+on the arrangement view. NOT idempotent (duplicate calls add multiple points).
 
 LiveAPI:
-  - `track.automation_envelopes` é uma lista de envelopes existentes.
-  - `track.create_or_get_automation_envelope(parameter)` cria se não existe.
-  - `envelope.insert_step(time, length, value)` insere ponto.
+  - `track.automation_envelopes` is a list of existing envelopes.
+  - `track.create_or_get_automation_envelope(parameter)` creates if missing.
+  - `envelope.insert_step(time, length, value)` inserts a point.
 
-Resolução de `parameter_locator` é feita aqui via helper compartilhado
-(`_resolve_locator`). Mesmo helper é usado por `clip.envelope_set_points`.
+`parameter_locator` resolution is done here via the shared helper
+(`_resolve_locator`). The same helper is used by `clip.envelope_set_points`.
 """
 from ..errors import (
     INVALID_PARAMS,
@@ -22,7 +22,7 @@ from ..errors import (
 from ..schemas import ArrangementAddAutomationPointInput
 from ..transactions import undo_step
 from ._base import Handler, register
-from .clip import _resolve_parameter_locator  # compartilhado
+from .clip import _resolve_parameter_locator  # shared
 
 
 @register("arrangement.add_automation_point")
@@ -53,7 +53,7 @@ class ArrangementAddAutomationPointHandler(Handler):
                 {"reason": str(exc), "locator": params.parameter_locator},
             ) from exc
 
-        # Live: usa create_or_get_automation_envelope
+        # Live: use create_or_get_automation_envelope
         getter = getattr(track, "create_or_get_automation_envelope", None)
         if getter is None:
             raise RpcError(
@@ -64,7 +64,7 @@ class ArrangementAddAutomationPointHandler(Handler):
         envelope = getter(parameter)
 
         with undo_step("arrangement.add_automation_point", song):
-            # length=0 = single point. Live aceita.
+            # length=0 = single point. Live accepts this.
             envelope.insert_step(float(params.time), 0.0, float(params.value))
 
         return {

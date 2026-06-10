@@ -1,45 +1,45 @@
 # QA Report — Cycle 9
 
-**Data:** 2026-06-09
-**Veredito:** **PASS-WITH-WARNINGS**
+**Date:** 2026-06-09
+**Verdict:** **PASS-WITH-WARNINGS**
 
-## Resumo
+## Summary
 
-Phase 5 (preview/verify) iniciada. Recipes (Trilha C) estreou. Knowledge salta para **20 devices**. TD-024 e TD-025 fechados.
+Phase 5 (preview/verify) started. Recipes (Track C) debuted. Knowledge jumps to **20 devices**. TD-024 and TD-025 closed.
 
 ## Tech debt
 
 | ID | Status |
 |---|---|
-| TD-004 | 🟡 PENDENTE (usuário) |
-| TD-005 | 🟡 PENDENTE (sandbox) |
-| TD-024 (Sampler complete) | ✅ FECHADO — 49 params curados + modulation_matrix |
-| TD-025 (mock helper) | ✅ FECHADO — `install_listener_methods()` + `fire_listener()` em `_fakes/live_api.py` |
+| TD-004 | 🟡 PENDING (user) |
+| TD-005 | 🟡 PENDING (sandbox) |
+| TD-024 (Sampler complete) | ✅ CLOSED — 49 curated params + modulation_matrix |
+| TD-025 (mock helper) | ✅ CLOSED — `install_listener_methods()` + `fire_listener()` in `_fakes/live_api.py` |
 
-**2 fechados em Cycle 9. Aberto: só TD-004/005.**
+**2 closed in Cycle 9. Open: only TD-004/005.**
 
 ## Phase 5 — preview + verify
 
-- `session.snapshot` — deep read de tempo, transport, tracks, clips, devices.
-- `session.diff` — recursive diff entre snapshots; ignora `ts`.
-- `render.preview` — modo `snapshot` (Phase 5); modo `bounce` planejado Cycle 10.
+- `session.snapshot` — deep read of tempo, transport, tracks, clips, devices.
+- `session.diff` — recursive diff between snapshots; ignores `ts`.
+- `render.preview` — `snapshot` mode (Phase 5); `bounce` mode planned for Cycle 10.
 
-3 tools MCP: `session_snapshot`, `session_diff`, `render_preview`. Esquema completo Zod-validado.
+3 MCP tools: `session_snapshot`, `session_diff`, `render_preview`. Full Zod-validated schema.
 
-Foundation para **verify loop completo** (LLM tira snap, muta, tira snap de novo, vê diff).
+Foundation for **full verify loop** (LLM takes snapshot, mutates, takes snapshot again, sees diff).
 
-## Recipes — Trilha C estreia (ADR-0007)
+## Recipes — Track C debuts (ADR-0007)
 
-- `src/recipes/index.ts` loader Zod-tipado.
-- `src/recipes/runner.ts` executor com placeholders mustache + dotted-let bindings.
-- 2 tools MCP: `list_recipes` (filter por categoria), `apply_recipe` (overrides + progresso parcial em falha).
-- 1 recipe seed: `recipes/drums/tech-house-kick.json` (4-on-the-floor kick com Drum Cell + 4 inputs).
+- `src/recipes/index.ts` Zod-typed loader.
+- `src/recipes/runner.ts` executor with mustache placeholders + dotted-let bindings.
+- 2 MCP tools: `list_recipes` (filter by category), `apply_recipe` (overrides + partial progress on failure).
+- 1 seed recipe: `recipes/drums/tech-house-kick.json` (4-on-the-floor kick with Drum Cell + 4 inputs).
 
-`apply_recipe` retorna `{ applied, completed, failed_at?, error?, bindings }`. Sem rollback (Phase 6 adiciona via undo batch).
+`apply_recipe` returns `{ applied, completed, failed_at?, error?, bindings }`. No rollback (Phase 6 adds it via undo batch).
 
 ## Knowledge — 20 devices / ~520 params
 
-Novos Cycle 9:
+New Cycle 9:
 | Device | Params |
 |---|---|
 | Sampler (TD-024 complete) | 49 |
@@ -51,35 +51,35 @@ Novos Cycle 9:
 
 PLAN.md §5 target 50+ → **40% done**.
 
-## Total tools MCP: 26
+## Total MCP tools: 26
 
-Era 23. +3 Phase 5 + 2 recipes (note: `apply_recipe` returns `ok: boolean` via recipe outcome — design intencional).
+Was 23. +3 Phase 5 + 2 recipes (note: `apply_recipe` returns `ok: boolean` via recipe outcome — intentional design).
 
 ## Warnings
 
-### W1 — Testes Cycle 9 não escritos (TD-026)
-Phase 5 handlers + recipe runner sem cobertura. Medium.
+### W1 — Cycle 9 tests not written (TD-026)
+Phase 5 handlers + recipe runner without coverage. Medium.
 
-### W2 — Contract doc não atualizado (TD-027)
-§27..§29 (session.*, render.preview) + §30 (recipes) faltando. Baixa.
+### W2 — Contract doc not updated (TD-027)
+§27..§29 (session.*, render.preview) + §30 (recipes) missing. Low.
 
-### W3 — `recipes/recipe-schema.json` referenciado mas não criado
-Recipes apontam para `$schema: "../recipe-schema.json"` que não existe (loader ignora). TD-028 (trivial).
+### W3 — `recipes/recipe-schema.json` referenced but not created
+Recipes point to `$schema: "../recipe-schema.json"` which does not exist (loader ignores). TD-028 (trivial).
 
-### W4 — Recipe `tech-house-kick` assume drum_cell já carregado
-Recipe não faz `browser.load_item` do Drum Cell. Em runtime real, MIDI track recém-criada não tem device. Cycle 10 deve adicionar step ou criar variante "complete-from-scratch". TD-029 (baixa).
+### W4 — `tech-house-kick` recipe assumes drum_cell already loaded
+Recipe does not do `browser.load_item` for Drum Cell. In real runtime, a freshly created MIDI track has no device. Cycle 10 should add a step or create a "complete-from-scratch" variant. TD-029 (low).
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 9.** Próximo:
+**PASS Cycle 9.** Next:
 
 Cycle 10:
-- Smoke real (TD-004).
-- TD-026 (testes Phase 5 + recipes).
+- Real smoke (TD-004).
+- TD-026 (Phase 5 + recipes tests).
 - TD-027 (contract doc).
 - TD-028 (recipe-schema.json).
 - TD-029 (recipe drum loading).
-- Phase 5 cont: `render.preview` modo bounce (`freeze_track` + export).
+- Phase 5 cont: `render.preview` bounce mode (`freeze_track` + export).
 - Phase 6 start: Push 1/2/3 LED/pad control (PLAN.md §4.18).
 - +5 devices: Pedal, Roar, Vocoder, Beat Repeat, Erosion.
 - +3 recipes: `bass/sub-808`, `racks/sidechain-rack`, `mixing/master-bus`.

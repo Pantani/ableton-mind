@@ -1,5 +1,5 @@
 /**
- * Testes das tools track_list e track_create.
+ * Tests for the track_list and track_create tools.
  */
 
 import { describe, expect, it, vi } from "vitest";

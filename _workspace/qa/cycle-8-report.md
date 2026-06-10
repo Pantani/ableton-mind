@@ -1,28 +1,28 @@
 # QA Report — Cycle 8
 
-**Data:** 2026-06-09
-**Veredito:** **PASS-WITH-WARNINGS**
+**Date:** 2026-06-09
+**Verdict:** **PASS-WITH-WARNINGS**
 **QA:** architect inline.
 
-## Resumo
+## Summary
 
-Cycle 8 fechou **5 débitos técnicos** (TD-016, TD-019, TD-021, TD-022, TD-023). Verify loop agora cobre **23/23 tools**. Knowledge salta para **15 devices / 360+ params**. Phase 4 ganha curve_type real.
+Cycle 8 closed **5 tech debts** (TD-016, TD-019, TD-021, TD-022, TD-023). The verify loop now covers **23/23 tools**. Knowledge jumps to **15 devices / 360+ params**. Phase 4 gets real curve_type.
 
-Tech debt aberto reduzido para 2 itens — ambos dependentes de ambiente real (smoke + npm install).
+Open tech debt reduced to 2 items — both dependent on real environment (smoke + npm install).
 
 ## Tech debt status
 
 | ID | Status |
 |---|---|
-| TD-004 (smoke real) | 🟡 PENDENTE (usuário) |
-| TD-005 (npm install) | 🟡 PENDENTE (sandbox) |
-| TD-016 (verify carry-over) | ✅ FECHADO — 23/23 tools (read-only declarativo; mutators com verifyField; async marcados UNVERIFIABLE) |
-| TD-019 (SDK internals) | ✅ FECHADO — `src/server/_mcp-internals.ts` + adapter `getServerNotifier` |
-| TD-021 (contract doc §25-26) | ✅ FECHADO |
-| TD-022 (testes Cycle 7) | ✅ FECHADO — `tests/tools-locator-and-phase4.test.ts` + `live/.../tests/test_cycle7_phase4.py` |
-| TD-023 (curve_type) | ✅ FECHADO — `clip.envelope_set_points` implementa `hold` via 2-step split |
+| TD-004 (real smoke) | 🟡 PENDING (user) |
+| TD-005 (npm install) | 🟡 PENDING (sandbox) |
+| TD-016 (verify carry-over) | ✅ CLOSED — 23/23 tools (declarative read-only; mutators with verifyField; async marked UNVERIFIABLE) |
+| TD-019 (SDK internals) | ✅ CLOSED — `src/server/_mcp-internals.ts` + `getServerNotifier` adapter |
+| TD-021 (contract doc §25-26) | ✅ CLOSED |
+| TD-022 (Cycle 7 tests) | ✅ CLOSED — `tests/tools-locator-and-phase4.test.ts` + `live/.../tests/test_cycle7_phase4.py` |
+| TD-023 (curve_type) | ✅ CLOSED — `clip.envelope_set_points` implements `hold` via 2-step split |
 
-**5 fechados / 2 abertos** (ambos não-resolvíveis em sandbox).
+**5 closed / 2 open** (both non-resolvable in sandbox).
 
 ## Verify loop — 23/23 ✅
 
@@ -37,82 +37,82 @@ Tech debt aberto reduzido para 2 itens — ambos dependentes de ambiente real (s
 | create_midi_clip | length+name | 7 |
 | clip_set_loop | loop fields | 7 |
 | device_set_parameter | value (1e-4) | 7 |
-| clip_set_envelope | points count (com hold) | 7+8 |
+| clip_set_envelope | points count (with hold) | 7+8 |
 | clip_add_notes | added count | 8 |
 | **read-only**: track_list, track_get_info, session_get_info, browser_get_categories, browser_load_item, device_get_parameters | inherently verified (no mutation) | 8 |
 | **async**: play, stop, scene_fire, clip_fire, clip_stop | UNVERIFIABLE sentinel | 5-8 |
-| arrangement_add_automation_point | (NOT idempotent, bridge confirma add) | 7 |
+| arrangement_add_automation_point | (NOT idempotent, bridge confirms add) | 7 |
 
-Cobertura completa. Cada tool tem decisão registrada — verify real / declarativo / UNVERIFIABLE.
+Complete coverage. Each tool has a recorded decision — real verify / declarative / UNVERIFIABLE.
 
-## Phase 4 — curve_type implementado (TD-023)
+## Phase 4 — curve_type implemented (TD-023)
 
 Bridge `clip.envelope_set_points`:
-- `linear` (default) / `ramp`: 1 step puro.
-- `hold` (a partir do 2º point): insere 2 steps — edge value@previous a `time-1e-4` + `value@time`. Cria a borda de step característica do hold.
+- `linear` (default) / `ramp`: 1 pure step.
+- `hold` (from the 2nd point): inserts 2 steps — edge value@previous at `time-1e-4` + `value@time`. Creates the characteristic step edge of hold.
 
-TS tool `clip_set_envelope` calcula `expectedCount = sum(1 + isHoldAfterFirst(p) ? 1 : 0)` para verify.
+TS tool `clip_set_envelope` computes `expectedCount = sum(1 + isHoldAfterFirst(p) ? 1 : 0)` for verify.
 
-Testes Python `test_cycle7_phase4.py::TestClipEnvelopeSetPoints::test_hold_curve_type_inserts_extra_step` confirma.
+Python tests `test_cycle7_phase4.py::TestClipEnvelopeSetPoints::test_hold_curve_type_inserts_extra_step` confirm.
 
 ## SDK adapter — TD-019
 
-`src/server/_mcp-internals.ts` centraliza TODO acesso a internals:
+`src/server/_mcp-internals.ts` centralizes ALL internals access:
 - `getServerNotifier(server) → ServerNotifier`
-- `SdkIncompatibilityError` quando shape do SDK mudar
+- `SdkIncompatibilityError` when SDK shape changes
 
-`notifications.ts::createMcpNotifier` agora delega 1 linha. Se SDK 2.x mover `.server.notification` para outro caminho, só 1 arquivo precisa atualizar.
+`notifications.ts::createMcpNotifier` now delegates 1 line. If SDK 2.x moves `.server.notification` elsewhere, only 1 file needs updating.
 
-Testes: `tests/tools-locator-and-phase4.test.ts::getServerNotifier` cobre happy path + 3 cenários de incompatibilidade.
+Tests: `tests/tools-locator-and-phase4.test.ts::getServerNotifier` covers happy path + 3 incompatibility scenarios.
 
 ## Contract doc
 
-§1..§26 completos:
+§1..§26 complete:
 - §25 `clip.envelope_set_points` (locator + points + curve_type)
 - §26 `arrangement.add_automation_point`
-- Resumo final lista 23 tools por categoria.
+- Final summary lists 23 tools by category.
 
 ## Knowledge — 15 devices / ~360 params
 
-Novos Cycle 8:
-| Device | Params | Categoria |
+New Cycle 8:
+| Device | Params | Category |
 |---|---|---|
 | Drum Cell | 16 | instrument (Live 12+) |
 | Simpler | 23 | instrument |
-| Sampler | 17 (parcial) | instrument |
+| Sampler | 17 (partial) | instrument |
 | Tuner | 4 | audio_effect |
 | Phaser-Flanger | 14 | audio_effect (Live 11+ unified) |
 
-Total acumulado: **15 devices**, **~360 parameters** indexados + drum_rack metadata.
+Accumulated total: **15 devices**, **~360 parameters** indexed + drum_rack metadata.
 
 PLAN.md §5 target 50+ devices → **30% done**.
 
-## Testes
+## Tests
 
 Python:
-- `test_cycle7_phase4.py` NEW: 11+ casos cobrindo Phase 4 handlers + locator + listeners expansion.
+- `test_cycle7_phase4.py` NEW: 11+ cases covering Phase 4 handlers + locator + listeners expansion.
 
 TS:
-- `tools-locator-and-phase4.test.ts` NEW: 17+ casos cobrindo locator parser (6 vars), arrangement+envelope tools (5), SDK adapter (4), UNVERIFIABLE behavior (4).
+- `tools-locator-and-phase4.test.ts` NEW: 17+ cases covering locator parser (6 vars), arrangement+envelope tools (5), SDK adapter (4), UNVERIFIABLE behavior (4).
 
 ## Warnings
 
-### W1 — Sampler parcial
-17/~80 params. Marcado `completeness: partial` com TODO. Não bloqueia uso de Sampler via knowledge (LLM ainda recebe enriquecimento para os params curados). TD-024 (baixa).
+### W1 — Partial Sampler
+17/~80 params. Marked `completeness: partial` with TODO. Does not block Sampler use via knowledge (LLM still receives enrichment for curated params). TD-024 (low).
 
-### W2 — Live mock para Cycle 8 Python tests
-`test_cycle7_phase4.py::TestListenerManagerExpansion` adiciona métodos `add_*_listener` dinamicamente nos fakes. Padrão funciona mas é frágil — Phase 9 pode mover esse setup para `_fakes/live_api.py` como helper. TD-025 (trivial).
+### W2 — Live mock for Cycle 8 Python tests
+`test_cycle7_phase4.py::TestListenerManagerExpansion` dynamically adds `add_*_listener` methods to the fakes. The pattern works but is fragile — Phase 9 may move this setup into `_fakes/live_api.py` as a helper. TD-025 (trivial).
 
-### W3 — Phase 5 não iniciada
-PLAN.md §12 lista Phase 5 (preview / render) como próxima major. Cycle 9 deve abrir.
+### W3 — Phase 5 not started
+PLAN.md §12 lists Phase 5 (preview / render) as the next major. Cycle 9 should open it.
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 8.** Tech debt back-to-back essencialmente zerado (só TD-004/005 abertos, ambos de ambiente).
+**PASS Cycle 8.** Back-to-back tech debt essentially zeroed (only TD-004/005 open, both environmental).
 
-Próximo (Cycle 9):
-- TD-004 smoke real.
+Next (Cycle 9):
+- TD-004 real smoke.
 - Phase 5 start: `render_preview` (8-bar bounce) + `screenshot_live` + session snapshot.
 - Knowledge: +5-10 devices (Bass, Drift, Meld, Beat Repeat, Erosion, Frequency Shifter, Glue Compressor, Hybrid Reverb, Limiter, Vocoder).
-- Recipes (Trilha C): primeira recipe entregue (`drums/tech-house-kick.json` como prova de conceito).
+- Recipes (Track C): first recipe delivered (`drums/tech-house-kick.json` as proof of concept).
 - TD-024 (Sampler complete), TD-025 (mock helper).

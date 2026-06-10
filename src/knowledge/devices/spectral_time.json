@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "11.0",
-  "description": "Spectral freezer + reverb-via-FFT. Cria pads infinitos, smears congelados.",
+  "description": "Spectral freezer + FFT-based reverb. Creates infinite pads and frozen smears.",
   "source": "curated (Cycle 12)",
   "completeness": "complete",
   "parameters": [

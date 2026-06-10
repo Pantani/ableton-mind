@@ -4,35 +4,167 @@
   "name": "Reese Bass",
   "category": "bass",
   "version": "0.1",
-  "description": "Classic Reese bass com Operator — 2 detuned saws + filter LP24 + chorus. Sub-bass para D&B / neurofunk.",
-  "tags": ["reese", "dnb", "neurofunk", "bass", "detuned"],
+  "description": "Classic Reese bass with Operator: 2 detuned saws + LP24 filter + chorus. Sub-bass for D&B / neurofunk.",
+  "tags": [
+    "reese",
+    "dnb",
+    "neurofunk",
+    "bass",
+    "detuned"
+  ],
   "inputs": {
-    "track_name": { "type": "string", "default": "Reese" },
-    "root_pitch": { "type": "int", "default": 33, "min": 24, "max": 48 },
-    "detune": { "type": "number", "default": 12, "min": 0, "max": 50, "description": "Cents detune entre as ondas." },
-    "filter_freq": { "type": "number", "default": 800, "min": 200, "max": 5000 }
+    "track_name": {
+      "type": "string",
+      "default": "Reese"
+    },
+    "root_pitch": {
+      "type": "int",
+      "default": 33,
+      "min": 24,
+      "max": 48
+    },
+    "detune": {
+      "type": "number",
+      "default": 12,
+      "min": 0,
+      "max": 50,
+      "description": "Cents detune entre as ondas."
+    },
+    "filter_freq": {
+      "type": "number",
+      "default": 800,
+      "min": 200,
+      "max": 5000
+    }
   },
   "steps": [
-    { "op": "track.upsert", "args": { "name": "{{track_name}}", "type": "midi" }, "let": "reese" },
-    { "op": "browser.load_item", "args": { "path": ["instruments", "Operator", "Init"] } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "A Wave", "value": 1 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "B Wave", "value": 1 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "B Level", "value": 0.7 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "B Fine", "value": "{{detune}}" } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "Filter On", "value": 1 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "Filter Type", "value": 0 } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "Filter Freq", "value": "{{filter_freq}}" } },
-    { "op": "device.set_parameter", "args": { "track_index": "{{reese.track.index}}", "device_index": 0, "parameter_name": "Filter Res", "value": 0.4 } },
-    { "op": "browser.load_item", "args": { "path": ["audio_effects", "Chorus-Ensemble", "Init"] } },
-    { "op": "clip.create_midi", "args": { "track_index": "{{reese.track.index}}", "clip_slot_index": 0, "length_beats": 8.0, "name": "Reese" } },
+    {
+      "op": "track.upsert",
+      "args": {
+        "name": "{{track_name}}",
+        "type": "midi"
+      },
+      "let": "reese"
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "instruments",
+          "Operator",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "A Wave",
+        "value": 1
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "B Wave",
+        "value": 1
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "B Level",
+        "value": 0.7
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "B Fine",
+        "value": "{{detune}}"
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "Filter On",
+        "value": 1
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "Filter Type",
+        "value": 0
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "Filter Freq",
+        "value": "{{filter_freq}}"
+      }
+    },
+    {
+      "op": "device.set_parameter",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "device_index": 0,
+        "parameter_name": "Filter Res",
+        "value": 0.4
+      }
+    },
+    {
+      "op": "browser.load_item",
+      "args": {
+        "path": [
+          "audio_effects",
+          "Chorus-Ensemble",
+          "Init"
+        ]
+      }
+    },
+    {
+      "op": "clip.create_midi",
+      "args": {
+        "track_index": "{{reese.track.index}}",
+        "clip_slot_index": 0,
+        "length_beats": 8,
+        "name": "Reese"
+      }
+    },
     {
       "op": "clip.add_notes",
       "args": {
         "track_index": "{{reese.track.index}}",
         "clip_slot_index": 0,
         "notes": [
-          { "pitch": "{{root_pitch}}", "start": 0, "duration": 4, "velocity": 110 },
-          { "pitch": "{{root_pitch}}", "start": 4, "duration": 4, "velocity": 110 }
+          {
+            "pitch": "{{root_pitch}}",
+            "start": 0,
+            "duration": 4,
+            "velocity": 110
+          },
+          {
+            "pitch": "{{root_pitch}}",
+            "start": 4,
+            "duration": 4,
+            "velocity": 110
+          }
         ]
       }
     }

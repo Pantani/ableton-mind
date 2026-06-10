@@ -1,69 +1,69 @@
 # QA Report — Cycle 15
 
-**Data:** 2026-06-09
-**Veredito:** **PASS-WITH-WARNINGS**
+**Date:** 2026-06-09
+**Verdict:** **PASS-WITH-WARNINGS**
 
-## Resumo
+## Summary
 
-TD-041 fechado. Knowledge atinge **45/50 = 90%** PLAN.md §5. Recipes 12. Versão 0.0.15.
+TD-041 closed. Knowledge reaches **45/50 = 90%** PLAN.md §5. Recipes 12. Version 0.0.15.
 
-**Bloqueio para tag v0.1.0-rc.1: TD-004 (smoke real) — depende do usuário.**
+**Blocker for tag v0.1.0-rc.1: TD-004 (real smoke) — depends on user.**
 
 ## Tech debt
 
 | ID | Status |
 |---|---|
-| TD-004 | 🟡 PENDENTE (usuário) — BLOQUEIA rc.1 |
-| TD-005 | 🟡 PENDENTE (sandbox) |
-| TD-030 | 🟡 PENDENTE (Push hardware) |
-| TD-041 (knowledge units convention) | ✅ FECHADO — `src/knowledge/README.md` |
+| TD-004 | 🟡 PENDING (user) — BLOCKS rc.1 |
+| TD-005 | 🟡 PENDING (sandbox) |
+| TD-030 | 🟡 PENDING (Push hardware) |
+| TD-041 (knowledge units convention) | ✅ CLOSED — `src/knowledge/README.md` |
 
-**1 fechado. Aberto: TD-004/005/030 (todos de ambiente real).**
+**1 closed. Open: TD-004/005/030 (all real-environment).**
 
 ## TD-041 — Knowledge units convention
 
-`src/knowledge/README.md` documenta:
-- Estrutura do schema completo.
-- **Tabela de 16 unit types canônicos** (linear, curve, Hz, dB, s, ms, semitones, cents, octaves, MIDI, °, Q, %, BPM, bits, enum, bool, voices/count, ratio).
-- **Regra `linear` vs `curve`**: linear espelha exatamente o slider; curve é 0..1 visual mas engine aplica curva não-linear → 0.5 ≠ "metade audível".
-- Processo de adicionar device: extract → curador → KNOWN_DEVICES → tests.
+`src/knowledge/README.md` documents:
+- Full schema structure.
+- **Table of 16 canonical unit types** (linear, curve, Hz, dB, s, ms, semitones, cents, octaves, MIDI, °, Q, %, BPM, bits, enum, bool, voices/count, ratio).
+- **`linear` vs `curve` rule**: linear mirrors the slider exactly; curve is 0..1 visual but the engine applies a non-linear curve → 0.5 ≠ "audible half".
+- Process to add a device: extract → curator → KNOWN_DEVICES → tests.
 
-Aplicado já em Cycle 15: Drum Buss Drive (Cycle 14) precedeu mas agora `Dynamic Tube::Drive` e `Dynamic Tube::Bias` usam `unit: "curve"` explícito. Devices anteriores ficam carry-over de re-anotação (TD-042 baixa).
+Applied already in Cycle 15: Drum Buss Drive (Cycle 14) preceded but now `Dynamic Tube::Drive` and `Dynamic Tube::Bias` use explicit `unit: "curve"`. Earlier devices remain carry-over for re-annotation (TD-042 low).
 
 ## Knowledge — 45 devices (90% PLAN.md §5) 🎯
 
-Novos Cycle 15: Cabinet (guitar IR sim), Dynamic Tube (3-type sat com curve units), Filter Delay (3 lines L/L+R/R), Grain Delay (granular pitch/spray), Utility (essential mixing).
+New Cycle 15: Cabinet (guitar IR sim), Dynamic Tube (3-type sat with curve units), Filter Delay (3 lines L/L+R/R), Grain Delay (granular pitch/spray), Utility (essential mixing).
 
 ## Recipes — 12
 
-Novos Cycle 15:
-- `drums/jungle-break` — Amen-style 170 BPM, kick + snare ghost + hat off-beat, 16 notes.
+New Cycle 15:
+- `drums/jungle-break` — Amen-style 170 BPM, kick + ghost snare + off-beat hat, 16 notes.
 - `bass/reese` — Operator detuned saws (A+B level 0.7) + Filter LP24 + Chorus-Ensemble. D&B / neurofunk.
 
-Drums e Bass agora têm 2 recipes cada (era 1).
+Drums and Bass now have 2 recipes each (was 1).
 
-## Total tools MCP: 31 (sem mudança)
+## Total MCP tools: 31 (unchanged)
 
-## Versão: 0.0.15
+## Version: 0.0.15
 
 `package.json` + `dxt/manifest.json` + CHANGELOG sync.
 
 ## Warnings
 
-### W1 — Devices anteriores não re-anotados com `unit: "curve"` quando aplicável
-TD-042 (baixa): Drum Buss, Pedal, Roar, Saturator têm Drive/Amount usando `unit: "linear"` mas engine é não-linear. Re-curadoria progressiva em Cycle 16+.
+### W1 — Earlier devices not re-annotated with `unit: "curve"` where applicable
+TD-042 (low): Drum Buss, Pedal, Roar, Saturator have Drive/Amount using `unit: "linear"` but the engine is non-linear. Progressive re-curation in Cycle 16+.
 
-### W2 — TD-004 continua bloqueando rc.1
-Nenhuma ação possível no sandbox.
+### W2 — TD-004 continues to block rc.1
+No action possible in sandbox.
 
-## Recomendação
+## Recommendation
 
-**PASS Cycle 15.** Próximo:
+**PASS Cycle 15.** Next:
 
 Cycle 16:
-- **TD-004 smoke real** (BLOQUEIO).
-- TD-042 re-anotação curve units.
-- Tag `v0.1.0-rc.1` (após smoke PASS).
-- +5 devices → meta 50/50 (100%).
+- **TD-004 real smoke** (BLOCKER).
+- TD-042 curve units re-annotation.
+- Tag `v0.1.0-rc.1` (after smoke PASS).
+- +5 devices → target 50/50 (100%).
 - +2 recipes.
 - Commit + push.

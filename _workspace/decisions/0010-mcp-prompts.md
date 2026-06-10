@@ -1,20 +1,20 @@
 # ADR 0010 — MCP Prompts
 
-**Data:** 2026-06-09
-**Status:** Aceito
-**Autor:** architect
+**Date:** 2026-06-09
+**Status:** Accepted
+**Author:** architect
 
-## Contexto
+## Context
 
-MCP define **3 primitivas**: tools (function calls), resources (URIs lidos pelo cliente), **prompts** (templates pré-canned que o usuário/LLM pode invocar para iniciar uma conversa estruturada).
+MCP defines **3 primitives**: tools (function calls), resources (URIs read by the client), **prompts** (pre-canned templates that the user/LLM can invoke to start a structured conversation).
 
-PLAN.md §3.3 listou `src/prompts/` como parte do layout esperado, mas até Cycle 17 só implementamos tools. Resources estão fora do escopo até Phase 8. **Prompts são valor imediato e baratos** — capturam workflows recorrentes ("crie uma track tech-house", "monte uma chain de mixing pra vocal") como entrada estruturada.
+PLAN.md §3.3 listed `src/prompts/` as part of the expected layout, but until Cycle 17 we only implemented tools. Resources are out of scope until Phase 8. **Prompts are immediate and cheap value** — they capture recurring workflows ("create a tech-house track", "build a mixing chain for vocal") as structured input.
 
-## Decisão
+## Decision
 
-### 1. Shape de uma prompt
+### 1. Prompt shape
 
-Espelha a API `McpServer.prompt(name, description, argsSchema, handler)` do SDK:
+Mirrors the SDK's `McpServer.prompt(name, description, argsSchema, handler)` API:
 
 ```ts
 {
@@ -22,8 +22,8 @@ Espelha a API `McpServer.prompt(name, description, argsSchema, handler)` do SDK:
   description: "Compose a complete track in a specified genre with kit + bassline + chords.",
   arguments: [
     { name: "genre", description: "techno | tech-house | jungle | lofi | dnb | neo-soul", required: true },
-    { name: "tempo", description: "BPM (auto se omitido)", required: false },
-    { name: "duration_min", description: "Minutos (default 7)", required: false }
+    { name: "tempo", description: "BPM (auto if omitted)", required: false },
+    { name: "duration_min", description: "Minutes (default 7)", required: false }
   ],
   handler: ({ genre, tempo, duration_min }) => ({
     messages: [{
@@ -34,46 +34,46 @@ Espelha a API `McpServer.prompt(name, description, argsSchema, handler)` do SDK:
 }
 ```
 
-### 2. Diretório
+### 2. Directory
 
 `src/prompts/`:
-- `index.ts` — registry `allPrompts` + `loadPrompt(name)`.
+- `index.ts` — `allPrompts` registry + `loadPrompt(name)`.
 - `genre-track.ts`, `mix-chain.ts`, `arrangement.ts`, `sound-design.ts`, `vocal-chain.ts` — 5 seed prompts.
-- Cada prompt é um objeto `PromptDefinition` registrado no MCP server.
+- Each prompt is a `PromptDefinition` object registered on the MCP server.
 
-### 3. Renderização
+### 3. Rendering
 
-Prompts retornam **texto que vira primeira mensagem da conversação**. Tipicamente:
+Prompts return **text that becomes the conversation's first message**. Typically:
 
-> Use as ferramentas `track.upsert`, `clip.create_midi`, `clip.add_notes`, `device.set_parameter` (e `apply_recipe` quando possível) para construir uma track em `{{genre}}` a {{tempo}} BPM:
+> Use the tools `track.upsert`, `clip.create_midi`, `clip.add_notes`, `device.set_parameter` (and `apply_recipe` when possible) to build a track in `{{genre}}` at {{tempo}} BPM:
 >
 > 1. Set tempo
-> 2. Listar recipes da categoria `drums` filtrando por tag `{{genre}}` (`list_recipes`)
-> 3. Aplicar recipe selecionada
-> 4. (continuar com bass, chords, mixing...)
+> 2. List recipes in the `drums` category filtering by tag `{{genre}}` (`list_recipes`)
+> 3. Apply selected recipe
+> 4. (continue with bass, chords, mixing...)
 
-Templates podem mencionar recipes existentes para reuso.
+Templates may mention existing recipes for reuse.
 
-### 4. Wiring no server bootstrap
+### 4. Wiring in the server bootstrap
 
-`src/server/index.ts` ganha `registerPrompts(server, allPrompts)` análogo a `registerTool`. SDK 1.x:
+`src/server/index.ts` gets `registerPrompts(server, allPrompts)` analogous to `registerTool`. SDK 1.x:
 
 ```ts
 server.prompt(p.name, p.description, argsShapeFromZod, p.handler);
 ```
 
-### 5. Listagem via tool MCP
+### 5. Listing via MCP tool
 
-Adicionar tool `list_prompts` (análogo a `list_recipes`) que devolve metadata. Útil para LLMs explorando o server sem depender do client expor prompts nativamente.
+Add a `list_prompts` tool (analogous to `list_recipes`) that returns metadata. Useful for LLMs exploring the server without depending on the client to expose prompts natively.
 
-## Consequências
+## Consequences
 
-- 2 novos arquivos por prompt + 1 registry + 1 wiring + 1 tool listing.
-- Sem dependência adicional (já temos Zod, MCP SDK, recipes).
-- Cliente MCP que suporta prompts (Claude Desktop, Cursor) mostra menu /prompts.
-- Cliente que NÃO suporta prompts ainda pode invocar via `list_prompts` + copiar texto.
+- 2 new files per prompt + 1 registry + 1 wiring + 1 listing tool.
+- No additional dependency (we already have Zod, MCP SDK, recipes).
+- An MCP client that supports prompts (Claude Desktop, Cursor) shows a /prompts menu.
+- A client that does NOT support prompts can still invoke via `list_prompts` + copying text.
 
-## Como aplicar
+## How to apply
 
-- Cycle 18: implementa + 5 seed prompts.
-- Cycles futuros: 10-20 prompts por gênero/workflow.
+- Cycle 18: implements + 5 seed prompts.
+- Future cycles: 10-20 prompts per genre/workflow.

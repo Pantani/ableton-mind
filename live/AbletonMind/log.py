@@ -1,7 +1,7 @@
 """
-Logger estruturado. Em produção (dentro do Live) chamamos
-`ControlSurface.log_message` com JSON. Fora do Live (testes), caímos no stderr
-mas mantemos o mesmo schema para parsing externo.
+Structured logger. In production (inside Live) we call
+`ControlSurface.log_message` with JSON. Outside Live (tests) we fall back to
+stderr but keep the same schema for external parsing.
 """
 import json
 import sys
@@ -10,13 +10,13 @@ from typing import Any, Optional
 
 
 class StructuredLogger:
-    """Wrapper fino sobre `ControlSurface.log_message`.
+    """Thin wrapper over `ControlSurface.log_message`.
 
-    Sempre serializa para JSON de uma linha; o Log.txt do Live é grep-friendly.
+    Always serializes to a single JSON line; Live's Log.txt is grep-friendly.
     """
 
     def __init__(self, sink=None, component: str = "ableton-mind"):
-        # `sink` é o ControlSurface (tem `.log_message(str)`). Pode ser None em testes.
+        # `sink` is the ControlSurface (has `.log_message(str)`). May be None in tests.
         self._sink = sink
         self._component = component
 
@@ -36,7 +36,7 @@ class StructuredLogger:
                 return
             except Exception:
                 pass
-        # Fallback fora do Live
+        # Fallback outside Live
         print(line, file=sys.stderr)
 
     def info(self, event: str, **fields: Any) -> None:

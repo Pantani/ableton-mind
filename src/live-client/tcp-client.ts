@@ -1,17 +1,17 @@
 /**
- * Cliente TCP NDJSON JSON-RPC 2.0 para a bridge Python do ableton-mind.
+ * NDJSON JSON-RPC 2.0 TCP client for the ableton-mind Python bridge.
  *
- * Responsabilidades:
- * - Conexão persistente a `127.0.0.1:9876` (override via env).
- * - Framing NDJSON: cada mensagem é UMA linha terminada por `\n`.
- * - Buffer parcial: linha incompleta no fim de um chunk fica guardada para
- *   o próximo `data`.
- * - Fila de requests pendentes por `id` com timeout default 5s.
- * - Reconnect transparente com backoff exponencial (100ms → 5s).
- * - Notifications (sem id) viram eventos via EventEmitter.
+ * Responsibilities:
+ * - Persistent connection to `127.0.0.1:9876` (override via env).
+ * - NDJSON framing: each message is ONE line terminated by `\n`.
+ * - Partial buffer: incomplete line at the end of a chunk is kept for
+ *   the next `data`.
+ * - Pending request queue by `id` with default 5s timeout.
+ * - Transparent reconnect with exponential backoff (100ms → 5s).
+ * - Notifications (no id) become events via EventEmitter.
  *
- * Não conhece a semântica dos métodos. Quem chama é responsável pelo schema
- * dos params/result.
+ * Does not know method semantics. The caller is responsible for the
+ * params/result schema.
  */
 
 import { EventEmitter } from "node:events";
@@ -32,13 +32,13 @@ import {
 export interface TcpClientOptions {
   host?: string;
   port?: number;
-  /** Timeout default por request, em ms. */
+  /** Default timeout per request, in ms. */
   defaultTimeoutMs?: number;
-  /** Backoff inicial em ms para reconnect. */
+  /** Initial backoff in ms for reconnect. */
   reconnectInitialMs?: number;
-  /** Backoff máximo em ms para reconnect. */
+  /** Maximum backoff in ms for reconnect. */
   reconnectMaxMs?: number;
-  /** Se `true`, tenta reconectar quando o socket cair. Default `true`. */
+  /** If `true`, attempts to reconnect when socket drops. Default `true`. */
   autoReconnect?: boolean;
 }
 
@@ -56,9 +56,9 @@ const DEFAULT_RECONNECT_INITIAL_MS = 100;
 const DEFAULT_RECONNECT_MAX_MS = 5000;
 
 /**
- * Parse env var como inteiro positivo. Retorna `undefined` se não setado,
- * vazio, NaN ou <= 0 — assim o `??` funciona corretamente para fallback.
- * (TD-001: `Number(undefined) ?? default` vira NaN e quebra o fallback.)
+ * Parse env var as a positive integer. Returns `undefined` if unset,
+ * empty, NaN, or <= 0 — so `??` works correctly for fallback.
+ * (TD-001: `Number(undefined) ?? default` becomes NaN and breaks the fallback.)
  */
 function parsePositiveInt(raw: string | undefined): number | undefined {
   if (raw === undefined || raw === "") return undefined;
@@ -77,9 +77,9 @@ interface ResolvedTcpOptions {
 }
 
 /**
- * Resolve `TcpClientOptions` → defaults aplicáveis em runtime.
- * Extraído do constructor para manter complexidade ciclomática ≤ 10.
- * Precedência: opt explícita > env var > DEFAULT_*.
+ * Resolves `TcpClientOptions` → applicable runtime defaults.
+ * Extracted from the constructor to keep cyclomatic complexity ≤ 10.
+ * Precedence: explicit opt > env var > DEFAULT_*.
  */
 function resolveTcpOptions(options: TcpClientOptions): ResolvedTcpOptions {
   return {
@@ -103,11 +103,11 @@ export type TcpClientState =
   | "closed";
 
 /**
- * Cliente TCP NDJSON. Emite:
- * - `connect` — socket pronto.
- * - `disconnect` — socket caiu (antes de tentar reconectar).
- * - `notification` — `(method, params)` para mensagens JSON-RPC sem id.
- * - `error` — erros não fatais (parse de linha, etc.).
+ * NDJSON TCP client. Emits:
+ * - `connect` — socket ready.
+ * - `disconnect` — socket dropped (before attempting reconnect).
+ * - `notification` — `(method, params)` for JSON-RPC messages without id.
+ * - `error` — non-fatal errors (line parse, etc.).
  */
 export class TcpJsonRpcClient extends EventEmitter {
   private readonly host: string;
@@ -142,8 +142,8 @@ export class TcpJsonRpcClient extends EventEmitter {
   }
 
   /**
-   * Abre conexão TCP. Resolve quando o socket conecta.
-   * Se já está conectado, retorna imediatamente.
+   * Opens the TCP connection. Resolves when the socket connects.
+   * If already connected, returns immediately.
    */
   async connect(): Promise<void> {
     if (this.state === "connected") return;
@@ -174,8 +174,8 @@ export class TcpJsonRpcClient extends EventEmitter {
   }
 
   /**
-   * Fecha conexão e marca como `closed`. Pending requests são rejeitadas.
-   * Nova chamada precisa de nova instância.
+   * Closes the connection and marks as `closed`. Pending requests are rejected.
+   * A new call requires a new instance.
    */
   async close(): Promise<void> {
     this.state = "closed";
@@ -195,10 +195,10 @@ export class TcpJsonRpcClient extends EventEmitter {
   }
 
   /**
-   * Envia um request JSON-RPC e aguarda a resposta correspondente.
+   * Sends a JSON-RPC request and awaits the matching response.
    *
-   * @throws `JsonRpcTransportError` quando socket desconecta ou timeout estoura.
-   * @throws `JsonRpcRemoteError` quando bridge responde com `error`.
+   * @throws `JsonRpcTransportError` when the socket disconnects or the timeout fires.
+   * @throws `JsonRpcRemoteError` when the bridge responds with `error`.
    */
   async call<TResult = unknown>(
     method: string,
@@ -254,7 +254,7 @@ export class TcpJsonRpcClient extends EventEmitter {
 
   private onData(chunk: string): void {
     this.buffer += chunk;
-    // NDJSON: separa por `\n`. Linha incompleta no fim fica em `this.buffer`.
+    // NDJSON: split by `\n`. Incomplete trailing line stays in `this.buffer`.
     let newlineIdx = this.buffer.indexOf("\n");
     while (newlineIdx >= 0) {
       const line = this.buffer.slice(0, newlineIdx);

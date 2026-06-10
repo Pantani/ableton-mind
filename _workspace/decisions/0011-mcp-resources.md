@@ -1,68 +1,68 @@
 # ADR 0011 — MCP Resources
 
-**Data:** 2026-06-09
-**Status:** Aceito
-**Autor:** architect
+**Date:** 2026-06-09
+**Status:** Accepted
+**Author:** architect
 
-## Contexto
+## Context
 
-MCP define 3 primitivas: **tools**, **prompts**, **resources**. Cycles 1-17 entregaram tools. Cycle 18 entregou prompts. **Cycle 19 entrega resources**, completando o trio.
+MCP defines 3 primitives: **tools**, **prompts**, **resources**. Cycles 1-17 delivered tools. Cycle 18 delivered prompts. **Cycle 19 delivers resources**, completing the trio.
 
-Resources são URIs lidos pelo cliente MCP (`resources/read`) — diferente de tools, são **read-only puros**, sem side effects, ideais para estado introspectivo ("o que está acontecendo no Live agora?", "qual a knowledge base disponível?", "que recipes existem?").
+Resources are URIs read by the MCP client (`resources/read`) — unlike tools, they are **pure read-only**, with no side effects, ideal for introspective state ("what is happening in Live right now?", "what's the available knowledge base?", "what recipes exist?").
 
-PLAN.md §3.3 listou `src/resources/`. PLAN.md §4.21 mencionou listeners → notifications + `live://session/state`.
+PLAN.md §3.3 listed `src/resources/`. PLAN.md §4.21 mentioned listeners → notifications + `live://session/state`.
 
-## Decisão
+## Decision
 
 ### 1. URI namespace
 
 `live://<scope>/<path>`:
 
-| URI | Conteúdo | Mime type |
+| URI | Content | Mime type |
 |---|---|---|
-| `live://session/state` | snapshot do Live (tempo, transport, tracks, clips, devices) | `application/json` |
-| `live://session/diff?since=<ts>` | diff desde ts (Phase 9 — exige cache) | `application/json` |
-| `live://knowledge/devices` | índice de todos os 55 devices com metadata | `application/json` |
-| `live://knowledge/device/<id>` | schema completo de 1 device | `application/json` |
+| `live://session/state` | Live snapshot (tempo, transport, tracks, clips, devices) | `application/json` |
+| `live://session/diff?since=<ts>` | diff since ts (Phase 9 — requires cache) | `application/json` |
+| `live://knowledge/devices` | index of all 55 devices with metadata | `application/json` |
+| `live://knowledge/device/<id>` | full schema of 1 device | `application/json` |
 | `live://knowledge/scales` | scales.json | `application/json` |
-| `live://recipes/index` | metadata de todas as recipes | `application/json` |
-| `live://recipes/<category>/<id>` | recipe completa | `application/json` |
+| `live://recipes/index` | metadata of all recipes | `application/json` |
+| `live://recipes/<category>/<id>` | full recipe | `application/json` |
 
-Cycle 19 entrega: `live://session/state`, `live://knowledge/devices`, `live://recipes/index`. Resto é Phase 9+.
+Cycle 19 delivers: `live://session/state`, `live://knowledge/devices`, `live://recipes/index`. The rest is Phase 9+.
 
 ### 2. Shape
 
-Cada resource é `{uri, name, description, mimeType, read: () => Promise<{contents: [...]}>}`.
+Each resource is `{uri, name, description, mimeType, read: () => Promise<{contents: [...]}>}`.
 
-`read()` retorna `{contents: [{uri, mimeType, text}]}` per spec MCP.
+`read()` returns `{contents: [{uri, mimeType, text}]}` per MCP spec.
 
-`live://session/state` chama `bridge.call("session.snapshot", {include_clips: true, include_devices: true})` — comportamento idêntico ao tool `session_snapshot` mas exposto via primitiva resource.
+`live://session/state` calls `bridge.call("session.snapshot", {include_clips: true, include_devices: true})` — behavior identical to the `session_snapshot` tool but exposed via the resource primitive.
 
-### 3. Diretório
+### 3. Directory
 
 `src/resources/`:
-- `index.ts` — registry `allResources` + `loadResource(uri)`.
-- `session-state.ts`, `knowledge-devices.ts`, `recipes-index.ts` — 3 resources seed.
+- `index.ts` — `allResources` registry + `loadResource(uri)`.
+- `session-state.ts`, `knowledge-devices.ts`, `recipes-index.ts` — 3 seed resources.
 
-### 4. Tool MCP `list_resources`
+### 4. MCP tool `list_resources`
 
-Análogo a `list_prompts` — devolve metadata sem ler conteúdo. Para clientes que não navegam resources nativamente.
+Analogous to `list_prompts` — returns metadata without reading content. For clients that do not browse resources natively.
 
-### 5. Wiring no server bootstrap
+### 5. Wiring in the server bootstrap
 
-`createServer({bridge, tools, prompts, resources, ...})` ganha `resources` opcional. Para cada resource:
+`createServer({bridge, tools, prompts, resources, ...})` gains optional `resources`. For each resource:
 
 ```ts
 server.resource(r.name, r.uri, { description: r.description, mimeType: r.mimeType }, r.read);
 ```
 
-## Consequências
+## Consequences
 
-- 3 novos arquivos por resource + 1 registry + 1 wiring + 1 tool listing.
-- `live://session/state` exige bridge ativo. Se bridge offline, resource retorna erro JSON-RPC encapsulado em `{contents: [{text: '{"error": "..."}'}]}`.
-- Knowledge/recipes resources são static reads (FS); independem de Live.
+- 3 new files per resource + 1 registry + 1 wiring + 1 listing tool.
+- `live://session/state` requires an active bridge. If the bridge is offline, the resource returns a JSON-RPC error encapsulated in `{contents: [{text: '{"error": "..."}'}]}`.
+- Knowledge/recipes resources are static reads (FS); independent of Live.
 
-## Como aplicar
+## How to apply
 
-- Cycle 19: implementa 3 resources + wiring + `list_resources` tool.
-- Cycle 20+: expansion para `live://knowledge/device/<id>` e `live://recipes/<id>` (paths dinâmicos via resource templates do SDK).
+- Cycle 19: implements 3 resources + wiring + `list_resources` tool.
+- Cycle 20+: expansion to `live://knowledge/device/<id>` and `live://recipes/<id>` (dynamic paths via SDK resource templates).

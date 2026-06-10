@@ -1,8 +1,8 @@
 """
-Handler `session.get_info` — snapshot top-level read-only.
+`session.get_info` handler — read-only top-level snapshot.
 
-Equivalente do `get_session_info` do ahujasid/ableton-mcp. LLM usa para se
-orientar antes de mutar (LOM exploration).
+Equivalent of ahujasid/ableton-mcp's `get_session_info`. LLM uses it to
+orient itself before mutating (LOM exploration).
 """
 from ..errors import LIVE_NOT_RUNNING, RpcError
 from ..schemas import SessionGetInfoInput

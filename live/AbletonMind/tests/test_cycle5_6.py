@@ -1,13 +1,13 @@
 """
-Testes do Cycle 5 + Cycle 6 (TD-018).
+Cycle 5 + Cycle 6 tests (TD-018).
 
-Cobre:
+Covers:
   Cycle 5:
-    - browser.load_item (walk path + erro paths)
+    - browser.load_item (walk path + error paths)
     - device.get_parameters / device.set_parameter
     - ListenerManager (setup/teardown/callbacks)
   Cycle 6:
-    - BridgeServer.broadcast() — track clientes vivos + escreve NDJSON
+    - BridgeServer.broadcast() — tracks live clients + writes NDJSON
 """
 import json
 import socket
@@ -59,7 +59,7 @@ def _seed_track_with_device(song, dev=None):
             FakeDeviceParameter(value=100, mn=30, mx=22000),  # Frequency
         ]
     )
-    # Names em FakeDeviceParameter não existem por default; setar.
+    # Names on FakeDeviceParameter don't exist by default; set them.
     for i, p in enumerate(dev.parameters):
         p.name = ["Output Gain", "Frequency"][i] if i < 2 else f"P{i}"
         p.is_quantized = False
@@ -79,7 +79,7 @@ class TestBrowserLoadItem(unittest.TestCase):
     def test_walks_path_and_loads(self):
         song = FakeSong()
         app = FakeApplication()
-        # Adiciona Wavetable como child de instruments, e Pads dentro de Wavetable.
+        # Add Wavetable as a child of instruments, and Pads inside Wavetable.
         wt = FakeBrowserItem("Wavetable", is_folder=True, is_loadable=False)
         pads = FakeBrowserItem("Pads", is_folder=True, is_loadable=False)
         air_pad = FakeBrowserItem("Air Pad", is_folder=False, is_loadable=True)
@@ -87,7 +87,7 @@ class TestBrowserLoadItem(unittest.TestCase):
         wt.children = [pads]
         app.browser.instruments.children = [wt]
 
-        # Browser precisa de load_item method
+        # Browser needs a load_item method
         loaded = []
         app.browser.load_item = lambda item: loaded.append(item.name)
 
@@ -201,7 +201,7 @@ class TestDeviceParameters(unittest.TestCase):
 class TestListenerManager(unittest.TestCase):
     def setUp(self):
         self.song = FakeSong()
-        # FakeSong precisa de add_/remove_<prop>_listener; mock-amos inline.
+        # FakeSong needs add_/remove_<prop>_listener; we mock them inline.
         self._listeners = {"tempo": [], "is_playing": []}
 
         def make_add(prop):
@@ -226,7 +226,7 @@ class TestListenerManager(unittest.TestCase):
     def test_tempo_callback_fires_broadcast(self):
         self.mgr.setup()
         self.song.tempo = 140.0
-        # Invoca callback diretamente.
+        # Invoke callback directly.
         cb = self._listeners["tempo"][0]
         cb()
         self.assertEqual(len(self.events), 1)
@@ -255,7 +255,7 @@ class TestListenerManager(unittest.TestCase):
 
     def test_setup_idempotent(self):
         self.mgr.setup()
-        self.mgr.setup()  # 2x não deve duplicar
+        self.mgr.setup()  # 2x shouldn't duplicate
         self.assertEqual(len(self._listeners["tempo"]), 1)
 
 
@@ -266,25 +266,25 @@ class TestListenerManager(unittest.TestCase):
 
 class TestBridgeBroadcast(unittest.TestCase):
     def setUp(self):
-        # Headless server em porta efêmera.
+        # Headless server on ephemeral port.
         self.bridge = BridgeServer(host="127.0.0.1", port=0, headless=True)
-        # Porta 0 = OS escolhe; mas bridge.py usa bind(host,port) fixo. Para
-        # broadcast NÃO precisamos rede real — apenas registramos sockets
-        # diretamente no _clients.
+        # Port 0 = OS picks; but bridge.py uses fixed bind(host,port). For
+        # broadcast we do NOT need a real network — we just register sockets
+        # directly into _clients.
 
     def test_broadcast_writes_to_all_clients(self):
-        # Cria dois sockets em pares (cliente/servidor pair via socketpair).
+        # Create two socket pairs (client/server pair via socketpair).
         a1, b1 = socket.socketpair()
         a2, b2 = socket.socketpair()
-        # Registra "a" como clients (lado do bridge); "b" simula o cliente
-        # leitor.
+        # Register "a" as clients (bridge side); "b" simulates the reader
+        # client.
         with self.bridge._clients_lock:
             self.bridge._clients.extend([a1, a2])
 
         n = self.bridge.broadcast("event.test", {"value": 42})
         self.assertEqual(n, 2)
 
-        # Lê do lado dos consumidores.
+        # Read from the consumer side.
         line1 = b1.recv(4096).decode("utf-8").strip()
         line2 = b2.recv(4096).decode("utf-8").strip()
         msg1 = json.loads(line1)
@@ -301,11 +301,11 @@ class TestBridgeBroadcast(unittest.TestCase):
         a, b = socket.socketpair()
         with self.bridge._clients_lock:
             self.bridge._clients.append(a)
-        b.close()  # mata o consumer → write para `a` vai falhar quando OS notar
-        # Pode levar 1-2 sends; tentamos duas vezes.
+        b.close()  # kill the consumer → write to `a` will fail once OS notices
+        # May take 1-2 sends; try twice.
         self.bridge.broadcast("event.dummy", {})
         time.sleep(0.05)
-        # Segunda chamada — agora `a` deve estar morto e removido.
+        # Second call — now `a` should be dead and removed.
         delivered = self.bridge.broadcast("event.dummy", {})
         self.assertEqual(delivered, 0)
         with self.bridge._clients_lock:

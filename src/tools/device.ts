@@ -1,13 +1,13 @@
 /**
- * Tools MCP do domínio Device. Knowledge-aware: usa `src/knowledge/devices/`
- * para resolver `parameter_name` → index quando o LLM mandar nome humano.
+ * MCP tools for the Device domain. Knowledge-aware: uses `src/knowledge/devices/`
+ * to resolve `parameter_name` → index when the LLM sends a human-readable name.
  *
- * `device_get_parameters` — read-only. Enriquece o response com `canonical_name`
- * vindo da knowledge quando bate por nome ou por device class.
+ * `device_get_parameters` — read-only. Enriches response with `canonical_name`
+ * from knowledge when matching by name or device class.
  *
- * `device_set_parameter` — aceita `parameter_name` OU `parameter_index`. Se
- * só vier name, faz lookup na resposta de `device.get_parameters` (1 round-trip)
- * antes de chamar `device.set_parameter`. Idempotente do lado do bridge.
+ * `device_set_parameter` — accepts `parameter_name` OR `parameter_index`. If
+ * only name is provided, looks it up in the `device.get_parameters` response
+ * (1 round-trip) before calling `device.set_parameter`. Idempotent on the bridge side.
  */
 
 import { z } from "zod";
@@ -37,7 +37,7 @@ const getParamsInputSchema = z.object({
 });
 
 const enrichedParamSchema = deviceParamSnapshotSchema.extend({
-  /** Vem da knowledge: descrição, unit, etc. Null se device não está na knowledge. */
+  /** Comes from knowledge: description, unit, etc. Null if device is not in knowledge. */
   knowledge: z
     .object({
       unit: z.string().optional(),
@@ -55,7 +55,7 @@ const getParamsOutputSchema = z.object({
   class_name: z.string(),
   parameters: z.array(enrichedParamSchema),
   total: z.number().int().nonnegative(),
-  knowledge_matched: z.boolean().describe("True se device foi encontrado na knowledge."),
+  knowledge_matched: z.boolean().describe("True if device was found in the knowledge base."),
 });
 
 const getParamsBridgeResult = z.object({
@@ -65,7 +65,7 @@ const getParamsBridgeResult = z.object({
   total: z.number().int().nonnegative(),
 });
 
-/** Match heurístico: bate por `name` exato OU por `class_name` exato. */
+/** Heuristic match: matches by exact `name` OR exact `class_name`. */
 async function matchKnowledgeDevice(
   deviceName: string,
   className: string,

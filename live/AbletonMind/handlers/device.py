@@ -1,12 +1,12 @@
 """
-Handlers device.* (Cycle 5).
+device.* handlers (Cycle 5).
 
-`device.get_parameters` — read-only. Lista todos os params do device, com
+`device.get_parameters` — read-only. Lists every device param, with
 `name`, `value`, `min`, `max`, `is_quantized`, `value_items` (enum).
 
-`device.set_parameter` — set por index. A resolução name→index é feita no
-lado TS via knowledge (`src/knowledge/devices/<id>.json`). Bridge não precisa
-da knowledge.
+`device.set_parameter` — set by index. name→index resolution happens on
+the TS side via knowledge (`src/knowledge/devices/<id>.json`). The bridge
+doesn't need the knowledge.
 """
 from ..errors import (
     LIVE_NOT_RUNNING,
@@ -75,8 +75,8 @@ class DeviceGetParametersHandler(Handler):
 
 @register("device.set_parameter")
 class DeviceSetParameterHandler(Handler):
-    """Set por index. Idempotente em 1e-4 (para floats) ou igualdade exata
-    (para is_quantized=True)."""
+    """Set by index. Idempotent within 1e-4 (for floats) or exact equality
+    (for is_quantized=True)."""
 
     INPUT = DeviceSetParameterInput
 

@@ -1,27 +1,28 @@
 # Tech Debt — ableton-mind
 
-⚠ = endereçar próximo ciclo. ✅ = fechado.
+⚠ = address next cycle. ✅ = closed.
 
-## Aberto
+## Open
 
-| ID | Severidade | Origem | Item | Fix | Owner |
+| ID | Severity | Origin | Item | Fix | Owner |
 |---|---|---|---|---|---|
-| TD-005 | baixa | Cycle 1 | npm install não rodou em sandbox | máquina real | ts-server-engineer |
-| TD-030 | baixa | Cycle 10 | Push hardware smoke | conectar Push 2/3 | qa-integration |
+| TD-030 | low | Cycle 10 | Push hardware smoke blocked: no Push 2/3 visible over USB/CoreMIDI | connect Push 2/3 and run real sysex smoke | qa-integration |
+| TD-048 | high | Cycle 23 | Package validation red before rc.1 (`typecheck`, tests, build, DXT check) | fix TS/test/build failures, then rerun release gate | ts-server-engineer + distribution-docs-engineer |
 
-**Só 2 abertos — ambos ambiente real (não-resolvíveis em CI/sandbox).**
+**2 open.** TD-030 is environment-blocked; TD-048 is a release-gate blocker discovered while closing TD-005.
 
-## Fechado (mais recentes)
+## Closed (most recent)
 
 | ID | Cycle | Item |
 |---|---|---|
 | TD-038, TD-039, TD-040 | 14 | workflow tests / version sync / CI secrets |
 | TD-041 | 15 | Knowledge units convention |
-| TD-042 | 16 | Curve unit re-anotação |
+| TD-042 | 16 | Curve unit re-annotation |
 | TD-043 | 17 | 5 MIDI effects |
 | TD-044 | 19 | Prompts subsystem tests |
 | TD-045 | 20 | DXT manifest resources field |
-| **TD-004** | **21** | **🎯 Smoke real Live 12.4.1 PASS** |
+| **TD-004** | **21** | **🎯 Real smoke Live 12.4.1 PASS** |
 | **TD-046, TD-047** | **22** | **system.hello version stubs (pkg.json + Live API multi-path)** |
+| **TD-005** | **23** | **npm install environment verified on real machine; validation failures split to TD-048** |
 
-**45 TDs fechados em 22 ciclos.** Restante: só TD-005 (npm sandbox) e TD-030 (Push hardware).
+**46 TDs closed in 23 cycles.** Remaining: TD-030 (Push hardware) and TD-048 (package validation gate).

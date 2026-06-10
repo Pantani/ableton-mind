@@ -1,10 +1,10 @@
 /**
- * Tools MCP Phase 5 — session snapshot/diff + render preview.
+ * MCP tools Phase 5 — session snapshot/diff + render preview.
  *
- * `session_snapshot` (read-only) → deep state do Live para verify loop completo.
- * `session_diff` recebe snapshot anterior + lê atual + devolve mudanças.
- * `render_preview` modo "snapshot" devolve session_snapshot enriquecido.
- *   modo "bounce" planejado Cycle 10 (freeze + export).
+ * `session_snapshot` (read-only) → deep state of Live for the full verify loop.
+ * `session_diff` receives the previous snapshot + reads the current one + returns changes.
+ * `render_preview` mode "snapshot" returns an enriched session_snapshot.
+ *   mode "bounce" planned for Cycle 10 (freeze + export).
  */
 
 import { z } from "zod";

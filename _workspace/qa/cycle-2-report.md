@@ -1,50 +1,50 @@
 # QA Report — Cycle 2 (tech debt + Phase 1 start)
 
-**Data:** 2026-06-08
-**Veredito:** **PASS-WITH-WARNINGS**
-**QA:** architect inline (mesma justificativa do Cycle 1; volta a dispatch de qa-integration quando trabalho for grande).
+**Date:** 2026-06-08
+**Verdict:** **PASS-WITH-WARNINGS**
+**QA:** architect inline (same justification as Cycle 1; returns to qa-integration dispatch when work is large).
 
-## Resumo
+## Summary
 
-Cycle 2 fechou 3 dos 5 débitos técnicos do Cycle 1, expôs 4 tools MCP novas + 1 nova feature (`track.create`), e iniciou trilha de distribuição (DXT manifest, script de install dev). Smoke real continua dependendo de execução manual pelo usuário (TD-004 fica aberto até o usuário rodar o roteiro em `docs/smoke-test.md`).
+Cycle 2 closed 3 of the 5 Cycle 1 tech debts, exposed 4 new MCP tools + 1 new feature (`track.create`), and started the distribution track (DXT manifest, dev install script). Real smoke still depends on manual user execution (TD-004 stays open until the user runs the script in `docs/smoke-test.md`).
 
 ## Tech debt status
 
-| ID | Status | Onde |
+| ID | Status | Where |
 |---|---|---|
-| TD-001 (NaN env var) | ✅ FECHADO | `src/live-client/tcp-client.ts` — função `parsePositiveInt()` |
-| TD-002 (track.list indexes) | ✅ FECHADO | `live/AbletonMind/handlers/track.py` + ADR-0002 |
-| TD-003 (LIVE_API_FAILED naming) | ✅ FECHADO | `live/AbletonMind/errors.py`, `bridge.py` |
-| TD-004 (smoke real) | 🟡 DOCUMENTADO | `docs/smoke-test.md` — execução manual pelo usuário |
-| TD-005 (npm install não rodou) | 🟡 ACEITO | depende da máquina dev do usuário; sem ação possível em sandbox |
+| TD-001 (NaN env var) | ✅ CLOSED | `src/live-client/tcp-client.ts` — `parsePositiveInt()` function |
+| TD-002 (track.list indexes) | ✅ CLOSED | `live/AbletonMind/handlers/track.py` + ADR-0002 |
+| TD-003 (LIVE_API_FAILED naming) | ✅ CLOSED | `live/AbletonMind/errors.py`, `bridge.py` |
+| TD-004 (real smoke) | 🟡 DOCUMENTED | `docs/smoke-test.md` — manual user execution |
+| TD-005 (npm install did not run) | 🟡 ACCEPTED | depends on user's dev machine; no action possible in sandbox |
 
 ## Parity check (TS ↔ Python)
 
-| Método | Bridge handler | TS tool MCP | Match |
+| Method | Bridge handler | TS MCP tool | Match |
 |---|---|---|---|
-| `system.hello` | `handlers/system.py` | `live-client/handshake.ts` (cliente) | ✅ |
-| `system.ping` | `handlers/system.py` | (cliente direto) | ✅ |
+| `system.hello` | `handlers/system.py` | `live-client/handshake.ts` (client) | ✅ |
+| `system.ping` | `handlers/system.py` | (direct client) | ✅ |
 | `transport.play` | `handlers/transport.py` | `tools/transport.ts::playTool` | ✅ |
 | `transport.stop` | `handlers/transport.py` | `tools/transport.ts::stopTool` | ✅ NEW |
 | `transport.set_tempo` | `handlers/transport.py` | `tools/transport.ts::setTempoTool` | ✅ NEW |
-| `track.list` | `handlers/track.py` (shape novo ADR-0002) | `tools/track.ts::trackListTool` | ✅ NEW shape sincronizado |
+| `track.list` | `handlers/track.py` (new shape ADR-0002) | `tools/track.ts::trackListTool` | ✅ NEW shape synced |
 | `track.create` | `handlers/track.py` NEW | `tools/track.ts::trackCreateTool` NEW | ✅ NEW |
 | `clip.create_midi` | `handlers/clip.py` | `tools/clip.ts::createMidiClipTool` | ✅ NEW |
 
-7 tools MCP registradas (era 1 no Cycle 1).
+7 MCP tools registered (was 1 in Cycle 1).
 
 ## Contract drift
 
-- `_workspace/contracts/phase0-methods.md` foi **atualizado** para refletir ADR-0002 (track.list shape novo) e adicionar §9 (`track.create`).
-- `_workspace/contracts/jsonrpc.md` **intacto**.
-- `ADR-0002` registrado em `_workspace/decisions/0002-track-list-shape.md`.
+- `_workspace/contracts/phase0-methods.md` was **updated** to reflect ADR-0002 (new track.list shape) and add §9 (`track.create`).
+- `_workspace/contracts/jsonrpc.md` **intact**.
+- `ADR-0002` recorded in `_workspace/decisions/0002-track-list-shape.md`.
 
 ## Error code sync
 
 | Code | TS (`ABLETON_MIND_ERRORS`) | Python (`errors.py`) |
 |---|---|---|
 | -32000 | LIVE_NOT_RUNNING | LIVE_NOT_RUNNING |
-| -32001 | LIVE_API_CALL_FAILED | LIVE_API_CALL_FAILED ✅ (era LIVE_API_FAILED) |
+| -32001 | LIVE_API_CALL_FAILED | LIVE_API_CALL_FAILED ✅ (was LIVE_API_FAILED) |
 | -32002 | OBJECT_NOT_FOUND | OBJECT_NOT_FOUND |
 | -32003 | TYPE_MISMATCH | TYPE_MISMATCH |
 | -32004 | OUT_OF_RANGE | OUT_OF_RANGE |
@@ -55,37 +55,37 @@ Cycle 2 fechou 3 dos 5 débitos técnicos do Cycle 1, expôs 4 tools MCP novas +
 
 100% match.
 
-## Testes adicionados
+## Added tests
 
-Python (em `live/AbletonMind/tests/`):
-- `test_handlers_track.py` totalmente reescrito para novo shape + 6 casos de `track.create` (default append, index específico, named, OOR, bad type, undo wrap).
+Python (in `live/AbletonMind/tests/`):
+- `test_handlers_track.py` fully rewritten for the new shape + 6 `track.create` cases (default append, specific index, named, OOR, bad type, undo wrap).
 
-TS (em `tests/`):
-- `tools-transport.test.ts` expandido: + 5 casos para `stop` e `set_tempo`.
-- `tools-track.test.ts` NEW: 5 casos cobrindo `trackListTool` + `trackCreateTool`.
-- `tools-clip.test.ts` NEW: 3 casos para `createMidiClipTool` (incluindo TYPE_MISMATCH propagado).
+TS (in `tests/`):
+- `tools-transport.test.ts` expanded: + 5 cases for `stop` and `set_tempo`.
+- `tools-track.test.ts` NEW: 5 cases covering `trackListTool` + `trackCreateTool`.
+- `tools-clip.test.ts` NEW: 3 cases for `createMidiClipTool` (including propagated TYPE_MISMATCH).
 
-`tests/live-client.test.ts` continua igual e cobre o transport TCP.
+`tests/live-client.test.ts` remains the same and covers the TCP transport.
 
-## Warnings (não bloqueiam)
+## Warnings (non-blocking)
 
-### W1 — Tipos nullable em master_track
-Aceito como design. Em testes com FakeSong sem master_track, vira `null`. Em runtime real, `song.master_track` sempre existe. Tools MCP que precisarem assumir master sempre presente devem documentar.
+### W1 — Nullable types on master_track
+Accepted as design. In tests with FakeSong without master_track, it becomes `null`. In real runtime, `song.master_track` always exists. MCP tools that need to assume master always present should document it.
 
-### W2 — Smoke real ainda pendente (TD-004)
-Phase 0 só fecha oficialmente quando o usuário rodar `docs/smoke-test.md` e reportar PASS. Nenhum gate automatizado para isso até CI macOS na Phase 7.
+### W2 — Real smoke still pending (TD-004)
+Phase 0 only officially closes when the user runs `docs/smoke-test.md` and reports PASS. No automated gate for this until macOS CI in Phase 7.
 
-### W3 — `track_create` não é idempotente
-Decisão intencional (criar track sempre cria). Phase 1+ pode adicionar `track_upsert` se a UX for ruim. Documentado na description da tool.
+### W3 — `track_create` is not idempotent
+Intentional decision (creating a track always creates). Phase 1+ may add `track_upsert` if UX is poor. Documented in the tool description.
 
-### W4 — Dev install script só macOS+win32
-`linux` levanta erro explícito ("Ableton não roda nativamente"). Documentado. Nenhuma ação.
+### W4 — Dev install script only macOS+win32
+`linux` raises an explicit error ("Ableton does not run natively"). Documented. No action.
 
-## Recomendação para o architect
+## Recommendation for the architect
 
-**PASS Cycle 2.** Movendo TD-004 e TD-005 para "carry-over". Próximo ciclo deve:
+**PASS Cycle 2.** Moving TD-004 and TD-005 to "carry-over". Next cycle should:
 
-1. **Usuário roda `docs/smoke-test.md`** → reporta PASS/FAIL. Se PASS, Phase 0 fecha oficialmente.
-2. **Phase 1 cont.:** mais ~15 tools do `ahujasid/ableton-mcp` (browser, load_instrument, set_clip_name, add_notes, fire_clip, etc.).
-3. **knowledge-curator entra:** primeiro device JSON (Wavetable) como prova de conceito.
-4. **distribution-docs cont.:** preparar `npm run build:dxt` que zipa o `.mcpb`.
+1. **User runs `docs/smoke-test.md`** → reports PASS/FAIL. If PASS, Phase 0 closes officially.
+2. **Phase 1 cont.:** ~15 more `ahujasid/ableton-mcp` tools (browser, load_instrument, set_clip_name, add_notes, fire_clip, etc.).
+3. **knowledge-curator enters:** first device JSON (Wavetable) as proof of concept.
+4. **distribution-docs cont.:** prepare `npm run build:dxt` that zips the `.mcpb`.

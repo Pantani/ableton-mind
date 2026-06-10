@@ -1,7 +1,7 @@
 """
-Fakes da LiveAPI para testes offline.
+LiveAPI fakes for offline tests.
 
-Implementa o subset usado pelos handlers até Cycle 3:
+Implements the subset used by handlers up to Cycle 3:
 - `Song`: tempo, is_playing, current_song_time, tracks, return_tracks,
   master_track, start_playing/stop_playing, begin_undo_step/end_undo_step,
   signature_numerator/denominator, name, song_length, root_note, scale_name.
@@ -11,12 +11,12 @@ Implementa o subset usado pelos handlers até Cycle 3:
 - `DeviceParameter`: value (read/write).
 - `ClipSlot`: has_clip, clip, create_clip(length), fire(), stop().
 - `Clip`: name, length, is_midi_clip, is_playing, add_new_notes(spec),
-  set_notes(legacy), notes (lista interna para asserts).
-- `BrowserItem` + `Application` + `FakeCtrl.application` para browser tests.
+  set_notes(legacy), notes (internal list for asserts).
+- `BrowserItem` + `Application` + `FakeCtrl.application` for browser tests.
 
-Tudo é instrumentado para assertions: `FakeSong.undo_steps` conta begin/end,
-`FakeClipSlot.create_clip` registra histórico, `FakeClip.notes` é uma list
-acumulada por `add_new_notes`/`set_notes`.
+Everything is instrumented for assertions: `FakeSong.undo_steps` counts
+begin/end, `FakeClipSlot.create_clip` records history, `FakeClip.notes` is
+a list accumulated by `add_new_notes`/`set_notes`.
 """
 from typing import List, Optional
 
@@ -84,10 +84,10 @@ class FakeClipSlot:
 
 
 class FakeDeviceParameter:
-    """Espelha `Live.DeviceParameter.DeviceParameter` (apenas o subset usado).
+    """Mirrors `Live.DeviceParameter.DeviceParameter` (only the subset used).
 
-    TD-020 (Cycle 7): name/is_quantized/value_items/automation_state agora no
-    construtor para evitar mutação post-build em testes.
+    TD-020 (Cycle 7): name/is_quantized/value_items/automation_state are now in
+    the constructor to avoid post-build mutation in tests.
     """
 
     def __init__(
@@ -199,7 +199,7 @@ class FakeSong:
         self.undo_steps.append("end")
         self._undo_depth -= 1
 
-    # criação de tracks
+    # track creation
     def create_midi_track(self, idx: int) -> None:
         self.tracks.insert(idx, FakeTrack(name=f"{idx + 1} MIDI", is_midi=True))
 
@@ -241,17 +241,17 @@ class FakeApplication:
 
 
 def install_listener_methods(obj, props):
-    """Helper (TD-025) — instala `add_<prop>_listener` / `remove_<prop>_listener`
-    dinâmicos em `obj` para cada prop em `props`. Mantém callbacks num dict
-    `obj._fake_listeners` para inspeção.
+    """Helper (TD-025) — installs dynamic `add_<prop>_listener` /
+    `remove_<prop>_listener` on `obj` for each prop in `props`. Stores callbacks
+    in a dict `obj._fake_listeners` for inspection.
 
-    Uso típico nos testes:
+    Typical use in tests:
         install_listener_methods(song, ["tempo", "is_playing"])
         install_listener_methods(track, ["name", "mute", "solo"])
 
-    Após `ListenerManager.setup()`, pode-se inspecionar `obj._fake_listeners[prop]`
-    para conferir que callback foi registrada, e invocar manualmente para simular
-    o trigger do Live.
+    After `ListenerManager.setup()`, you can inspect `obj._fake_listeners[prop]`
+    to confirm a callback was registered, and invoke it manually to simulate
+    Live's trigger.
     """
     if not hasattr(obj, "_fake_listeners"):
         obj._fake_listeners = {}
@@ -276,13 +276,13 @@ def install_listener_methods(obj, props):
 
 
 def fire_listener(obj, prop):
-    """Helper para testes — invoca todas as callbacks de `prop` em `obj`."""
+    """Test helper — invokes every callback of `prop` on `obj`."""
     for cb in obj._fake_listeners.get(prop, []):
         cb()
 
 
 class FakeCtrl:
-    """Stub do ControlSurface — expõe `.song()` (e opcionalmente `.application`)."""
+    """ControlSurface stub — exposes `.song()` (and optionally `.application`)."""
 
     def __init__(
         self,

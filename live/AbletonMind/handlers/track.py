@@ -1,12 +1,12 @@
 """
-Handlers do domínio Track.
+Track-domain handlers.
 
-`track.list` — read-only, devolve coleções separadas (regular, return, master).
-  Shape canônico definido em ADR-0002 (`_workspace/decisions/0002-track-list-shape.md`),
-  supersede o shape provisório de Phase 0.
+`track.list` — read-only, returns split collections (regular, return, master).
+  Canonical shape defined in ADR-0002 (`_workspace/decisions/0002-track-list-shape.md`),
+  supersedes Phase 0's provisional shape.
 
-`track.create` — cria audio ou MIDI track em `index` (ou no fim se omitido).
-  Não é idempotente (sempre cria). Phase 1+ pode adicionar `track.upsert`.
+`track.create` — creates an audio or MIDI track at `index` (or at the end if omitted).
+  Not idempotent (always creates). Phase 1+ may add `track.upsert`.
 """
 from typing import Optional
 
@@ -24,7 +24,7 @@ from ._base import Handler, register
 
 
 def _is_midi(track) -> bool:
-    """Live expõe `has_midi_input` em tracks regulares."""
+    """Live exposes `has_midi_input` on regular tracks."""
     return bool(getattr(track, "has_midi_input", False))
 
 
@@ -98,11 +98,11 @@ class TrackListHandler(Handler):
 
 @register("track.create")
 class TrackCreateHandler(Handler):
-    """Cria audio ou MIDI track. Não idempotente.
+    """Creates an audio or MIDI track. Not idempotent.
 
-    `index` é a posição final desejada em `song.tracks`. Se omitido, anexa no
-    fim. Live aceita inserir em `len(tracks)` (final), então faixa válida é
-    `[0, num_tracks]`.
+    `index` is the desired final position in `song.tracks`. If omitted, appends
+    at the end. Live accepts insertion at `len(tracks)` (end), so the valid
+    range is `[0, num_tracks]`.
     """
 
     INPUT = TrackCreateInput
@@ -137,7 +137,7 @@ class TrackCreateHandler(Handler):
 
             new_tracks = list(song.tracks)
             if target >= len(new_tracks):
-                # Live deveria ter inserido; se não inseriu, undo step ainda fecha.
+                # Live should have inserted; if it didn't, undo step still closes.
                 raise RpcError(
                     -32001,
                     "Live did not create the track",
@@ -149,7 +149,7 @@ class TrackCreateHandler(Handler):
                 try:
                     created.name = params.name
                 except Exception:
-                    # Nome pode falhar (chars inválidos, etc); não bloqueia a criação.
+                    # Name can fail (invalid chars, etc); doesn't block creation.
                     pass
 
         return {
@@ -164,9 +164,9 @@ class TrackCreateHandler(Handler):
 
 
 # ---------------------------------------------------------------------------
-# Conversão volume → dB (curva piecewise aprox do Live, ver ADR-0004)
+# Volume → dB conversion (Live's approximate piecewise curve, see ADR-0004)
 # ---------------------------------------------------------------------------
-# Tabela calibrada contra Live 12 (volume slider, audio track, sem sends).
+# Table calibrated against Live 12 (volume slider, audio track, no sends).
 _VOL_DB_TABLE = [
     (0.000, float("-inf")),
     (0.100, -64.0),
@@ -185,7 +185,7 @@ _VOL_DB_TABLE = [
 
 
 def _volume_to_db(v: float) -> float:
-    """Interpolação linear entre os pontos da tabela. Aceita 0..1."""
+    """Linear interpolation between table points. Accepts 0..1."""
     v = max(0.0, min(1.0, float(v)))
     if v <= 0.0:
         return float("-inf")
@@ -194,7 +194,7 @@ def _volume_to_db(v: float) -> float:
         hi_v, hi_db = _VOL_DB_TABLE[i + 1]
         if lo_v <= v <= hi_v:
             if lo_db == float("-inf"):
-                return hi_db  # transição entre -inf e -64; aproximação grosseira
+                return hi_db  # transition between -inf and -64; coarse approximation
             t = (v - lo_v) / (hi_v - lo_v) if hi_v > lo_v else 0.0
             return lo_db + t * (hi_db - lo_db)
     return _VOL_DB_TABLE[-1][1]
@@ -214,10 +214,10 @@ def _require_regular_track(song, index: int):
 
 @register("track.upsert")
 class TrackUpsertHandler(Handler):
-    """Cria track se o nome ainda não existir. Idempotente.
+    """Creates the track if the name doesn't exist yet. Idempotent.
 
-    Procura por `name` em `song.tracks`. Se achar, retorna `changed: False` e
-    o snapshot da existente. Se não, cria e nomeia.
+    Looks for `name` in `song.tracks`. If found, returns `changed: False` and
+    the existing snapshot. Otherwise creates and names it.
     """
 
     INPUT = TrackUpsertInput
@@ -303,7 +303,7 @@ class TrackSetNameHandler(Handler):
 
 @register("track.set_volume")
 class TrackSetVolumeHandler(Handler):
-    """Volume normalized 0..1 conforme ADR-0004. Idempotente em 1e-4."""
+    """Volume normalized 0..1 per ADR-0004. Idempotent within 1e-4."""
 
     INPUT = TrackSetVolumeInput
 
@@ -358,7 +358,7 @@ class TrackSetVolumeHandler(Handler):
 
 @register("track.get_info")
 class TrackGetInfoHandler(Handler):
-    """Read-only detail por track regular."""
+    """Read-only detail per regular track."""
 
     INPUT = TrackGetInfoInput
 

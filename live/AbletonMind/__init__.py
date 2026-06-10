@@ -1,14 +1,14 @@
 """
 AbletonMind — Remote Script (Phase 0 Spike).
 
-O Live carrega este pacote como Control Surface quando o usuário seleciona
-"AbletonMind" em Preferences → Link/Tempo/MIDI → Control Surface.
+Live loads this package as a Control Surface when the user selects
+"AbletonMind" in Preferences → Link/Tempo/MIDI → Control Surface.
 
-Entrypoint exigido pelo Live: função `create_instance(c_instance)`.
+Entrypoint required by Live: `create_instance(c_instance)` function.
 
-Em modo headless (importado fora do Live para testes), `_Framework` não está
-disponível. Por isso, fazemos import condicional: se `_Framework` falhar,
-ainda expomos `BridgeServer` / `schemas` / `handlers` para os testes.
+In headless mode (imported outside Live for tests), `_Framework` is not
+available. We therefore do a conditional import: if `_Framework` fails, we
+still expose `BridgeServer` / `schemas` / `handlers` for the tests.
 """
 import os
 
@@ -16,14 +16,14 @@ from .bridge import BridgeServer, DEFAULT_HOST, DEFAULT_PORT
 
 __all__ = ["BridgeServer", "create_instance", "AbletonMind"]
 
-try:  # pragma: no cover - importável só dentro do Live
+try:  # pragma: no cover - importable only inside Live
     from _Framework.ControlSurface import ControlSurface
 
     from .listeners import ListenerManager
 
     class AbletonMind(ControlSurface):
-        """ControlSurface root. Sobe o `BridgeServer` num thread daemon e
-        instala listeners LiveAPI que viram MCP notifications (Phase 2)."""
+        """Root ControlSurface. Spins up `BridgeServer` on a daemon thread and
+        installs LiveAPI listeners that become MCP notifications (Phase 2)."""
 
         def __init__(self, c_instance):
             super().__init__(c_instance)
@@ -52,7 +52,7 @@ try:  # pragma: no cover - importável só dentro do Live
     def create_instance(c_instance):
         return AbletonMind(c_instance)
 
-except Exception:  # pragma: no cover - fora do Live
+except Exception:  # pragma: no cover - outside Live
     AbletonMind = None  # type: ignore
 
     def create_instance(c_instance):  # pragma: no cover

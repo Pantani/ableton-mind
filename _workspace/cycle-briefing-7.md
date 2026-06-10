@@ -1,51 +1,51 @@
 # Cycle 7 — 2026-06-09
 
-**Fase PLAN.md:** Phase 4 (automation envelopes) inicia. Phase 2 (listeners) expande. Phase 3 (knowledge) continua.
+**PLAN.md Phase:** Phase 4 (automation envelopes) starts. Phase 2 (listeners) expands. Phase 3 (knowledge) continues.
 
-**Objetivo:** TD-020 trivial, TD-016 batch migration (6+ tools), 5 listeners novos (track + clip), 2-3 handlers/tools de automation, 5 device schemas novos, ADR-0006.
+**Goal:** TD-020 trivial, TD-016 batch migration (6+ tools), 5 new listeners (track + clip), 2-3 automation handlers/tools, 5 new device schemas, ADR-0006.
 
-## Estratégia
+## Strategy
 
-Inline. Patterns 100% maduros.
+Inline. Patterns 100% mature.
 
-## Atribuições
+## Assignments
 
-### Trilha A — Bridge
-1. TD-020: `FakeDeviceParameter.__init__` recebe `name`, `is_quantized`, `value_items`, `automation_state`.
-2. `ListenerManager` ganha track + clip listeners — registra dinamicamente para todas as tracks/clips existentes na hora do `setup()`. Eventos: `event.track_<i>_name_changed`, `track_<i>_volume_changed`, `track_<i>_mute_changed`, `track_<i>_solo_changed`, `clip_<t>_<s>_is_playing_changed`.
-3. Handlers Phase 4: `clip.envelope_set_points` (lista de `(time, value)` num automation envelope dentro do clip), `arrangement.add_automation_point` (envelope no arrangement).
+### Track A — Bridge
+1. TD-020: `FakeDeviceParameter.__init__` receives `name`, `is_quantized`, `value_items`, `automation_state`.
+2. `ListenerManager` gets track + clip listeners — dynamically registers for all tracks/clips existing at `setup()` time. Events: `event.track_<i>_name_changed`, `track_<i>_volume_changed`, `track_<i>_mute_changed`, `track_<i>_solo_changed`, `clip_<t>_<s>_is_playing_changed`.
+3. Phase 4 handlers: `clip.envelope_set_points` (list of `(time, value)` in an automation envelope inside the clip), `arrangement.add_automation_point` (envelope in the arrangement).
 
-### Trilha A — Server TS
-1. Migrar para verify loop: `track_create`, `track_upsert`, `clip_set_loop`, `scene_fire`, `device_set_parameter`, `create_midi_clip` (TD-016 → 10/21 tools migradas).
-2. 2 tools novas Phase 4: `clip_set_envelope`, `arrangement_add_automation_point`.
+### Track A — TS Server
+1. Migrate to verify loop: `track_create`, `track_upsert`, `clip_set_loop`, `scene_fire`, `device_set_parameter`, `create_midi_clip` (TD-016 → 10/21 tools migrated).
+2. 2 new Phase 4 tools: `clip_set_envelope`, `arrangement_add_automation_point`.
 
-### Trilha B — Knowledge
-1. `auto_filter.json`, `echo.json`, `saturator.json`, `delay.json`, `drum_rack.json` (este último é macro: rack params + slot enumeration).
-2. Atualizar `KNOWN_DEVICES`.
+### Track B — Knowledge
+1. `auto_filter.json`, `echo.json`, `saturator.json`, `delay.json`, `drum_rack.json` (the last is a macro: rack params + slot enumeration).
+2. Update `KNOWN_DEVICES`.
 
-### Trilha — Architect
-1. ADR-0006: shape de automation envelope (points como `Array<{time, value, curve_type?}>`, escala temporal em beats, valor sem normalização — usa o range nativo do param).
+### Track — Architect
+1. ADR-0006: automation envelope shape (points as `Array<{time, value, curve_type?}>`, time scale in beats, value without normalization — uses the param's native range).
 
-## Contratos
+## Contracts
 
 `clip.envelope_set_points`:
-- request: `{ track_index, clip_slot_index, parameter_path: string, points: Array<{time, value, curve_type?}> }` — `parameter_path` resolve via knowledge na rota TS (ex: `"mixer.volume"`, `"device.0.Cutoff"`).
+- request: `{ track_index, clip_slot_index, parameter_path: string, points: Array<{time, value, curve_type?}> }` — `parameter_path` resolves via knowledge on the TS path (e.g. `"mixer.volume"`, `"device.0.Cutoff"`).
 - response: `{ changed: true, replaced: number, points: number }`.
 
 `arrangement.add_automation_point`:
 - request: `{ track_index, parameter_path, time, value, curve_type? }`.
 - response: `{ added: true, time, value }`.
 
-## Critérios de gate
+## Gate criteria
 
-- [ ] TD-020 fechado.
-- [ ] TD-016: 10/21 tools usando verify.
-- [ ] 5 listeners novos no bridge ativos.
-- [ ] 2 tools Phase 4 + handlers.
-- [ ] 5 devices novos (10 total).
-- [ ] ADR-0006 escrito.
-- [ ] PROGRESS atualizado.
+- [ ] TD-020 closed.
+- [ ] TD-016: 10/21 tools using verify.
+- [ ] 5 new listeners active in the bridge.
+- [ ] 2 Phase 4 tools + handlers.
+- [ ] 5 new devices (10 total).
+- [ ] ADR-0006 written.
+- [ ] PROGRESS updated.
 
-## Próximo
+## Next
 
-Cycle 8: smoke real (TD-004), TD-016 finish (resto das tools), expandir automation (curve_type variants), Phase 4 cont, +10 devices.
+Cycle 8: real smoke (TD-004), TD-016 finish (rest of the tools), expand automation (curve_type variants), Phase 4 cont, +10 devices.

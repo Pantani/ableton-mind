@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "3 delay lines (L / L+R / R) com filter por linha. Útil para dub e creative routing.",
+  "description": "3 delay lines (L / L+R / R) with per-line filters. Useful for dub and creative routing.",
   "source": "curated (Cycle 15)",
   "completeness": "complete",
   "parameters": [

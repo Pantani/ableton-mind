@@ -1,7 +1,7 @@
 {
   "name": "ableton-mind",
   "version": "0.0.21",
-  "description": "Servidor MCP definitivo para Ableton Live — cobertura completa do LOM, knowledge base embutida e recipes musicais.",
+  "description": "Definitive MCP server for Ableton Live: complete LOM coverage, embedded knowledge base and music recipes.",
   "license": "MIT",
   "homepage": "https://pantani.github.io/ableton-mind/",
   "repository": {

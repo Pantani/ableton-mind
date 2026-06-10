@@ -1,15 +1,15 @@
 """
-Handler `clip.create_midi` — cria MIDI clip vazio num slot da Session view.
+`clip.create_midi` handler — creates an empty MIDI clip in a Session-view slot.
 
-Transacional: envolve `Song.begin_undo_step()` / `end_undo_step()`. Idempotente:
-se o slot já tem um clip, retorna -32005 com o nome do clip existente (Phase 0
-não sobrescreve).
+Transactional: wraps `Song.begin_undo_step()` / `end_undo_step()`. Idempotent:
+if the slot already has a clip, returns -32005 with the existing clip's name
+(Phase 0 doesn't overwrite).
 
 Read-before-write:
-1. Confere que `track_index` cai em `song.tracks` (não em return/master).
-2. Confere que a track é MIDI.
-3. Confere que `clip_slot_index` é válido.
-4. Confere que o slot está vazio.
+1. Verifies that `track_index` falls within `song.tracks` (not in return/master).
+2. Verifies that the track is MIDI.
+3. Verifies that `clip_slot_index` is valid.
+4. Verifies that the slot is empty.
 """
 from ..errors import (
     INVALID_PARAMS,
@@ -36,8 +36,8 @@ from ._base import Handler, register
 
 
 def _resolve_slot(song, track_index: int, clip_slot_index: int):
-    """Valida indexes e devolve (track, slot). Levanta RpcError em qualquer falha.
-    Compartilhado entre add_notes/fire/stop/set_name."""
+    """Validates indexes and returns (track, slot). Raises RpcError on any failure.
+    Shared among add_notes/fire/stop/set_name."""
     tracks = list(song.tracks)
     n = len(tracks)
     if track_index < 0 or track_index >= n:
@@ -104,8 +104,8 @@ def _validate_note(index: int, note: NoteSpec) -> None:
 
 
 def _parse_and_validate_notes(raw_notes) -> list:
-    """Parse + valida cada nota. Extraído de `ClipAddNotesHandler.execute`
-    para manter complexidade ciclomática ≤ 10."""
+    """Parse + validate each note. Extracted from `ClipAddNotesHandler.execute`
+    to keep cyclomatic complexity ≤ 10."""
     if not isinstance(raw_notes, list) or len(raw_notes) == 0:
         raise RpcError(
             INVALID_PARAMS,
@@ -134,7 +134,7 @@ class CreateMidiClipHandler(Handler):
         tracks = list(song.tracks)
         num_tracks = len(tracks)
 
-        # 1) track index válido?
+        # 1) valid track index?
         if params.track_index < 0 or params.track_index >= num_tracks:
             raise RpcError(
                 OBJECT_NOT_FOUND,
@@ -143,7 +143,7 @@ class CreateMidiClipHandler(Handler):
             )
         track = tracks[params.track_index]
 
-        # 2) é track MIDI?
+        # 2) is it a MIDI track?
         if not bool(getattr(track, "has_midi_input", False)):
             actual = "audio" if bool(getattr(track, "has_audio_input", False)) else "unknown"
             raise RpcError(
@@ -152,7 +152,7 @@ class CreateMidiClipHandler(Handler):
                 {"expected": "midi", "actual": actual, "track_index": params.track_index},
             )
 
-        # 3) clip slot index válido?
+        # 3) valid clip slot index?
         slots = list(getattr(track, "clip_slots", []))
         num_slots = len(slots)
         if params.clip_slot_index < 0 or params.clip_slot_index >= num_slots:
@@ -163,7 +163,7 @@ class CreateMidiClipHandler(Handler):
             )
         slot = slots[params.clip_slot_index]
 
-        # 4) length_beats sensata
+        # 4) sensible length_beats
         if params.length_beats <= 0:
             raise RpcError(
                 OUT_OF_RANGE,
@@ -171,7 +171,7 @@ class CreateMidiClipHandler(Handler):
                 {"min": 0.0, "got": params.length_beats},
             )
 
-        # 5) slot ocupado? → INVALID_STATE
+        # 5) slot occupied? → INVALID_STATE
         if bool(getattr(slot, "has_clip", False)):
             existing = getattr(slot, "clip", None)
             existing_name = str(getattr(existing, "name", "")) if existing is not None else ""
@@ -185,14 +185,14 @@ class CreateMidiClipHandler(Handler):
                 },
             )
 
-        # ---- mutação atômica ----
+        # ---- atomic mutation ----
         with undo_step("clip.create_midi", song):
-            # Live API: `ClipSlot.create_clip(length)` — duração em beats.
+            # Live API: `ClipSlot.create_clip(length)` — length in beats.
             slot.create_clip(float(params.length_beats))
             new_clip = getattr(slot, "clip", None)
             if new_clip is None:
-                # LiveAPI deveria ter populado o clip; se não, undo step ainda fecha
-                # via `finally`. Devolvemos -32001 (Live API call failed).
+                # LiveAPI should have populated the clip; if not, the undo step
+                # still closes via `finally`. Return -32001 (Live API call failed).
                 raise RpcError(
                     -32001,
                     "Live did not create clip in slot",
@@ -216,10 +216,10 @@ class CreateMidiClipHandler(Handler):
 
 @register("clip.add_notes")
 class ClipAddNotesHandler(Handler):
-    """Adiciona notas MIDI a um clip existente. Transacional, NÃO idempotente
-    (chamar 2x adiciona 2x). Valida cada nota conforme ADR-0003.
+    """Adds MIDI notes to an existing clip. Transactional, NOT idempotent
+    (calling 2x adds 2x). Validates each note per ADR-0003.
 
-    Para idempotência futura, usar `clip.replace_notes` (Phase 4).
+    For future idempotency, use `clip.replace_notes` (Phase 4).
     """
 
     INPUT = ClipAddNotesInput
@@ -241,9 +241,9 @@ class ClipAddNotesHandler(Handler):
         parsed = _parse_and_validate_notes(params.notes)
 
         with undo_step("clip.add_notes", song):
-            # LiveAPI Phase 1 — usa `add_new_notes` se disponível, senão fallback
-            # para `set_notes` (older API). FakeClip nos testes implementa
-            # `add_new_notes` com lista interna.
+            # LiveAPI Phase 1 — use `add_new_notes` if available, else fall back
+            # to `set_notes` (older API). FakeClip in tests implements
+            # `add_new_notes` with an internal list.
             if hasattr(clip, "add_new_notes"):
                 clip.add_new_notes(
                     {
@@ -277,7 +277,7 @@ class ClipAddNotesHandler(Handler):
 
 @register("clip.fire")
 class ClipFireHandler(Handler):
-    """Dispara o clip num slot. Idempotente: se já tocando, retorna changed=False."""
+    """Fires the clip in a slot. Idempotent: if already playing, returns changed=False."""
 
     INPUT = ClipFireInput
 
@@ -295,7 +295,7 @@ class ClipFireHandler(Handler):
                 "track_index": params.track_index,
                 "clip_slot_index": params.clip_slot_index,
             }
-        # Live API: `ClipSlot.fire()` ou `Clip.fire()`. Preferimos slot.fire().
+        # Live API: `ClipSlot.fire()` or `Clip.fire()`. We prefer slot.fire().
         slot.fire()
         return {
             "changed": True,
@@ -307,7 +307,7 @@ class ClipFireHandler(Handler):
 
 @register("clip.stop")
 class ClipStopHandler(Handler):
-    """Para o clip num slot. Idempotente."""
+    """Stops the clip in a slot. Idempotent."""
 
     INPUT = ClipStopInput
 
@@ -336,7 +336,7 @@ class ClipStopHandler(Handler):
 
 @register("clip.set_name")
 class ClipSetNameHandler(Handler):
-    """Renomeia um clip. Idempotente."""
+    """Renames a clip. Idempotent."""
 
     INPUT = ClipSetNameInput
 
@@ -356,7 +356,7 @@ class ClipSetNameHandler(Handler):
 
 
 # ---------------------------------------------------------------------------
-# parameter_locator resolution (compartilhado com arrangement.py)
+# parameter_locator resolution (shared with arrangement.py)
 # ---------------------------------------------------------------------------
 
 
@@ -402,8 +402,8 @@ def _resolve_device_param(track, locator: dict):
 
 
 def _validate_envelope_points(points) -> None:
-    """Garante que `points` é list[dict] com keys `time`/`value`.
-    Extraído de `ClipEnvelopeSetPointsHandler.execute` para manter CC ≤ 10."""
+    """Ensures `points` is list[dict] with `time`/`value` keys.
+    Extracted from `ClipEnvelopeSetPointsHandler.execute` to keep CC ≤ 10."""
     if not isinstance(points, list):
         raise RpcError(INVALID_PARAMS, "points must be list", {"got": type(points).__name__})
     for i, pt in enumerate(points):
@@ -414,12 +414,12 @@ def _validate_envelope_points(points) -> None:
 
 
 def _resolve_parameter_locator(track, locator: dict):
-    """Devolve o objeto `DeviceParameter` apontado pelo locator.
+    """Returns the `DeviceParameter` object pointed to by the locator.
 
     Format: { kind: "mixer_volume" | "mixer_panning" | "mixer_send" | "device_param",
               device_index?: int, parameter_index?: int, send_index?: int }
 
-    Levanta RpcError se locator inválido ou objeto não encontrado.
+    Raises RpcError if the locator is invalid or the object is not found.
     """
     if not isinstance(locator, dict):
         raise RpcError(INVALID_PARAMS, "parameter_locator must be object", {"got": str(locator)[:80]})
@@ -441,13 +441,13 @@ def _resolve_parameter_locator(track, locator: dict):
 
 @register("clip.envelope_set_points")
 class ClipEnvelopeSetPointsHandler(Handler):
-    """Substitui TODOS os pontos de um clip automation envelope.
-    Idempotente em sentido fraco: chamadas com a mesma lista = mesmo resultado.
+    """Replaces ALL points of a clip automation envelope.
+    Weakly idempotent: calls with the same list = same result.
 
     LiveAPI:
       - `clip.create_automation_envelope(parameter)` → ClipEnvelope
-      - `envelope.clear()` apaga pontos
-      - `envelope.insert_step(time, length, value)` insere
+      - `envelope.clear()` erases points
+      - `envelope.insert_step(time, length, value)` inserts
     """
 
     INPUT = ClipEnvelopeSetPointsInput
@@ -477,10 +477,10 @@ class ClipEnvelopeSetPointsHandler(Handler):
             if clear is not None:
                 clear()
             inserted = 0
-            # TD-023: curve_type real.
-            #   - "linear" (default) / "ramp" → 1 step puro.
-            #   - "hold" → 2 steps: valor anterior até `time`, depois pula.
-            #     Sem ponto anterior (1º point), trata como linear.
+            # TD-023: real curve_type.
+            #   - "linear" (default) / "ramp" → 1 pure step.
+            #   - "hold" → 2 steps: previous value up to `time`, then jumps.
+            #     Without a previous point (1st point), treat as linear.
             for i, pt in enumerate(params.points):
                 t = float(pt["time"])
                 v = float(pt["value"])
@@ -488,8 +488,8 @@ class ClipEnvelopeSetPointsHandler(Handler):
                 if ct == "hold" and i > 0:
                     prev = params.points[i - 1]
                     prev_value = float(prev["value"])
-                    # Insere um step com valor "prev" infinitesimamente antes de `t`
-                    # para criar a borda de hold. Live aceita length pequenos.
+                    # Insert a step with value "prev" infinitesimally before `t`
+                    # to create the hold edge. Live accepts tiny lengths.
                     eps = 1e-4
                     envelope.insert_step(max(0.0, t - eps), 0.0, prev_value)
                     inserted += 1
@@ -507,10 +507,10 @@ class ClipEnvelopeSetPointsHandler(Handler):
 
 @register("clip.set_loop")
 class ClipSetLoopHandler(Handler):
-    """Configura loop_start/loop_end/looping de um clip. Idempotente em 1e-4.
+    """Configures loop_start/loop_end/looping of a clip. Idempotent within 1e-4.
 
-    Aceita 0..3 dos campos; campos `None` ficam intocados. Antes de mutar
-    valida que `loop_start < loop_end`. Encapsula em undo_step se mutou.
+    Accepts 0..3 of the fields; `None` fields stay untouched. Before mutating,
+    validates that `loop_start < loop_end`. Wraps in undo_step if mutation occurs.
     """
 
     INPUT = ClipSetLoopInput

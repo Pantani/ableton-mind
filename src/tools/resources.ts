@@ -1,6 +1,6 @@
 /**
- * Tool MCP `list_resources` — fallback discovery quando o cliente MCP não
- * lista resources nativamente.
+ * MCP tool `list_resources` — fallback discovery when the MCP client doesn't
+ * list resources natively.
  */
 
 import { z } from "zod";

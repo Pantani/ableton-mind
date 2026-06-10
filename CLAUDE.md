@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository state
 
-This repo is **pre-implementation**. The only file is [PLAN.md](PLAN.md) — a 788-line specification (in PT-BR) for `ableton-mind`, a definitive MCP server for Ableton Live. No `package.json`, no source tree, no build system exists yet. Treat PLAN.md as the source of truth for scope, architecture, and decisions.
+This repo has moved past the original planning-only state. Treat [PLAN.md](PLAN.md) as the scope source of truth, and `_workspace/PROGRESS.md` as the current implementation state.
 
 Before scaffolding anything, confirm with the user that the open decisions in [PLAN.md §13](PLAN.md) are resolved (TS vs Python, min Live version, Mac-first vs cross-platform, name, license, etc.). Several were pending input as of the last session.
 
@@ -66,31 +66,31 @@ Work proceeds in 8 phases. Phase 0 is the spike: scaffold the TS server, minimal
 
 ## Working in this repo today
 
-- Documentation is in **PT-BR**. New docs should also be PT-BR (with EN parallel for top-level README/docs per [PLAN.md §3.3](PLAN.md)).
-- When the user asks to "começar Fase 0" or scaffold, reference `tdmcp` structure but don't blindly copy — adapt to Ableton's domain.
+- Documentation is in **English** at the repo root. Localized VitePress pages live only under `docs/pt/`.
+- When the user asks to "start Phase 0" or scaffold, reference `tdmcp` structure but don't blindly copy — adapt to Ableton's domain.
 - No commands to run yet (no `package.json`, no test suite, nothing to build). When scaffolding lands, update this file with the actual `npm` / `pnpm` / `pytest` commands.
 
 ## Harness: 7-agent parallel team
 
-**Objetivo:** construir, estender e manter o ableton-mind seguindo o PLAN.md, com 5 trilhas em paralelo sob um líder (architect) e um QA contínuo.
+**Goal:** build, extend, and maintain ableton-mind following PLAN.md, with 5 tracks running in parallel under a lead (architect) and a continuous QA.
 
-**Trigger:** qualquer pedido para **executar/implementar/continuar/scaffold/refazer/sincronizar/avaliar fase** do projeto → invoque a skill `ableton-mind-build`. Perguntas conceituais sobre o PLAN.md podem ser respondidas direto, sem disparar o time.
+**Trigger:** any request to **execute/implement/continue/scaffold/redo/sync/evaluate a phase** of the project → invoke the `ableton-mind-build` skill. Conceptual questions about PLAN.md can be answered directly, without dispatching the team.
 
-**Time (todos `model: opus`):**
-- `architect` — líder, ADRs, integração, gate de fase
-- `ts-server-engineer` — server MCP TS/Node
-- `python-bridge-engineer` — Remote Script Python
-- `knowledge-curator` — schemas de devices + packs
-- `recipe-designer` — recipes musicais JSON
+**Team (all `model: opus`):**
+- `architect` — lead, ADRs, integration, phase gate
+- `ts-server-engineer` — TS/Node MCP server
+- `python-bridge-engineer` — Python Remote Script
+- `knowledge-curator` — device schemas + packs
+- `recipe-designer` — JSON music recipes
 - `distribution-docs-engineer` — DXT, npm, Docker, docs, CI
-- `qa-integration` — checks cruzados (parity, contract drift, recipe lint), gate
+- `qa-integration` — cross-checks (parity, contract drift, recipe lint), gate
 
-**Workspace:** `_workspace/` guarda `PROGRESS.md`, `decisions/`, `contracts/`, `cycle-briefing-*.md`, `qa/*-report.md` e summaries por ciclo+trilha. Nada vai para `src/`/`live/`/`recipes/`/`docs/` sem QA aprovar.
+**Workspace:** `_workspace/` holds `PROGRESS.md`, `decisions/`, `contracts/`, `cycle-briefing-*.md`, `qa/*-report.md`, and summaries per cycle+track. Nothing lands in `src/`/`live/`/`recipes/`/`docs/` without QA approval.
 
-**Execução paralela:** matriz Fase × Trilhas em `.claude/skills/ableton-mind-build/SKILL.md`. Phase 0 (Spike) é sequencial; Fases 1-7 disparam trilhas em paralelo (`run_in_background: true`).
+**Parallel execution:** Phase × Tracks matrix in `.claude/skills/ableton-mind-build/SKILL.md`. Phase 0 (Spike) is sequential; Phases 1-7 launch tracks in parallel (`run_in_background: true`).
 
-## Histórico de mudanças do harness
+## Harness change history
 
-| Data | Mudança | Alvo | Motivo |
-|------|---------|------|--------|
-| 2026-06-08 | Construção inicial — 7 agentes + 7 skills + orchestrator + workspace | `.claude/agents/`, `.claude/skills/`, `_workspace/PROGRESS.md` | `/harness monta um time para executar esse plano em várias fases em paralelo` |
+| Date | Change | Target | Reason |
+|------|--------|--------|--------|
+| 2026-06-08 | Initial build — 7 agents + 7 skills + orchestrator + workspace | `.claude/agents/`, `.claude/skills/`, `_workspace/PROGRESS.md` | `/harness assemble a team to execute this plan across multiple phases in parallel` |

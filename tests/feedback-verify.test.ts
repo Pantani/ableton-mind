@@ -1,5 +1,5 @@
 /**
- * Testes do verify loop genérico.
+ * Tests for the generic verify loop.
  */
 
 import { describe, expect, it } from "vitest";
