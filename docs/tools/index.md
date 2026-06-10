@@ -30,6 +30,6 @@
 | 20 | `cue` | `cue_add` |
 | 21 | `live_set` | `live_set_info` |
 
-## Current coverage (Cycle 23)
+## Current coverage (Cycle 24)
 
-**33 MCP tools** implemented, including transport, session, track, clip, device, browser, scene, automation, preview, recipe, push, prompts and resources. The target remains ~180 tools across the 21 LOM domains.
+**36 MCP tools** implemented, including transport, session, track, clip, device, browser, scene, automation, preview, recipe, push, prompts, resources and Phase 8 read-only discovery. The target remains ~180 tools across the 21 LOM domains.

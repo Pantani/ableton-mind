@@ -82,7 +82,8 @@ export default defineConfig({
   ignoreDeadLinks: true,
 
   head: [
-    ["meta", { name: "theme-color", content: "#8b5cf6" }],
+    ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+    ["meta", { name: "theme-color", content: "#fcff50" }],
     ["meta", { property: "og:type", content: "website" }],
     ["meta", { property: "og:title", content: "ableton-mind" }],
     [

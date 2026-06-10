@@ -30,9 +30,9 @@
 | 20 | `cue` | cue points, locators, tempo events | `cue_add` |
 | 21 | `live_set` | save, load, new, metadata | `live_set_info` |
 
-## Cobertura atual (Cycle 23)
+## Cobertura atual (Cycle 24)
 
-**33 tools MCP** implementadas, incluindo transport, session, track, clip, device, browser, scene, automation, preview, recipe, push, prompts e resources. A meta continua sendo ~180 tools nos 21 dominios LOM.
+**36 tools MCP** implementadas, incluindo transport, session, track, clip, device, browser, scene, automation, preview, recipe, push, prompts, resources e discovery read-only da Phase 8. A meta continua sendo ~180 tools nos 21 dominios LOM.
 
 ## Como uma tool é declarada
 

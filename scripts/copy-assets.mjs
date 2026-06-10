@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Copy runtime assets next to the compiled dist/index.js so that:
 //   - knowledge loader (KNOWLEDGE_DIR = dirname(import.meta.url) = dist/)
-//     finds dist/devices/*.json and dist/scales.json.
+//     finds dist/devices/*.json, dist/scales.json and dist/discovery.json.
 //   - recipes loader finds dist/recipes/**.
 //
 // Runs as a postbuild step (see package.json `build` script). Without this,
@@ -30,4 +30,5 @@ async function copyFile(src, dest) {
 
 await copyDir("src/knowledge/devices", "devices");
 await copyFile("src/knowledge/scales.json", "scales.json");
+await copyFile("src/knowledge/discovery.json", "discovery.json");
 await copyDir("recipes", "recipes");

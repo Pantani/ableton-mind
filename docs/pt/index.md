@@ -19,7 +19,7 @@ hero:
 features:
   - icon: 🎛️
     title: Tools reais, nao palpite
-    details: 33 tools MCP hoje, mirando ~180 nos 21 dominios do Live Object Model — transport, tracks, clips, devices, automation, browser, arrangement, Push e mais.
+    details: 36 tools MCP hoje, mirando ~180 nos 21 dominios do Live Object Model — transport, tracks, clips, devices, automation, browser, arrangement, Push e mais.
   - icon: 🧠
     title: Knowledge base embutida
     details: 55+ devices nativos do Live 12 com schema de parâmetros (nome, range, default, unidade). LLM nunca chuta "Osc 1 Position".
@@ -55,8 +55,10 @@ features:
 | 5 — Preview/verify | snapshot+diff |
 | 6 — Push 1/2/3 | pad/button/mode |
 | 7 — Distribuição | DXT/Docker/Smithery/CI/release ready |
-| 8 — Long tail | resources entregues; M4L/VST3/Live Link pendentes |
+| 8 — Long tail | slice 1 entregue: introspeccao read-only de M4L/plug-in + status Link/remote; M4L/VST3/remote DAW/mobile seguem pendentes |
 
-> Atualmente: **33 tools MCP**, **5 prompts**, **3 resources MCP**, **55 device schemas**, **14 recipes** em 7/7 categorias, **verify loop 23/23** e **smoke real PASS no Ableton Live 12.4.1** para core bridge/session/transport/track.
+> Atualmente: **36 tools MCP**, **5 prompts**, **3 resources MCP**, **55 device schemas**, **14 recipes** em 7/7 categorias, **verify loop em 23/23 tools de mutacao/preview** e **smoke real PASS no Ableton Live 12.4.1** para core bridge/session/transport/track.
 
 Os gates de validacao estao verdes para `0.1.0`, incluindo typecheck, lint, testes, build, `.mcpb`, docs build, dry-runs de package e doctor. Os canais publicos npm, GitHub Release, MCP Registry, Smithery/Glama e Docker/ghcr.io ainda nao foram publicados; eles esperam o gate manual final. TD-030, smoke de hardware Push 2/3, continua bloqueado ate existir hardware fisico disponivel.
+
+Phase 8 ainda nao e um release amplo de long tail. A slice 1 entrega introspeccao read-only de Max for Live/plug-in e descoberta de status Link/remote. Controle M4L mais profundo, sidecars VST3, integracao remote DAW e mobile companion continuam pendentes, e smoke real em Live para M4L/plug-in/Link ainda nao foi provado nesta passada.
