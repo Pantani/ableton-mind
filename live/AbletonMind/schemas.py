@@ -189,6 +189,14 @@ class SessionGetInfoInput:
 
 
 # ---------------------------------------------------------------------------
+# session.link_status — read-only Ableton Link / remote sync discovery
+# ---------------------------------------------------------------------------
+@dataclass
+class SessionLinkStatusInput:
+    pass
+
+
+# ---------------------------------------------------------------------------
 # browser.get_categories — read-only
 # ---------------------------------------------------------------------------
 @dataclass
@@ -222,6 +230,21 @@ class DeviceSetParameterInput:
     device_index: int = -1
     parameter_index: int = -1
     value: float = 0.0
+
+
+# ---------------------------------------------------------------------------
+# device.inspect_* — read-only Phase 8 discovery
+# ---------------------------------------------------------------------------
+@dataclass
+class DeviceInspectPatcherInput:
+    track_index: int = -1
+    device_index: int = -1
+
+
+@dataclass
+class DeviceInspectPluginInput:
+    track_index: int = -1
+    device_index: int = -1
 
 
 # ---------------------------------------------------------------------------

@@ -24,13 +24,19 @@ import {
   clipStopTool,
   createMidiClipTool,
 } from "./clip.js";
-import { deviceGetParametersTool, deviceSetParameterTool } from "./device.js";
+import {
+  deviceGetParametersTool,
+  deviceInspectPatcherTool,
+  deviceInspectPluginTool,
+  deviceSetParameterTool,
+} from "./device.js";
 import { renderPreviewTool, sessionDiffTool, sessionSnapshotTool } from "./preview.js";
 import { listPromptsTool } from "./prompts.js";
 import { pushSetButtonLedTool, pushSetModeTool, pushSetPadColorTool } from "./push.js";
 import { applyRecipeTool, listRecipesTool } from "./recipe.js";
 import { listResourcesTool } from "./resources.js";
 import { sceneFireTool } from "./scene.js";
+import { sessionLinkStatusTool } from "./session-link.js";
 import { sessionGetInfoTool } from "./session.js";
 import {
   trackCreateTool,
@@ -64,10 +70,13 @@ export {
   clipStopTool,
   createMidiClipTool,
   deviceGetParametersTool,
+  deviceInspectPatcherTool,
+  deviceInspectPluginTool,
   deviceSetParameterTool,
   playTool,
   sceneFireTool,
   sessionGetInfoTool,
+  sessionLinkStatusTool,
   setTempoTool,
   stopTool,
   trackCreateTool,
@@ -105,12 +114,15 @@ export const allTools = [
   sceneFireTool,
   // session
   sessionGetInfoTool,
+  sessionLinkStatusTool,
   // browser
   browserGetCategoriesTool,
   browserLoadItemTool,
   // device
   deviceGetParametersTool,
   deviceSetParameterTool,
+  deviceInspectPatcherTool,
+  deviceInspectPluginTool,
   // arrangement (Phase 4)
   arrangementAddAutomationPointTool,
   // Phase 5 — preview & verify
