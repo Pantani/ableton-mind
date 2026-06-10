@@ -8,6 +8,7 @@ Static JSON files consumed by the loader in `src/knowledge/index.ts` (Zod-valida
 src/knowledge/
 ├─ index.ts                # loader + Zod schemas
 ├─ scales.json             # 16 scales + 12 root notes
+├─ discovery.json          # compact Phase 8 discovery labels
 ├─ devices/
 │  ├─ <id>.json            # 1 file per native Live device
 │  └─ _extracted/          # output from scripts/extract-device-schemas.mjs (not distributed)
@@ -82,3 +83,12 @@ The LLM should assume that **raising Drive/Amount from 0.5 to 0.8 is not "60% mo
 `scales.json` follows a simple format: 16 scales + 12 root notes (intervals in semitones from root).
 
 The LLM can combine this with `session.get_info`, which returns Live's `root_note` and `scale_name`, to generate notes inside the current scale.
+
+## Phase 8 Discovery Labels
+
+`discovery.json` is intentionally small. It defines canonical labels for the
+read-only Phase 8 discovery slice: plug-in/device formats, Max for Live
+inspection capabilities, and Ableton Link status fields.
+
+Do not expand it into a catalog of third-party plug-ins, Max devices, or remote
+DAW integrations. Those are runtime facts and belong in bridge/tool responses.

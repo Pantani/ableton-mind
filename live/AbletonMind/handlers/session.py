@@ -5,8 +5,74 @@ Equivalent of ahujasid/ableton-mcp's `get_session_info`. LLM uses it to
 orient itself before mutating (LOM exploration).
 """
 from ..errors import LIVE_NOT_RUNNING, RpcError
-from ..schemas import SessionGetInfoInput
+from ..schemas import SessionGetInfoInput, SessionLinkStatusInput
 from ._base import Handler, register
+
+_MISSING = object()
+
+
+def _safe_get(obj, name: str, default=_MISSING):
+    if obj is None:
+        return default
+    try:
+        return getattr(obj, name)
+    except Exception:
+        return default
+
+
+def _safe_call(fn, default=_MISSING):
+    try:
+        return fn()
+    except Exception:
+        return default
+
+
+def _ctrl_application(ctrl):
+    app = _safe_get(ctrl, "application", _MISSING)
+    if callable(app):
+        app = _safe_call(app, _MISSING)
+    return None if app is _MISSING else app
+
+
+def _optional_bool(value):
+    if value is _MISSING or value is None:
+        return None
+    try:
+        return bool(value)
+    except Exception:
+        return None
+
+
+def _optional_int(value):
+    if value is _MISSING or value is None:
+        return None
+    try:
+        return int(value)
+    except Exception:
+        return None
+
+
+def _optional_float(value):
+    if value is _MISSING or value is None:
+        return None
+    try:
+        return float(value)
+    except Exception:
+        return None
+
+
+def _read_first(sources: list, names: list) -> tuple:
+    missing = []
+    for source_name, obj in sources:
+        if obj is None:
+            missing.extend([f"{source_name}.{name}" for name in names])
+            continue
+        for name in names:
+            value = _safe_get(obj, name, _MISSING)
+            if value is not _MISSING and value is not None and value != "":
+                return source_name, value, missing
+            missing.append(f"{source_name}.{name}")
+    return "", _MISSING, missing
 
 
 @register("session.get_info")
@@ -44,4 +110,103 @@ class SessionGetInfoHandler(Handler):
             "song_length": float(getattr(song, "song_length", 0.0)),
             "root_note": int(getattr(song, "root_note", 0)),
             "scale_name": str(getattr(song, "scale_name", "")),
+        }
+
+
+@register("session.link_status")
+class SessionLinkStatusHandler(Handler):
+    INPUT = SessionLinkStatusInput
+
+    def execute(self, params: SessionLinkStatusInput) -> dict:
+        song = self.song
+        if song is None:
+            raise RpcError(LIVE_NOT_RUNNING, "Live song is not available")
+
+        sources = [("song", song), ("application", _ctrl_application(self.ctrl))]
+        unsupported = []
+        sources_used = set()
+
+        source, enabled, missing = _read_first(
+            sources,
+            ["link_enabled", "ableton_link_enabled", "is_link_enabled"],
+        )
+        unsupported.extend(missing)
+        if source:
+            sources_used.add(source)
+
+        source, num_peers, missing = _read_first(
+            sources,
+            ["link_num_peers", "num_link_peers", "link_peer_count", "link_peers"],
+        )
+        unsupported.extend(missing)
+        if source:
+            sources_used.add(source)
+
+        source, is_connected, missing = _read_first(
+            sources,
+            ["link_connected", "is_link_connected", "link_has_peers"],
+        )
+        unsupported.extend(missing)
+        if source:
+            sources_used.add(source)
+
+        source, start_stop_sync, missing = _read_first(
+            sources,
+            ["link_start_stop_sync_enabled", "ableton_link_start_stop_sync_enabled"],
+        )
+        unsupported.extend(missing)
+        if source:
+            sources_used.add(source)
+
+        source, tempo_sync, missing = _read_first(
+            sources,
+            ["link_tempo_sync_enabled", "ableton_link_tempo_sync_enabled", "link_sync_enabled"],
+        )
+        unsupported.extend(missing)
+        if source:
+            sources_used.add(source)
+
+        source, quantum, missing = _read_first(
+            sources,
+            ["link_quantum", "ableton_link_quantum"],
+        )
+        unsupported.extend(missing)
+        if source:
+            sources_used.add(source)
+
+        parsed_num_peers = _optional_int(num_peers)
+        parsed_is_connected = _optional_bool(is_connected)
+        if parsed_is_connected is None and parsed_num_peers is not None:
+            parsed_is_connected = parsed_num_peers > 0
+
+        available = any(
+            value is not _MISSING and value is not None
+            for value in (
+                enabled,
+                num_peers,
+                is_connected,
+                start_stop_sync,
+                tempo_sync,
+                quantum,
+            )
+        )
+        if not sources_used:
+            source_name = "none"
+        elif len(sources_used) == 1:
+            source_name = list(sources_used)[0]
+        else:
+            source_name = "mixed"
+
+        return {
+            "available": bool(available),
+            "read_only": True,
+            "source": source_name,
+            "enabled": _optional_bool(enabled),
+            "is_connected": parsed_is_connected,
+            "num_peers": parsed_num_peers,
+            "start_stop_sync_enabled": _optional_bool(start_stop_sync),
+            "tempo_sync_enabled": _optional_bool(tempo_sync),
+            "quantum": _optional_float(quantum),
+            "reason": None if available else "Live song/application does not expose Ableton Link status attributes",
+            "unsupported_attributes": sorted(set(unsupported)),
         }

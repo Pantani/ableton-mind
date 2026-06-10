@@ -27,6 +27,8 @@ Muitos fluxos de IA para musica param em conselho. `ableton-mind` foi desenhado 
 
 O codigo ja passou smoke real no Ableton Live 12.4.1 para operacoes centrais de transport/session/track, e os gates de package validation do `0.1.0` estao verdes. Os canais publicos npm e `.mcpb` ainda nao foram publicados, entao use instalacao via source ou bundle local ate o gate manual final rodar.
 
+A slice 1 da Phase 8 entrega introspeccao read-only de Max for Live/plug-in e descoberta de status Link/remote. Isso nao significa que controle M4L amplo, sidecars VST3, integracao remote DAW ou mobile companion ja estejam disponiveis.
+
 ## Proximos passos
 
 1. [Instale via source](./installation).

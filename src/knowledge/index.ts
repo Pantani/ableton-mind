@@ -76,6 +76,53 @@ export const scalesSchema = z.object({
 
 export type ScalesPayload = z.infer<typeof scalesSchema>;
 
+const discoveryReferenceSchema = z.object({
+  title: z.string(),
+  url: z.string().url(),
+});
+
+const pluginFormatSchema = z.object({
+  id: z.enum([
+    "ableton_native",
+    "max_for_live",
+    "vst2",
+    "vst3",
+    "audio_unit_v2",
+    "audio_unit_v3",
+    "unknown",
+  ]),
+  label: z.string(),
+  platform: z.enum(["all", "macos", "windows", "unknown"]),
+  device_kind: z.enum(["native", "max_for_live", "third_party", "unknown"]),
+  description: z.string(),
+});
+
+const m4lCapabilitySchema = z.object({
+  id: z.enum(["patcher_metadata", "exposed_parameters", "live_api_paths", "dependencies"]),
+  label: z.string(),
+  phase8_slice1: z.literal("read_only"),
+  description: z.string(),
+});
+
+const linkStatusFieldSchema = z.object({
+  id: z.enum(["available", "enabled", "num_peers", "start_stop_sync", "link_audio", "reason"]),
+  label: z.string(),
+  availability: z.literal("runtime_reported"),
+  description: z.string(),
+});
+
+export const discoveryMetadataSchema = z.object({
+  $schema: z.string().optional(),
+  version: z.string(),
+  source: z.string(),
+  references: z.array(discoveryReferenceSchema),
+  plugin_formats: z.array(pluginFormatSchema),
+  m4l_capabilities: z.array(m4lCapabilitySchema),
+  link_status_fields: z.array(linkStatusFieldSchema),
+});
+
+export type DiscoveryMetadata = z.infer<typeof discoveryMetadataSchema>;
+
 // ----- Loaders ---------------------------------------------------------------
 
 let cachedKnowledgeRoot: string | null = null;
@@ -177,6 +224,11 @@ export async function loadAllDevices(): Promise<DeviceSchema[]> {
 export async function loadScales(): Promise<ScalesPayload> {
   const raw = await readJson("scales.json");
   return scalesSchema.parse(raw);
+}
+
+export async function loadDiscoveryMetadata(): Promise<DiscoveryMetadata> {
+  const raw = await readJson("discovery.json");
+  return discoveryMetadataSchema.parse(raw);
 }
 
 /** Lookup: given a device id and a param name, returns the parameter schema (or null). */

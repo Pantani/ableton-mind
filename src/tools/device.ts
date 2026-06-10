@@ -29,6 +29,50 @@ const deviceParamSnapshotSchema = z.object({
   automation_state: z.number().int(),
 });
 
+const jsonScalarSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+
+const deviceDiscoveryInputSchema = z
+  .object({
+    track_index: z.number().int().nonnegative(),
+    device_index: z.number().int().nonnegative(),
+  })
+  .strict();
+
+const deviceDiscoverySummarySchema = z.object({
+  track_index: z.number().int().nonnegative(),
+  device_index: z.number().int().nonnegative(),
+  name: z.string(),
+  class_name: z.string(),
+  class_display_name: z.string(),
+  type: jsonScalarSchema,
+  is_active: z.boolean().nullable(),
+  is_enabled: z.boolean().nullable(),
+  can_have_chains: z.boolean().nullable(),
+  chain_count: z.number().int().nonnegative(),
+});
+
+const patcherDescriptorSchema = z.object({
+  name: z.string().nullable(),
+  path: z.string().nullable(),
+  identifier: z.string().nullable(),
+  is_frozen: z.boolean().nullable(),
+  can_have_chains: z.boolean().nullable(),
+  chain_count: z.number().int().nonnegative(),
+});
+
+const pluginFormatSchema = z.enum(["vst", "vst3", "au", "unknown"]).nullable();
+
+const pluginDescriptorSchema = z.object({
+  name: z.string(),
+  format: pluginFormatSchema,
+  vendor: z.string().nullable(),
+  version: z.string().nullable(),
+  identifier: z.string().nullable(),
+  path: z.string().nullable(),
+  preset_name: z.string().nullable(),
+  preset_index: z.number().int().nullable(),
+});
+
 // ----- device_get_parameters -------------------------------------------------
 
 const getParamsInputSchema = z.object({
@@ -204,5 +248,77 @@ export const deviceSetParameterTool = defineTool({
       resolved_from: resolvedFrom,
       diff: v.diff,
     };
+  },
+});
+
+// ----- device_inspect_patcher ------------------------------------------------
+
+const inspectPatcherBridgeResult = z.object({
+  available: z.boolean(),
+  read_only: z.literal(true),
+  is_max_for_live: z.boolean(),
+  reason: z.string().nullable(),
+  device: deviceDiscoverySummarySchema,
+  patcher: patcherDescriptorSchema.nullable(),
+  parameters: z.array(deviceParamSnapshotSchema),
+  total_parameters: z.number().int().nonnegative(),
+  unsupported_attributes: z.array(z.string()),
+});
+
+const inspectPatcherOutputSchema = inspectPatcherBridgeResult.extend({
+  ok: z.literal(true),
+  verified: z.literal(true),
+});
+
+export const deviceInspectPatcherTool = defineTool({
+  name: "device_inspect_patcher",
+  description:
+    "Read-only Max for Live patcher discovery for a device. Returns available=false with a reason when the target is not inspectable or the runtime does not expose patcher metadata.",
+  input: deviceDiscoveryInputSchema,
+  output: inspectPatcherOutputSchema,
+  handler: async (input, ctx) => {
+    const raw = await ctx.bridge.call("device.inspect_patcher", input);
+    const parsed = inspectPatcherBridgeResult.parse(raw);
+    return inspectPatcherOutputSchema.parse({
+      ok: true as const,
+      verified: true as const,
+      ...parsed,
+    });
+  },
+});
+
+// ----- device_inspect_plugin -------------------------------------------------
+
+const inspectPluginBridgeResult = z.object({
+  available: z.boolean(),
+  read_only: z.literal(true),
+  is_plugin: z.boolean(),
+  reason: z.string().nullable(),
+  device: deviceDiscoverySummarySchema,
+  plugin: pluginDescriptorSchema.nullable(),
+  parameters: z.array(deviceParamSnapshotSchema),
+  total_parameters: z.number().int().nonnegative(),
+  unsupported_attributes: z.array(z.string()),
+});
+
+const inspectPluginOutputSchema = inspectPluginBridgeResult.extend({
+  ok: z.literal(true),
+  verified: z.literal(true),
+});
+
+export const deviceInspectPluginTool = defineTool({
+  name: "device_inspect_plugin",
+  description:
+    "Read-only VST/AU plug-in discovery for a device. Returns plug-in identity and exposed parameters, or available=false with a reason for built-in devices/unsupported runtimes.",
+  input: deviceDiscoveryInputSchema,
+  output: inspectPluginOutputSchema,
+  handler: async (input, ctx) => {
+    const raw = await ctx.bridge.call("device.inspect_plugin", input);
+    const parsed = inspectPluginBridgeResult.parse(raw);
+    return inspectPluginOutputSchema.parse({
+      ok: true as const,
+      verified: true as const,
+      ...parsed,
+    });
   },
 });

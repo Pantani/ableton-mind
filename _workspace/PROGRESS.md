@@ -1,7 +1,23 @@
 # PROGRESS — ableton-mind
 
-**Status:** Release closure for `v0.1.0` is green and ready for the final manual publish gate. TD-048 is closed; TD-030 remains blocked by missing Push hardware.
+**Status:** Cycle 24 delivered Phase 8 slice 1 as read-only discovery. Release closure for `v0.1.0` remains green and ready for the final manual publish gate. TD-048 is closed; TD-030 remains blocked by missing Push hardware.
 **Last update:** 2026-06-10
+
+## Cycle 24 - Phase 8 long tail slice 1
+
+- ✅ **M4L patcher discovery:** `device.inspect_patcher` bridge method + `device_inspect_patcher` MCP tool.
+- ✅ **Plug-in discovery:** `device.inspect_plugin` bridge method + `device_inspect_plugin` MCP tool for VST/AU-like metadata and exposed parameters.
+- ✅ **Link/remote status discovery:** `session.link_status` bridge method + `session_link_status` MCP tool.
+- ✅ **Discovery metadata:** compact static vocabulary in `src/knowledge/discovery.json`, copied to `dist/discovery.json`.
+- ✅ Focused TS/Python/knowledge coverage landed.
+- ⚠️ Real Ableton Live smoke against an actual Max for Live device, third-party plug-in, or active Link session was not run in this pass.
+- ⚠️ No Phase 8 recipe was added because this slice is read-only discovery, not musical mutation.
+
+Details:
+- [qa/cycle-24-report.md](qa/cycle-24-report.md)
+- [cycle-briefing-24.md](cycle-briefing-24.md)
+- [24_knowledge_summary.md](24_knowledge_summary.md)
+- [24_recipes_summary.md](24_recipes_summary.md)
 
 ## Release closure - v0.1.0
 
@@ -50,7 +66,7 @@ Details in [qa/cycle-21-smoke-pass.md](qa/cycle-21-smoke-pass.md).
 
 ## MCP primitives — 3/3 ✅
 
-- **Tools**: 33 (32 + list_prompts + list_resources)
+- **Tools**: 36 (33 previous + 3 Phase 8 read-only discovery tools)
 - **Prompts**: 5 (genre, mix, arrangement, sound design, vocal)
 - **Resources**: 3 (session/state, knowledge/devices, recipes/index)
 
@@ -58,17 +74,17 @@ Details in [qa/cycle-21-smoke-pass.md](qa/cycle-21-smoke-pass.md).
 
 | Category | Value |
 |---|---|
-| MCP tools | **33** |
+| MCP tools | **36** |
 | MCP prompts | **5** |
 | MCP resources | **3** |
 | Devices in knowledge | **55** (110% PLAN §5) |
 | Embedded recipes | **14** (7/7 categories) |
-| JSON-RPC methods in bridge | **30** + 7 listener events |
-| Verify loop | **23/23 tools** |
+| JSON-RPC methods in bridge | **33** + 7 listener events |
+| Verify loop | **23/23 mutation/preview tools** + 3 read-only Phase 8 discovery tools |
 | Consolidated ADRs | **11** |
-| Cycles | **23** |
-| QA reports | **22** |
-| TS + Python tests | **~250 cases** + wire smoke + **real smoke PASS** |
+| Cycles | **24** |
+| QA reports | **23** |
+| TS + Python tests | **~270 cases** + wire smoke + **real smoke PASS** |
 | TDs closed | **47** |
 | TDs open | **1** (TD-030 hardware) |
 
@@ -84,7 +100,7 @@ Details in [qa/cycle-21-smoke-pass.md](qa/cycle-21-smoke-pass.md).
 | 5 — Preview / verify | ✅ snapshot+diff |
 | 6 — Push | ✅ pad/button/mode LEDs (hardware test pending TD-030) |
 | 7 — Distribution | ✅ DXT/Docker/Smithery/CI/release ready |
-| 8 — Long tail | 🔵 Resources delivered; M4L/VST3/Live Link pending |
+| 8 — Long tail | 🔵 Slice 1 delivered: read-only M4L/plug-in introspection + Link status; deeper M4L/VST3/remote DAW/mobile pending |
 
 ## Next step
 
