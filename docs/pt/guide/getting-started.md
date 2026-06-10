@@ -1,19 +1,20 @@
 # Começando
 
-`ableton-mind` é um servidor MCP que expõe o **Live Object Model** completo para LLMs. Esta página leva você do zero ao primeiro `play` no Live.
+`ableton-mind` e um servidor MCP que permite que um assistente de IA crie, inspecione e verifique sets no Ableton Live. Esta pagina leva voce de um checkout local ate a primeira chamada verificada.
 
 ## Pré-requisitos
 
 - **Node.js 20+**
-- **Ableton Live 12** (suporte 11 vem na Phase 1 final). macOS prioritário.
-- Um cliente MCP — **Claude Desktop**, **Cursor**, **Continue**, etc.
+- **Ableton Live 12**. O smoke real usou Live 12.4.1 no macOS.
+- Um cliente MCP como Claude Desktop, Claude Code, Codex ou Cursor.
 
-## 1. Instalar
+## 1. Build via source
 
-Veja [Instalação](./installation) para os 4 canais (DXT one-click, npm, Docker, Smithery). Para começar rápido:
+Os canais publicos npm e `.mcpb` ainda nao foram publicados. Use o caminho via source por enquanto:
 
 ```bash
-npm install -g ableton-mind
+npm ci
+npm run build
 ```
 
 ## 2. Instalar o Remote Script (bridge Python)
@@ -21,7 +22,7 @@ npm install -g ableton-mind
 O Remote Script roda **dentro do Live** e expõe o LOM via TCP em `127.0.0.1:9876`.
 
 ```bash
-ableton-mind install:remote-script
+npm run install:remote-script
 ```
 
 Ou manualmente, copie `live/AbletonMind/` para:
@@ -39,7 +40,7 @@ Confirme no Log da bridge que o TCP server subiu:
 [AbletonMind] TCP server listening on 127.0.0.1:9876
 ```
 
-## 4. Apontar seu cliente MCP
+## 4. Apontar o cliente MCP para o build local
 
 Exemplo `claude_desktop_config.json`:
 
@@ -47,24 +48,32 @@ Exemplo `claude_desktop_config.json`:
 {
   "mcpServers": {
     "ableton-mind": {
-      "command": "ableton-mind"
+      "command": "node",
+      "args": ["/absolute/path/to/ableton-mind/dist/index.js"]
     }
   }
 }
 ```
 
-## 5. Primeiro `play`
+Troque o path pelo caminho absoluto deste repo depois de `npm run build`.
+
+## 5. Primeira leitura
 
 No Claude/Cursor, peça:
 
-> "Toca o set."
+> "Verifique se o ableton-mind consegue acessar o Live. Leia as informacoes da sessao e liste as tracks. Nao altere nada."
 
-O LLM chama `play`. A tool retorna `{ ok, verified: { is_playing: true }, diff: { is_playing: false → true } }`.
+Depois tente:
+
+> "Toque o set, verifique o estado de playback e depois pare."
+
+O assistente deve retornar estado verificado e um diff pequeno. A partir dai, siga para [Seu primeiro set no Live](./first-live-set) ou o [prompt cookbook](./prompt-cookbook).
 
 ## Próximos passos
 
 - [Arquitetura](../architecture) — entenda as 3 camadas.
 - [Tools](../tools/) — os 21 domínios LOM.
 - [Knowledge base](../knowledge/) — schemas de devices.
-- [Recipes](../recipes/) — drums/bass/racks por gênero.
+- [Prompt cookbook](./prompt-cookbook) — exemplos prontos de prompts.
+- [Recipes](../recipes/) — drums/bass/racks por genero.
 - [Smoke test](../smoke-test) — checklist end-to-end.

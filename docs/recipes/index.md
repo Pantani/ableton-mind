@@ -14,20 +14,24 @@
 | `recipes/mixing/` | Mix templates per genre |
 | `recipes/live_performance/` | Performance setups (Push, follow actions) |
 
-**14 recipes** active across 7/7 categories (Cycle 22).
+**14 recipes** active across 7/7 categories.
 
 ## Minimum schema
 
 ```jsonc
 {
-  "id": "techhouse-128-kit",
-  "name": "Tech House 128 Kit",
-  "tags": ["genre:tech-house", "bpm:128"],
-  "variables": { "bpm": { "default": 128, "min": 120, "max": 132 } },
+  "id": "drums/tech-house-kick",
+  "name": "Tech-House Kick",
+  "category": "drums",
+  "version": "0.1",
+  "tags": ["tech-house", "drums", "kick", "techno", "4-on-the-floor"],
+  "inputs": {
+    "track_name": { "type": "string", "default": "Kick" },
+    "velocity": { "type": "int", "default": 100, "min": 1, "max": 127 }
+  },
   "steps": [
-    { "tool": "set_tempo", "args": { "bpm": "{{bpm}}" } },
-    { "tool": "track_create", "args": { "type": "midi", "name": "Kick" } },
-    { "ref": "drums.kick.punchy-tech" }
+    { "op": "track.upsert", "args": { "name": "{{track_name}}", "type": "midi" } },
+    { "op": "clip.create_midi", "args": { "length_beats": 4, "name": "Kick" } }
   ]
 }
 ```

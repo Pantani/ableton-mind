@@ -1,19 +1,20 @@
 # Getting started
 
-`ableton-mind` is an MCP server exposing the full Live Object Model to LLMs. This page takes you from zero to your first `play` in Live.
+`ableton-mind` is an MCP server that lets an AI assistant create, inspect and verify Ableton Live sets. This page takes you from a local checkout to your first verified tool call.
 
 ## Prerequisites
 
 - **Node.js 20+**
-- **Ableton Live 12** (11 support comes late in Phase 1). macOS first.
-- An MCP client — **Claude Desktop**, **Cursor**, **Continue**, etc.
+- **Ableton Live 12**. The real smoke pass used Live 12.4.1 on macOS.
+- An MCP client such as Claude Desktop, Claude Code, Codex or Cursor.
 
-## 1. Install
+## 1. Build from source
 
-See [Installation](./installation) for all four channels. Quick path:
+Public npm and `.mcpb` channels are not published yet. Use the source path for now:
 
 ```bash
-npm install -g ableton-mind
+npm ci
+npm run build
 ```
 
 ## 2. Install the Remote Script (Python bridge)
@@ -21,7 +22,7 @@ npm install -g ableton-mind
 The Remote Script runs **inside Live** and exposes the LOM over TCP at `127.0.0.1:9876`.
 
 ```bash
-ableton-mind install:remote-script
+npm run install:remote-script
 ```
 
 Or manually copy `live/AbletonMind/` to:
@@ -33,22 +34,31 @@ Or manually copy `live/AbletonMind/` to:
 
 **Live → Preferences → Link/Tempo/MIDI → Control Surface → AbletonMind**.
 
-## 4. Point your MCP client
+## 4. Point your MCP client at the local build
 
 Example `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "ableton-mind": { "command": "ableton-mind" }
+    "ableton-mind": {
+      "command": "node",
+      "args": ["/absolute/path/to/ableton-mind/dist/index.js"]
+    }
   }
 }
 ```
 
-## 5. First `play`
+Replace the path with this repo's absolute path after `npm run build`.
+
+## 5. First read
 
 Ask Claude/Cursor:
 
-> "Play the set."
+> "Check that ableton-mind can reach Live. Read the session info and list the tracks. Do not change anything."
 
-The LLM calls `play`. The tool returns `{ ok, verified: { is_playing: true }, diff: { is_playing: false → true } }`.
+Then try:
+
+> "Play the set, verify playback state, then stop."
+
+The assistant should return a verified state and a small diff. From there, continue with [Your first Live set](./first-live-set) or the [prompt cookbook](./prompt-cookbook).

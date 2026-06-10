@@ -30,6 +30,6 @@
 | 20 | `cue` | `cue_add` |
 | 21 | `live_set` | `live_set_info` |
 
-## Current coverage (Cycle 22)
+## Current coverage (Cycle 23)
 
-**31 tools** implemented — transport, track, clip, device, automation, push, introspection. Canonical list in `_workspace/contracts/tool-registry.json`.
+**33 MCP tools** implemented, including transport, session, track, clip, device, browser, scene, automation, preview, recipe, push, prompts and resources. The target remains ~180 tools across the 21 LOM domains.

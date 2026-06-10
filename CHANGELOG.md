@@ -6,8 +6,13 @@ All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.c
 
 ### In preparation for `v0.1.0-rc.1`
 
-- Real smoke test against Live (TD-004) — release gate.
-- Final Push 2/3 sysex validation on hardware (TD-030).
+- Real smoke test against Live (TD-004) — passed in Cycle 21 against Ableton Live 12.4.1 on macOS.
+- Package validation blocker (TD-048): `typecheck`, tests, build and DXT check must be green before RC.
+- Final Push 2/3 sysex validation on hardware (TD-030) remains hardware-blocked.
+
+### Changed
+
+- Reworked VitePress docs into artist and developer paths, added first-set and prompt-cookbook guides, and clarified that public npm/`.mcpb` channels are not published yet.
 
 ## [0.0.21] — 2026-06-09 (Cycle 22) — Smoke-discovered fixes
 

@@ -2,52 +2,70 @@ import { defineConfig } from "vitepress";
 
 const enSidebar = [
   {
-    text: "Guide",
+    text: "For artists",
     items: [
-      { text: "Overview", link: "/" },
-      { text: "Getting started", link: "/guide/getting-started" },
-      { text: "Installation", link: "/guide/installation" },
-      { text: "Smoke test", link: "/smoke-test" },
+      { text: "What is ableton-mind?", link: "/guide/what-is-ableton-mind" },
+      {
+        text: "Get started",
+        items: [
+          { text: "Installation", link: "/guide/installation" },
+          { text: "Getting started", link: "/guide/getting-started" },
+          { text: "Your first Live set", link: "/guide/first-live-set" },
+          { text: "Prompt cookbook", link: "/guide/prompt-cookbook" },
+          { text: "Recipe gallery", link: "/recipes/" },
+          { text: "Troubleshooting", link: "/guide/troubleshooting" },
+        ],
+      },
     ],
   },
   {
-    text: "Reference",
+    text: "For developers",
     items: [
       { text: "Architecture", link: "/architecture" },
       { text: "Tools (21 LOM domains)", link: "/tools/" },
       { text: "Knowledge base", link: "/knowledge/" },
       { text: "Recipes", link: "/recipes/" },
       { text: "Distribution", link: "/distribution" },
+      { text: "Smoke test", link: "/smoke-test" },
     ],
   },
   {
-    text: "Project",
+    text: "Operations",
     items: [{ text: "Changelog", link: "/changelog" }],
   },
 ];
 
 const ptSidebar = [
   {
-    text: "Guide",
+    text: "Para artistas",
     items: [
-      { text: "Overview", link: "/pt/" },
-      { text: "Getting started", link: "/pt/guide/getting-started" },
-      { text: "Installation", link: "/pt/guide/installation" },
-      { text: "Smoke test", link: "/pt/smoke-test" },
+      { text: "O que e ableton-mind?", link: "/pt/guide/what-is-ableton-mind" },
+      {
+        text: "Comece aqui",
+        items: [
+          { text: "Instalacao", link: "/pt/guide/installation" },
+          { text: "Primeiros passos", link: "/pt/guide/getting-started" },
+          { text: "Seu primeiro set no Live", link: "/pt/guide/first-live-set" },
+          { text: "Prompt cookbook", link: "/pt/guide/prompt-cookbook" },
+          { text: "Galeria de recipes", link: "/pt/recipes/" },
+          { text: "Troubleshooting", link: "/pt/guide/troubleshooting" },
+        ],
+      },
     ],
   },
   {
-    text: "Reference",
+    text: "Para devs",
     items: [
       { text: "Architecture", link: "/pt/architecture" },
       { text: "Tools (21 LOM domains)", link: "/pt/tools/" },
       { text: "Knowledge base", link: "/pt/knowledge/" },
       { text: "Recipes", link: "/pt/recipes/" },
       { text: "Distribution", link: "/pt/distribution" },
+      { text: "Smoke test", link: "/pt/smoke-test" },
     ],
   },
   {
-    text: "Project",
+    text: "Operacao",
     items: [{ text: "Changelog", link: "/pt/changelog" }],
   },
 ];
@@ -95,11 +113,10 @@ export default defineConfig({
       description: "Definitive MCP server for Ableton Live.",
       themeConfig: {
         nav: [
-          { text: "Guide", link: "/guide/getting-started" },
-          { text: "Architecture", link: "/architecture" },
+          { text: "Artists", link: "/guide/what-is-ableton-mind" },
+          { text: "Cookbook", link: "/guide/prompt-cookbook" },
+          { text: "Developers", link: "/architecture" },
           { text: "Tools", link: "/tools/" },
-          { text: "Knowledge", link: "/knowledge/" },
-          { text: "Recipes", link: "/recipes/" },
           { text: "Distribution", link: "/distribution" },
           { text: "Changelog", link: "/changelog" },
         ],
@@ -114,11 +131,10 @@ export default defineConfig({
       description: "Definitive MCP server for Ableton Live.",
       themeConfig: {
         nav: [
-          { text: "Guide", link: "/pt/guide/getting-started" },
-          { text: "Architecture", link: "/pt/architecture" },
+          { text: "Artistas", link: "/pt/guide/what-is-ableton-mind" },
+          { text: "Cookbook", link: "/pt/guide/prompt-cookbook" },
+          { text: "Devs", link: "/pt/architecture" },
           { text: "Tools", link: "/pt/tools/" },
-          { text: "Knowledge", link: "/pt/knowledge/" },
-          { text: "Recipes", link: "/pt/recipes/" },
           { text: "Distribution", link: "/pt/distribution" },
           { text: "Changelog", link: "/pt/changelog" },
         ],
