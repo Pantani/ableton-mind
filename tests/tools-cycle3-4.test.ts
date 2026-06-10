@@ -371,4 +371,10 @@ describe("allTools registry", () => {
     const set = new Set(allTools.map((t) => t.name));
     expect(set.size).toBe(allTools.length);
   });
+
+  it("registers fallback discovery tools", () => {
+    const names = new Set(allTools.map((t) => t.name));
+    expect(names.has("list_prompts")).toBe(true);
+    expect(names.has("list_resources")).toBe(true);
+  });
 });

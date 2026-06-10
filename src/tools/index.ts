@@ -122,6 +122,8 @@ export const allTools = [
   applyRecipeTool,
   // Prompts discovery
   listPromptsTool,
+  // Resources discovery
+  listResourcesTool,
   // Phase 6 — Push
   pushSetPadColorTool,
   pushSetButtonLedTool,
