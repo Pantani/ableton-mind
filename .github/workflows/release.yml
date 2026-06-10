@@ -8,8 +8,9 @@ name: Release
 # The tag push triggers this workflow, which re-runs the full check suite, builds
 # the Claude Desktop `.mcpb` bundle, publishes a GitHub Release with the bundle
 # attached + auto-generated notes, and pushes a Docker image to ghcr.io.
-# npm publishing stays manual by default for pre-1.0 tags; set repository
-# variable ABLETON_MIND_AUTO_NPM_PUBLISH=true and NPM_TOKEN to opt in.
+# npm publishing stays manual by default; set repository variable
+# ABLETON_MIND_AUTO_NPM_PUBLISH=true and NPM_TOKEN to opt in. Prerelease tags
+# containing "-" are always skipped.
 
 on:
   push:
@@ -119,14 +120,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Compute Docker tags
+        id: docker_tags
+        run: |
+          {
+            echo "tags<<EOF"
+            echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/ableton-mind:${GITHUB_REF_NAME}"
+            if [[ "$GITHUB_REF_NAME" != *-* ]]; then
+              echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/ableton-mind:latest"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Docker build + push
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/ableton-mind:${{ github.ref_name }}
-            ghcr.io/${{ github.repository_owner }}/ableton-mind:latest
+          tags: ${{ steps.docker_tags.outputs.tags }}
 
       - name: Check npm publish mode
         id: npm_publish

@@ -9,15 +9,15 @@ Covers:
 """
 import unittest
 
-from AbletonMind.errors import RpcError
-from AbletonMind.handlers.arrangement import ArrangementAddAutomationPointHandler
-from AbletonMind.handlers.clip import (
+from ..errors import RpcError
+from ..handlers.arrangement import ArrangementAddAutomationPointHandler
+from ..handlers.clip import (
     ClipEnvelopeSetPointsHandler,
     CreateMidiClipHandler,
     _resolve_parameter_locator,
 )
-from AbletonMind.listeners import ListenerManager
-from AbletonMind.schemas import (
+from ..listeners import ListenerManager
+from ..schemas import (
     ArrangementAddAutomationPointInput,
     ClipEnvelopeSetPointsInput,
     CreateMidiClipInput,

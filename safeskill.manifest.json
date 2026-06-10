@@ -1,6 +1,6 @@
 {
   "name": "ableton-mind",
-  "version": "0.0.21",
+  "version": "0.1.0",
   "summary": "Ableton Live MCP server — drives a local Remote Script bridge for music production workflows.",
   "expectedCapabilities": {
     "filesystem": {

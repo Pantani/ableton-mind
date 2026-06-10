@@ -1,13 +1,13 @@
 import unittest
 
-from live.AbletonMind.errors import LIVE_NOT_RUNNING, OUT_OF_RANGE, RpcError
-from live.AbletonMind.handlers.transport import (
+from ..errors import LIVE_NOT_RUNNING, OUT_OF_RANGE, RpcError
+from ..handlers.transport import (
     PlayHandler,
     SetTempoHandler,
     StopHandler,
 )
-from live.AbletonMind.schemas import PlayInput, SetTempoInput, StopInput
-from live.AbletonMind.tests._fakes.live_api import FakeCtrl, FakeSong
+from ..schemas import PlayInput, SetTempoInput, StopInput
+from ._fakes.live_api import FakeCtrl, FakeSong
 
 
 class TestPlay(unittest.TestCase):

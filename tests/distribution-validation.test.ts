@@ -95,12 +95,14 @@ describe("Dockerfile + smithery.yaml + .npmignore", () => {
     expect(sm).toContain("ABLETON_MIND_HOST");
   });
 
-  it(".npmignore excludes src/ live/ tests/ but allows dist/recipes", () => {
+  it(".npmignore excludes dev-only sources/tests but allows published runtime assets", () => {
     expect(existsSync(join(REPO_ROOT, ".npmignore"))).toBe(true);
     const ig = read(".npmignore");
     expect(ig).toMatch(/^src\/$/m);
-    expect(ig).toMatch(/^live\/$/m);
     expect(ig).toMatch(/^tests\/$/m);
+    expect(ig).not.toMatch(/^live\/$/m);
+    expect(ig).not.toMatch(/^scripts\/install-remote-script\.mjs$/m);
+    expect(ig).not.toMatch(/^CHANGELOG\.md$/m);
     // recipes/ is kept (not in the ignore list)
     expect(ig).not.toMatch(/^recipes\/$/m);
   });

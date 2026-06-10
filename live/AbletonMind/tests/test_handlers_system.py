@@ -1,14 +1,14 @@
 import unittest
 
-from live.AbletonMind.handlers.system import (
+from ..handlers.system import (
     BRIDGE_NAME,
     BRIDGE_VERSION,
     PROTOCOL_VERSION,
     HelloHandler,
     PingHandler,
 )
-from live.AbletonMind.schemas import HelloInput, PingInput
-from live.AbletonMind.tests._fakes.live_api import FakeCtrl
+from ..schemas import HelloInput, PingInput
+from ._fakes.live_api import FakeCtrl
 
 
 class TestSystemHandlers(unittest.TestCase):

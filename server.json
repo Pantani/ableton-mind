@@ -3,7 +3,7 @@
   "name": "io.github.Pantani/ableton-mind",
   "title": "ableton-mind — Ableton Live MCP server",
   "description": "Definitive MCP server for Ableton Live — full LOM coverage, embedded device knowledge base, and declarative music recipes.",
-  "version": "0.0.21",
+  "version": "0.1.0",
   "repository": {
     "url": "https://github.com/Pantani/ableton-mind",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "ableton-mind",
-      "version": "0.0.21",
+      "version": "0.1.0",
       "transport": {
         "type": "stdio"
       }

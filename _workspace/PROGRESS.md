@@ -1,13 +1,33 @@
 # PROGRESS — ableton-mind
 
-**Status:** Cycle 23 environment-debt pass complete. TD-005 closed; TD-030 remains blocked by missing Push hardware; `v0.1.0-rc.1` is blocked by TD-048 package validation failures.
+**Status:** Release closure for `v0.1.0` is green and ready for the final manual publish gate. TD-048 is closed; TD-030 remains blocked by missing Push hardware.
 **Last update:** 2026-06-10
+
+## Release closure - v0.1.0
+
+- ✅ **TD-048 closed:** package validation is green on the final tree.
+- ✅ Version sync is `0.1.0` across `package.json`, `package-lock.json`, `dxt/manifest.json`, `server.json`, `server.json::packages[0].version`, and `safeskill.manifest.json`.
+- ✅ npm package includes the compiled server, runtime knowledge/recipes, `live/AbletonMind/` Remote Script runtime, metadata manifests, and `ableton-mind-install-remote-script`.
+- ✅ `.mcpb` build includes the server, runtime assets, Remote Script files, installer script, and release metadata. The manifest validates with `@anthropic-ai/mcpb`.
+- ✅ Python bridge gate is normalized to `python3 -m unittest discover -s live/AbletonMind/tests -t live -v`.
+- ✅ Local LLM/copilot/chat is not present in this checkout and is not exposed as a stable `0.1.0` bin/export.
+- ⚠️ **TD-030 still open:** Push 2/3 hardware smoke remains hardware-blocked.
+- ⛔ No tag, push, npm publish, GitHub Release, MCP Registry submission, Smithery/Glama publish, or Docker/ghcr push has been performed.
+
+Details:
+- [qa/release-0.1.0-report.md](qa/release-0.1.0-report.md)
+- [cycle-briefing-release-0.1.0.md](cycle-briefing-release-0.1.0.md)
+- [release-0.1.0-ts-summary.md](release-0.1.0-ts-summary.md)
+- [release-0.1.0-python-summary.md](release-0.1.0-python-summary.md)
+- [release-0.1.0-distribution-summary.md](release-0.1.0-distribution-summary.md)
+- [release-0.1.0-knowledge-recipes-summary.md](release-0.1.0-knowledge-recipes-summary.md)
+- [release-0.1.0-architect-summary.md](release-0.1.0-architect-summary.md)
 
 ## Cycle 23 - environment debts
 
 - ✅ **TD-005 closed:** npm install environment verified on the real machine (`npm ci --dry-run` PASS; `npm ci` PASS in a temporary clean copy).
 - ⚠️ **TD-030 still open:** no Push 2/3 visible over USB/CoreMIDI, so no real Push Sysex hardware smoke ran.
-- 🔴 **TD-048 opened:** package validation is red (`typecheck`, tests, build, DXT check). Do not tag `v0.1.0-rc.1` until TD-048 is fixed.
+- ✅ **TD-048 superseded by release closure:** package validation is now green for `v0.1.0`.
 
 Details:
 - [qa/cycle-23-report.md](qa/cycle-23-report.md)
@@ -49,8 +69,8 @@ Details in [qa/cycle-21-smoke-pass.md](qa/cycle-21-smoke-pass.md).
 | Cycles | **23** |
 | QA reports | **22** |
 | TS + Python tests | **~250 cases** + wire smoke + **real smoke PASS** |
-| TDs closed | **46** |
-| TDs open | **2** (TD-030 hardware, TD-048 package validation) |
+| TDs closed | **47** |
+| TDs open | **1** (TD-030 hardware) |
 
 ## Phases — final
 
@@ -69,11 +89,8 @@ Details in [qa/cycle-21-smoke-pass.md](qa/cycle-21-smoke-pass.md).
 ## Next step
 
 ```bash
-# Fix TD-048 first:
-npm run typecheck
-npm test
-npm run build
-npm run build:dxt:check
+# Final manual publish gate only after explicit confirmation:
+npm publish --access public --provenance
 ```
 
-After TD-048 is green, cut `v0.1.0-rc.1`. TD-030 can remain documented as hardware-blocked unless the release policy requires Push validation before RC.
+TD-030 can remain documented as hardware-blocked unless the release policy requires Push validation before publishing.

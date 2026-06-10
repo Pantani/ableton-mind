@@ -1,141 +1,168 @@
 # Distribution
 
-How `ableton-mind` reaches end users. Each channel serves a different audience.
+How `ableton-mind` reaches end users for the `0.1.0` release.
 
 ## Release status
 
-The source install path works today. Public npm, GitHub Release and `.mcpb` download channels are not published yet; `v0.1.0-rc.1` waits on TD-048 package validation.
+`0.1.0` is prepared locally but not published until the final manual gate. Do not assume npm, GitHub Release, MCP Registry, Smithery, Glama, or ghcr.io are live before the release commands are run.
 
-## 1. Claude Desktop `.mcpb` (local build today, public bundle after RC)
+Ableton integration has two pieces:
 
-One-click install. Build it with:
+- MCP server: Node.js process launched by Claude Desktop, Codex, Cursor, npm, Docker, Smithery, or another MCP client.
+- Remote Script: Python files under `live/AbletonMind/` that must be installed into Ableton Live's User Library and activated in Live preferences.
+
+Hosted channels can run the MCP server, but they cannot control a local Ableton Live instance unless the Remote Script bridge is reachable from that server.
+
+## Source install
+
+Use this path when developing the repo or validating a local checkout.
 
 ```bash
+npm ci
 npm run build
-npm run build:dxt
+npm run install:remote-script
+npm run test:bridge
+npm start
 ```
 
-Drag the `.mcpb` file into Claude Desktop. It configures `claude_desktop_config.json` automatically.
+Developer install uses a symlink by default. Reopen Live's Control Surface after edits to reload the script.
 
-User config (`host`, `port`, `log_level`) is editable through the Claude Desktop UI according to `dxt/manifest.json::user_config`.
+```bash
+node scripts/install-remote-script.mjs --check
+node scripts/install-remote-script.mjs --copy --force
+```
 
-## 2. npm (after publish)
+## npm
+
+After publish:
 
 ```bash
 npm install -g ableton-mind
-ableton-mind
+ableton-mind-install-remote-script
 ableton-mind-doctor
+ableton-mind
 ```
 
-Pre-1.0 uses `npm pack` or local install. CI validates `npm publish --dry-run`.
-Current registry status: `ableton-mind` is not published on npm yet.
+The npm package includes:
 
-## 3. Docker
+- compiled server in `dist/`
+- runtime recipes and knowledge assets
+- `live/AbletonMind/` Remote Script runtime without tests/cache
+- `ableton-mind-install-remote-script` for installing the Remote Script into Ableton's User Library
+- registry/listing metadata files
+
+Validate the package before publishing:
+
+```bash
+npm pack --dry-run --json
+npm publish --dry-run
+```
+
+## Claude Desktop `.mcpb`
+
+Build locally:
+
+```bash
+npm run build
+npm run build:mcpb
+```
+
+Install by dragging `build/ableton-mind-0.1.0.mcpb` into Claude Desktop or by using an MCPB installer.
+
+The bundle installs and runs the Node MCP server. It also includes the Remote Script files and installer script for reference, but Claude Desktop does not automatically copy those files into Ableton Live. Install the Remote Script separately through the npm/source installer, then activate it in Live:
+
+Live -> Preferences -> Link/Tempo/MIDI -> Control Surface -> AbletonMind.
+
+## MCP Registry
+
+`server.json` is the MCP Registry manifest. It uses `mcpName`/server name:
+
+```text
+io.github.Pantani/ableton-mind
+```
+
+Before submission, verify version sync:
+
+```bash
+node -e "const p=require('./package.json'),s=require('./server.json'); console.log(p.version, p.mcpName, s.name, s.version, s.packages[0].version)"
+```
+
+Submit only after the npm package and GitHub Release asset are available.
+
+## Smithery and Glama
+
+`smithery.yaml` and `glama.json` are listing metadata for hosted catalog channels.
+
+```bash
+smithery publish
+```
+
+Hosted Smithery/Glama listings are useful for discovery and remote MCP server hosting. They still need network access to the user's local Ableton bridge. For most musicians, local npm or `.mcpb` is the primary install path.
+
+## Docker and ghcr.io
+
+Local build:
 
 ```bash
 docker build -t ableton-mind .
 docker run --rm -i --network host ableton-mind
 ```
 
+Release workflow tags for stable releases:
+
+```text
+ghcr.io/Pantani/ableton-mind:v0.1.0
+ghcr.io/Pantani/ableton-mind:latest
+```
+
+Prerelease tags keep only their exact version tag and do not move `latest`.
+
 ### macOS / Linux
 
-`--network host` works natively, so the container can reach `127.0.0.1:9876` on the host.
-
-### Windows (TD-035)
-
-Docker Desktop on Windows does not support `--network host` reliably for every scenario. Use one of these options:
-
-**Option A — WSL2 backend (recommended).** Docker Desktop with WSL2:
-
-```bash
-# Inside WSL2 (Ubuntu, etc.):
-docker run --rm -i --network host ableton-mind
-```
-
-The bridge must be reachable from the WSL network. Point `ABLETON_MIND_HOST` at the host IP:
-
-```bash
-docker run --rm -i \
-  -e ABLETON_MIND_HOST=$(hostname -I | awk '{print $1}') \
-  ableton-mind
-```
-
-**Option B — `host.docker.internal`.** Without `--network host`:
+`--network host` lets the container reach `127.0.0.1:9876` on Linux. On macOS Docker Desktop, `host.docker.internal` is usually more reliable:
 
 ```bash
 docker run --rm -i \
   -e ABLETON_MIND_HOST=host.docker.internal \
   -e ABLETON_MIND_PORT=9876 \
-  -p 9876:9876 \
   ableton-mind
 ```
 
-Ableton Live must accept external connections. The default Remote Script listens on `0.0.0.0` if you set `ABLETON_MIND_HOST=0.0.0.0` in the User Library environment.
+### Windows
 
-**Option C — Skip Docker on Windows.** Use the source install path today, or the `.mcpb` bundle after RC. Docker is primarily for Linux/CI deployment.
-
-## 4. Smithery
-
-[`smithery.yaml`](../smithery.yaml) is configured. After v0.1.0, publish with:
+Docker Desktop networking varies by backend. Prefer WSL2 when possible:
 
 ```bash
-smithery publish
+docker run --rm -i \
+  -e ABLETON_MIND_HOST=host.docker.internal \
+  -e ABLETON_MIND_PORT=9876 \
+  ableton-mind
 ```
 
-Smithery hosts the container and creates an MCP endpoint. Users point Claude Desktop at the Smithery URL. This is a release-path channel, not a published public listing yet.
+If the container cannot reach the bridge, use npm or `.mcpb` locally instead.
 
-## 5. Dev Install
+## Release workflow
 
-Developer mode uses a symlink instead of a copy.
+`.github/workflows/release.yml` runs on `v*` tags. It verifies manifest version sync, runs typecheck/lint/tests/build, builds the `.mcpb`, creates or updates the GitHub Release, pushes ghcr.io images, and publishes npm only when explicitly enabled.
+
+npm behavior:
+
+- prerelease tags containing `-` are skipped
+- stable tags publish only when `ABLETON_MIND_AUTO_NPM_PUBLISH=true` and `NPM_TOKEN` is configured
+- manual npm publish remains the default for `0.1.0`
+
+Required GitHub Actions secrets/variables:
+
+| Name | Used by |
+|---|---|
+| `NPM_TOKEN` | optional npm publish with provenance |
+| `ABLETON_MIND_AUTO_NPM_PUBLISH` | repository variable that opts into automatic npm publish |
+| `GITHUB_TOKEN` | automatic GitHub Release and ghcr.io push |
+
+## Doctor CLI
 
 ```bash
-node scripts/install-remote-script.mjs
-node scripts/install-remote-script.mjs --check
+ableton-mind-doctor
 ```
 
-Repo edits reflect directly in Live. Reopen the Control Surface to reload.
-
-## 5b. CI / Release Secrets (TD-040)
-
-Workflows under `.github/workflows/` need secrets configured in **GitHub -> Settings -> Secrets and variables -> Actions**:
-
-| Secret | Used by | How to generate |
-|---|---|---|
-| `NPM_TOKEN` | `release.yml` `npm publish` step (only tags `v1.x.x+`; pre-1.0 skips) | npmjs.com -> Access Tokens -> Automation token. Granular access is OK if it can publish `ableton-mind`. |
-| `GITHUB_TOKEN` | `release.yml` push to ghcr.io + create Release | Automatic; GitHub Actions injects it. |
-
-Required `GITHUB_TOKEN` permissions are already declared in the workflow:
-
-- `contents: write` — create Release and upload `.mcpb`.
-- `packages: write` — push to `ghcr.io/<owner>/ableton-mind`.
-- `id-token: write` — npm provenance (Sigstore signing).
-
-### Smithery (optional)
-
-For automatic Smithery sync:
-
-- `SMITHERY_API_KEY` — generated at <https://smithery.ai/settings>.
-- Add a release workflow step: `smithery publish`.
-
-Cycle 13 did not include the Smithery step; it remains for v0.1.0.
-
-### Test a Release Locally
-
-```bash
-# Dry-run without publishing
-npm publish --dry-run
-
-# Build artifact without publishing
-git tag v0.0.0-test
-git push origin v0.0.0-test
-git tag -d v0.0.0-test
-git push origin :v0.0.0-test
-```
-
-## 6. Doctor CLI
-
-```bash
-npx ableton-mind-doctor
-```
-
-The doctor checks Node >= 20, Remote Script install, port 9876, valid knowledge and valid recipes.
+The doctor checks Node, Remote Script installation, bridge reachability, knowledge assets, recipes and MCP primitive imports.

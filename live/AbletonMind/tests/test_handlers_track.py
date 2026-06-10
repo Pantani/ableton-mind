@@ -3,9 +3,9 @@ Tests for track.list (new shape per ADR-0002) and track.create.
 """
 import unittest
 
-from live.AbletonMind.handlers.track import TrackCreateHandler, TrackListHandler
-from live.AbletonMind.schemas import TrackCreateInput, TrackListInput
-from live.AbletonMind.tests._fakes.live_api import (
+from ..handlers.track import TrackCreateHandler, TrackListHandler
+from ..schemas import TrackCreateInput, TrackListInput
+from ._fakes.live_api import (
     FakeCtrl,
     FakeReturnTrack,
     FakeSong,
@@ -110,7 +110,7 @@ class TestTrackCreate(unittest.TestCase):
         ctrl = FakeCtrl(song=song)
         with self.assertRaises(Exception) as exc:
             TrackCreateHandler(ctrl).execute(TrackCreateInput(type="midi", index=99))
-        from live.AbletonMind.errors import OUT_OF_RANGE
+        from ..errors import OUT_OF_RANGE
         self.assertEqual(exc.exception.code, OUT_OF_RANGE)
 
     def test_invalid_type_rejected(self):
@@ -118,7 +118,7 @@ class TestTrackCreate(unittest.TestCase):
         ctrl = FakeCtrl(song=song)
         with self.assertRaises(Exception) as exc:
             TrackCreateHandler(ctrl).execute(TrackCreateInput(type="group"))
-        from live.AbletonMind.errors import OBJECT_NOT_FOUND
+        from ..errors import OBJECT_NOT_FOUND
         self.assertEqual(exc.exception.code, OBJECT_NOT_FOUND)
 
     def test_wraps_in_undo_step(self):

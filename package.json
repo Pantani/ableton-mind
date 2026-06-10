@@ -1,12 +1,13 @@
 {
   "name": "ableton-mind",
-  "version": "0.0.21",
+  "version": "0.1.0",
+  "mcpName": "io.github.Pantani/ableton-mind",
   "description": "Definitive MCP server for Ableton Live: complete LOM coverage, embedded knowledge base and music recipes.",
   "license": "MIT",
   "homepage": "https://pantani.github.io/ableton-mind/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Pantani/ableton-mind.git"
+    "url": "git+https://github.com/Pantani/ableton-mind.git"
   },
   "bugs": {
     "url": "https://github.com/Pantani/ableton-mind/issues"
@@ -21,7 +22,8 @@
   },
   "bin": {
     "ableton-mind": "dist/index.js",
-    "ableton-mind-doctor": "dist/cli/doctor.js"
+    "ableton-mind-doctor": "dist/cli/doctor.js",
+    "ableton-mind-install-remote-script": "scripts/install-remote-script.mjs"
   },
   "main": "dist/index.js",
   "exports": {
@@ -33,10 +35,18 @@
   "files": [
     "dist",
     "recipes",
+    "live/AbletonMind/*.py",
+    "live/AbletonMind/handlers/*.py",
+    "live/AbletonMind/README.md",
+    "scripts/install-remote-script.mjs",
     "src/knowledge/devices",
     "src/knowledge/scales.json",
+    "server.json",
+    "dxt/manifest.json",
+    "safeskill.manifest.json",
+    "smithery.yaml",
+    "glama.json",
     "README.md",
-    "README.en.md",
     "LICENSE",
     "CHANGELOG.md"
   ],
@@ -62,7 +72,7 @@
     "build:mcpb": "node scripts/build-dxt.mjs",
     "lint:py": "uvx ruff check live/AbletonMind",
     "lint:py:fix": "uvx ruff check live/AbletonMind --fix-only",
-    "test:bridge": "cd live && python -m unittest discover -s AbletonMind/tests -v",
+    "test:bridge": "python3 -m unittest discover -s live/AbletonMind/tests -t live -v",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",

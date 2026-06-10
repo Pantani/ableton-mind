@@ -1,15 +1,15 @@
 import unittest
 
-from live.AbletonMind.errors import (
+from ..errors import (
     INVALID_STATE,
     OBJECT_NOT_FOUND,
     OUT_OF_RANGE,
     TYPE_MISMATCH,
     RpcError,
 )
-from live.AbletonMind.handlers.clip import CreateMidiClipHandler
-from live.AbletonMind.schemas import CreateMidiClipInput
-from live.AbletonMind.tests._fakes.live_api import FakeCtrl, FakeSong, FakeTrack
+from ..handlers.clip import CreateMidiClipHandler
+from ..schemas import CreateMidiClipInput
+from ._fakes.live_api import FakeCtrl, FakeSong, FakeTrack
 
 
 def _song_with_midi_and_audio() -> FakeSong:
