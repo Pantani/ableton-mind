@@ -124,6 +124,22 @@ class TestDeviceInspectPlugin(unittest.TestCase):
         self.assertIn("does not expose", result["reason"])
         self.assertEqual(result["total_parameters"], 1)
 
+    def test_renamed_native_device_with_plugin_terms_stays_unavailable(self):
+        device = FakeDevice(
+            name="VST Audio Unit PluginDevice",
+            class_name="AudioEffectGroupDevice",
+            params=[FakeDeviceParameter(value=0.5, name="Chain Activator")],
+        )
+        device.class_display_name = "Audio Effect Rack"
+
+        h = DeviceInspectPluginHandler(FakeCtrl(_seed_device(device)))
+        result = h.execute(DeviceInspectPluginInput(track_index=0, device_index=0))
+
+        self.assertFalse(result["available"])
+        self.assertFalse(result["is_plugin"])
+        self.assertIsNone(result["plugin"])
+        self.assertEqual(result["device"]["name"], "VST Audio Unit PluginDevice")
+
 
 class TestSessionLinkStatus(unittest.TestCase):
     def test_supported_link_shape_returns_status(self):

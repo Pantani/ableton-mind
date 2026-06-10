@@ -337,15 +337,15 @@ class DeviceInspectPluginHandler(Handler):
         _, preset_index, missing = _read_first(device, ["preset_index", "selected_preset_index"])
         unsupported.extend(missing)
 
-        class_text = " ".join(
+        # Device names are user-editable; classify from stable class/type metadata only.
+        plugin_class_text = " ".join(
             [
-                summary["name"],
                 summary["class_name"],
                 summary["class_display_name"],
                 _safe_str(summary["type"], ""),
             ]
         ).lower()
-        plugin_format = _infer_plugin_format(raw_format, class_text)
+        plugin_format = _infer_plugin_format(raw_format, plugin_class_text)
         has_plugin_metadata = any(
             value is not _MISSING and value is not None and value != ""
             for value in (
@@ -361,11 +361,11 @@ class DeviceInspectPluginHandler(Handler):
         )
         is_plugin = (
             has_plugin_metadata
-            or "plugindevice" in class_text
-            or "vst" in class_text
-            or "auplugindevice" in class_text
-            or "audio unit" in class_text
-            or "audiounit" in class_text
+            or "plugindevice" in plugin_class_text
+            or "vst" in plugin_class_text
+            or "auplugindevice" in plugin_class_text
+            or "audio unit" in plugin_class_text
+            or "audiounit" in plugin_class_text
         )
 
         return {
