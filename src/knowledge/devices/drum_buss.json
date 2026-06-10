@@ -18,7 +18,7 @@
       "unit": "curve",
       "automatable": true,
       "modulatable": true,
-      "description": "Curva não-linear — 0.5 ≠ metade audível."
+      "description": "Non-linear curve; 0.5 is not audibly half."
     },
     {
       "index": 1,
@@ -39,7 +39,7 @@
       "unit": "curve",
       "automatable": true,
       "modulatable": true,
-      "description": "Curva não-linear."
+      "description": "Non-linear curve."
     },
     {
       "index": 3,
@@ -69,7 +69,7 @@
       "unit": "curve",
       "automatable": true,
       "modulatable": true,
-      "description": "Curva não-linear."
+      "description": "Non-linear curve."
     },
     {
       "index": 6,

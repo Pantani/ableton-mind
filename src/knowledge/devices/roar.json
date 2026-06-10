@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "12.0",
-  "description": "Saturator multi-stage (Live 12+) com 3 colored stages e routing flexível. Modes: Mid/Side, Parallel, Multiband, Feedback.",
+  "description": "Multi-stage saturator (Live 12+) with three colored stages and flexible routing. Modes: Mid/Side, Parallel, Multiband, Feedback.",
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [
@@ -38,7 +38,7 @@
       "unit": "curve",
       "automatable": true,
       "modulatable": true,
-      "description": "Curva não-linear — varia conforme Type."
+      "description": "Non-linear curve; varies by Type."
     },
     {
       "index": 3,

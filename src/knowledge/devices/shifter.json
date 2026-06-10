@@ -86,7 +86,7 @@
       "default": 0,
       "unit": "bool",
       "automatable": false,
-      "description": "Pitch controlado por MIDI."
+      "description": "Pitch controlled by MIDI."
     },
     {
       "index": 8,

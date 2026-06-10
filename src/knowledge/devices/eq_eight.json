@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Equalizer paramétrico de 8 bandas com filter types (low cut, low shelf, bell, notch, high shelf, high cut) por banda, modo de oversampling e análise espectral.",
+  "description": "Eight-band parametric equalizer with per-band filter types (low cut, low shelf, bell, notch, high shelf, high cut), oversampling mode and spectral analysis.",
   "source": "curated (Cycle 6)",
   "completeness": "complete",
   "parameters": [
@@ -27,7 +27,7 @@
       "default": 2,
       "unit": "enum",
       "automatable": false,
-      "description": "Escala visual: 25/50/100/200/400%."
+      "description": "Visual scale: 25/50/100/200/400%."
     },
     {
       "index": 2,
@@ -451,5 +451,5 @@
       "modulatable": true
     }
   ],
-  "todo": ["Phase 4: adicionar params \"B\" para modo L/R + M/S (8 bandas × 5 params)."]
+  "todo": ["Phase 4: add \"B\" params for L/R + M/S mode (8 bands x 5 params)."]
 }

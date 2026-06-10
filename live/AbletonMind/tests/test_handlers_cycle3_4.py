@@ -1,7 +1,7 @@
 """
-Cobertura consolidada dos handlers do Cycle 3 + Cycle 4 (TD-009).
+Consolidated coverage for Cycle 3 + Cycle 4 handlers (TD-009).
 
-Cobre:
+Covers:
   Cycle 3 (TD-009 carry-over):
     - track.upsert, track.set_name, track.set_volume
     - clip.add_notes, clip.fire, clip.stop, clip.set_name
@@ -62,7 +62,7 @@ def _seed_song():
 
 
 def _seed_clip(song, track_index, slot_index, length=4.0, name=""):
-    """Cria um clip num slot. Devolve o FakeClip."""
+    """Create a clip in a slot. Return the FakeClip."""
     track = song.tracks[track_index]
     slot = track.clip_slots[slot_index]
     CreateMidiClipHandler(FakeCtrl(song)).execute(
@@ -230,7 +230,7 @@ class TestClipFireStop(unittest.TestCase):
         self.assertTrue(r["changed"])
         self.assertTrue(r["is_playing"])
 
-        # idempotente: fire de novo → changed=False
+        # Idempotent: firing again -> changed=False.
         r = ClipFireHandler(ctrl).execute(ClipFireInput(track_index=0, clip_slot_index=0))
         self.assertFalse(r["changed"])
 

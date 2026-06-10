@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Routing helper que envia audio para hardware/outboard via Output Routing e recebe de volta via Input Routing. Compensação de latência incluída.",
+  "description": "Routing helper that sends audio to hardware/outboard gear through Output Routing and receives it back through Input Routing. Includes latency compensation.",
   "source": "curated (Cycle 16)",
   "completeness": "complete",
   "parameters": [
@@ -46,7 +46,7 @@
       "default": 0,
       "unit": "ms",
       "automatable": false,
-      "description": "Compensação manual em sample/ms."
+      "description": "Manual compensation in samples/ms."
     },
     {
       "index": 4,
@@ -60,6 +60,6 @@
     }
   ],
   "todo": [
-    "Adicionar campos de Input/Output routing — não automatável mas relevante para conexão real (string enum populado pelo Live runtime)."
+    "Add Input/Output routing fields; not automatable but relevant for real connections (string enum populated by the Live runtime)."
   ]
 }

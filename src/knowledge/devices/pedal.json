@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "10.0",
-  "description": "Emulação de pedais clássicos: Overdrive / Distortion / Fuzz, com EQ pre/post e sub-bass enhancement.",
+  "description": "Classic pedal emulation: Overdrive / Distortion / Fuzz, with pre/post EQ and sub-bass enhancement.",
   "source": "curated (Cycle 10)",
   "completeness": "complete",
   "parameters": [
@@ -28,7 +28,7 @@
       "unit": "curve",
       "automatable": true,
       "modulatable": true,
-      "description": "Curva não-linear — varia conforme Type."
+      "description": "Non-linear curve; varies by Type."
     },
     {
       "index": 2,

@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Audio tuner com chromatic display, reference pitch ajustável, hold mode.",
+  "description": "Audio tuner with chromatic display, adjustable reference pitch and hold mode.",
   "source": "curated (Cycle 8)",
   "completeness": "complete",
   "parameters": [
@@ -17,7 +17,7 @@
       "default": 440,
       "unit": "Hz",
       "automatable": false,
-      "description": "Frequência do A4."
+      "description": "A4 frequency."
     },
     {
       "index": 1,

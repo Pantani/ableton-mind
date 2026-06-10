@@ -5,7 +5,7 @@
   "category": "midi_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "MIDI effect: aleatoriza pitch das notas dentro de range configurável.",
+  "description": "MIDI effect: randomizes note pitch within a configurable range.",
   "source": "curated (Cycle 17)",
   "completeness": "complete",
   "parameters": [
@@ -18,7 +18,7 @@
       "unit": "%",
       "automatable": true,
       "modulatable": true,
-      "description": "Probabilidade da aleatorização ser aplicada."
+      "description": "Probability that randomization is applied."
     },
     {
       "index": 1,
@@ -29,7 +29,7 @@
       "unit": "count",
       "automatable": true,
       "modulatable": true,
-      "description": "Número de pitches possíveis."
+      "description": "Number of possible pitches."
     },
     {
       "index": 2,
@@ -40,7 +40,7 @@
       "unit": "semitones",
       "automatable": true,
       "modulatable": true,
-      "description": "Step entre choices."
+      "description": "Step between choices."
     },
     {
       "index": 3,

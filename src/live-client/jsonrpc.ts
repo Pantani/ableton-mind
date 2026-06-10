@@ -1,19 +1,19 @@
 /**
- * Tipos e schemas JSON-RPC 2.0 conforme `_workspace/contracts/jsonrpc.md`.
+ * JSON-RPC 2.0 types and schemas from `_workspace/contracts/jsonrpc.md`.
  *
- * Espelha 1:1 o contrato congelado para Phase 0. Qualquer mudança aqui
- * exige ADR e PROPOSED-change.md no workspace.
+ * Mirrors the frozen Phase 0 contract 1:1. Any change here requires an ADR
+ * and PROPOSED-change.md in the workspace.
  */
 
 import { z } from "zod";
 
 // ---------- Envelope -----------------------------------------------------
 
-/** ID JSON-RPC: number ou string (spec aceita ambos; usamos sempre number). */
+/** JSON-RPC ID: number or string (the spec accepts both; we always use number). */
 export const jsonRpcIdSchema = z.union([z.number().int(), z.string()]);
 export type JsonRpcId = z.infer<typeof jsonRpcIdSchema>;
 
-/** Request: tem `id`, `method` e `params` opcional. */
+/** Request: has `id`, `method` and optional `params`. */
 export const jsonRpcRequestSchema = z.object({
   jsonrpc: z.literal("2.0"),
   id: jsonRpcIdSchema,
@@ -22,7 +22,7 @@ export const jsonRpcRequestSchema = z.object({
 });
 export type JsonRpcRequest = z.infer<typeof jsonRpcRequestSchema>;
 
-/** Erro JSON-RPC: code + message + data opcional. */
+/** JSON-RPC error: code + message + optional data. */
 export const jsonRpcErrorObjectSchema = z.object({
   code: z.number().int(),
   message: z.string(),
@@ -30,25 +30,25 @@ export const jsonRpcErrorObjectSchema = z.object({
 });
 export type JsonRpcErrorObject = z.infer<typeof jsonRpcErrorObjectSchema>;
 
-/** Response success: result presente, error ausente. */
+/** Success response: result present, error absent. */
 export const jsonRpcSuccessSchema = z.object({
   jsonrpc: z.literal("2.0"),
   id: jsonRpcIdSchema,
   result: z.unknown(),
 });
 
-/** Response error: error presente, result ausente. */
+/** Error response: error present, result absent. */
 export const jsonRpcErrorResponseSchema = z.object({
   jsonrpc: z.literal("2.0"),
   id: jsonRpcIdSchema.nullable(),
   error: jsonRpcErrorObjectSchema,
 });
 
-/** Response union — discriminada por presença de `result` vs `error`. */
+/** Response union, discriminated by the presence of `result` vs `error`. */
 export const jsonRpcResponseSchema = z.union([jsonRpcSuccessSchema, jsonRpcErrorResponseSchema]);
 export type JsonRpcResponse = z.infer<typeof jsonRpcResponseSchema>;
 
-/** Notification: sem `id`, server → client. */
+/** Notification: no `id`, server -> client. */
 export const jsonRpcNotificationSchema = z.object({
   jsonrpc: z.literal("2.0"),
   method: z.string().min(1),
@@ -56,7 +56,7 @@ export const jsonRpcNotificationSchema = z.object({
 });
 export type JsonRpcNotification = z.infer<typeof jsonRpcNotificationSchema>;
 
-/** Qualquer mensagem chegando do bridge — pode ser response ou notification. */
+/** Any incoming bridge message, either a response or a notification. */
 export const jsonRpcIncomingSchema = z.union([
   jsonRpcSuccessSchema,
   jsonRpcErrorResponseSchema,
@@ -66,7 +66,7 @@ export type JsonRpcIncoming = z.infer<typeof jsonRpcIncomingSchema>;
 
 // ---------- Error codes (contract `_workspace/contracts/jsonrpc.md`) -----
 
-/** Códigos reservados pela spec JSON-RPC 2.0. */
+/** Codes reserved by the JSON-RPC 2.0 spec. */
 export const JSON_RPC_RESERVED_ERRORS = {
   PARSE_ERROR: -32700,
   INVALID_REQUEST: -32600,
@@ -75,7 +75,7 @@ export const JSON_RPC_RESERVED_ERRORS = {
   INTERNAL_ERROR: -32603,
 } as const;
 
-/** Códigos custom do ableton-mind (faixa -32000 a -32099). */
+/** ableton-mind custom codes (range -32000 to -32099). */
 export const ABLETON_MIND_ERRORS = {
   LIVE_NOT_RUNNING: -32000,
   LIVE_API_CALL_FAILED: -32001,
@@ -90,7 +90,7 @@ export const ABLETON_MIND_ERRORS = {
 
 // ---------- Helpers ------------------------------------------------------
 
-/** Erro estruturado lançado pelo cliente quando o bridge devolve `error`. */
+/** Structured error thrown by the client when the bridge returns `error`. */
 export class JsonRpcRemoteError extends Error {
   public readonly code: number;
   public readonly data: unknown;
@@ -103,7 +103,7 @@ export class JsonRpcRemoteError extends Error {
   }
 }
 
-/** Erro do transport (timeout, socket fechou, parse falhou). */
+/** Transport error (timeout, socket closed, parse failed). */
 export class JsonRpcTransportError extends Error {
   public override readonly cause?: unknown;
 
@@ -114,12 +114,12 @@ export class JsonRpcTransportError extends Error {
   }
 }
 
-/** Serializa um request para NDJSON (uma linha). */
+/** Serializes a request as NDJSON (one line). */
 export function encodeRequest(req: JsonRpcRequest): string {
   return `${JSON.stringify(req)}\n`;
 }
 
-/** Faz parse + validação de uma linha NDJSON recebida do bridge. */
+/** Parses and validates one NDJSON line received from the bridge. */
 export function decodeIncoming(line: string): JsonRpcIncoming {
   let parsed: unknown;
   try {
@@ -134,12 +134,12 @@ export function decodeIncoming(line: string): JsonRpcIncoming {
   return result.data;
 }
 
-/** Discriminator: é response (tem id e result|error)? */
+/** Discriminator: is this a response (has id and result|error)? */
 export function isResponse(msg: JsonRpcIncoming): msg is JsonRpcResponse {
   return "id" in msg && ("result" in msg || "error" in msg);
 }
 
-/** Discriminator: é notification (sem id, só method)? */
+/** Discriminator: is this a notification (no id, only method)? */
 export function isNotification(msg: JsonRpcIncoming): msg is JsonRpcNotification {
   return "method" in msg && !("id" in msg);
 }

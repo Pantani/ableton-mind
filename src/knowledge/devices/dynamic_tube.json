@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Tube saturation modelado em 3 tipos (A/B/C — cool, gentle, aggressive). Bias + Envelope controls.",
+  "description": "Tube saturation modeled in three types (A/B/C: cool, gentle, aggressive). Bias + Envelope controls.",
   "source": "curated (Cycle 15)",
   "completeness": "complete",
   "parameters": [
@@ -28,7 +28,7 @@
       "unit": "curve",
       "automatable": true,
       "modulatable": true,
-      "description": "Não-linear. 0.5 ≠ metade do drive máximo."
+      "description": "Non-linear. 0.5 is not half of maximum drive."
     },
     {
       "index": 2,

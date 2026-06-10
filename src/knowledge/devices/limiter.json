@@ -18,7 +18,7 @@
       "unit": "dB",
       "automatable": true,
       "modulatable": true,
-      "description": "Input gain antes do limiter."
+      "description": "Input gain before the limiter."
     },
     {
       "index": 1,
@@ -38,7 +38,7 @@
       "default": 0.5,
       "unit": "enum",
       "automatable": false,
-      "description": "0=Auto, ou time fixo entre 0.5 e 1 segundo."
+      "description": "0=Auto, or fixed time between 0.5 and 1 second."
     },
     {
       "index": 3,

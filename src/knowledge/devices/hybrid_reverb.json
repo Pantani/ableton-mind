@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "11.0",
-  "description": "Reverb que combina algorítmico (Room/Hall/Plate/Shimmer) com convolution (IR samples). Modes: Convolution / Algorithm / Serial / Parallel.",
+  "description": "Reverb that combines algorithmic modes (Room/Hall/Plate/Shimmer) with convolution (IR samples). Modes: Convolution / Algorithm / Serial / Parallel.",
   "source": "curated (Cycle 9)",
   "completeness": "complete",
   "parameters": [
@@ -28,7 +28,7 @@
       "unit": "linear",
       "automatable": true,
       "modulatable": true,
-      "description": "Só ativo em Serial/Parallel."
+      "description": "Only active in Serial/Parallel."
     },
     {
       "index": 2,
@@ -196,7 +196,7 @@
       "unit": "bool",
       "automatable": true,
       "modulatable": true,
-      "description": "Congela tail."
+      "description": "Freezes the tail."
     }
   ],
   "todo": []

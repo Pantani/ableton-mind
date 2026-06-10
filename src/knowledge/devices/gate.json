@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Noise gate com sidechain interno e flip mode (Gate / Duck).",
+  "description": "Noise gate with internal sidechain and flip mode (Gate / Duck).",
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [
@@ -63,7 +63,7 @@
       "default": -36,
       "unit": "dB",
       "automatable": true,
-      "description": "Floor da redução; -96 = mute prático."
+      "description": "Reduction floor; -96 = practical mute."
     },
     {
       "index": 6,

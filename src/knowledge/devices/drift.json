@@ -5,7 +5,7 @@
   "category": "instrument",
   "vendor": "Ableton",
   "live_version_min": "12.0",
-  "description": "Subtractive synth analógico-vibe (Live 12+). 2 oscs, sync, modulation, filter type variável, perfect para leads / pads / arps clássicos.",
+  "description": "Analog-vibe subtractive synth (Live 12+). Two oscillators, sync, modulation, variable filter type, ideal for classic leads, pads and arps.",
   "source": "curated (Cycle 9)",
   "completeness": "complete",
   "parameters": [
@@ -93,7 +93,7 @@
       "unit": "linear",
       "automatable": true,
       "modulatable": true,
-      "description": "0=só Osc 1, 1=só Osc 2."
+      "description": "0=Osc 1 only, 1=Osc 2 only."
     },
     {
       "index": 9,

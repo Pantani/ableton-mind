@@ -1,5 +1,6 @@
 import ast
 from pathlib import Path
+from typing import List, Optional, Tuple
 import unittest
 
 
@@ -18,7 +19,7 @@ def _is_builtin_generic_annotation(node: ast.AST) -> bool:
     )
 
 
-def _inspect_annotation(annotation):
+def _inspect_annotation(annotation: Optional[ast.AST]) -> List[Tuple[int, int, str]]:
     if annotation is None:
         return []
     return [
@@ -28,7 +29,7 @@ def _inspect_annotation(annotation):
     ]
 
 
-def _function_annotations(node):
+def _function_annotations(node: ast.AST) -> List[Optional[ast.AST]]:
     annotations = [node.returns]
     annotations.extend(arg.annotation for arg in node.args.args)
     annotations.extend(arg.annotation for arg in node.args.kwonlyargs)

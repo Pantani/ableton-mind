@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Compressor com 3 modos de detecção (Peak, RMS, Expand), sidechain interno/externo, knee ajustável, lookahead e auto makeup gain.",
+  "description": "Compressor with three detection modes (Peak, RMS, Expand), internal/external sidechain, adjustable knee, lookahead and auto makeup gain.",
   "source": "curated (Cycle 6)",
   "completeness": "complete",
   "parameters": [
@@ -90,7 +90,7 @@
       "default": 0,
       "unit": "bool",
       "automatable": true,
-      "description": "Release adaptativo ao programa."
+      "description": "Program-adaptive release."
     },
     {
       "index": 8,
@@ -139,7 +139,7 @@
       "default": 0,
       "unit": "bool",
       "automatable": false,
-      "description": "Ativa external/EQ sidechain."
+      "description": "Enables external/EQ sidechain."
     },
     {
       "index": 13,
@@ -169,7 +169,7 @@
       "default": 0,
       "unit": "bool",
       "automatable": false,
-      "description": "Solo o sinal de sidechain."
+      "description": "Solo the sidechain signal."
     },
     {
       "index": 16,
@@ -179,7 +179,7 @@
       "default": 0,
       "unit": "bool",
       "automatable": false,
-      "description": "EQ no sidechain interno."
+      "description": "EQ on the internal sidechain."
     },
     {
       "index": 17,

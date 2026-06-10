@@ -23,10 +23,10 @@ function resolveSymlinkTarget(linkPath: string, rawTarget: string): string {
 export function describeRemoteScriptInstall(target: string, expectedSource: string): DoctorCheck {
   if (!existsSync(target) && !isDanglingSymlink(target)) {
     return {
-      name: "Remote Script instalado",
+      name: "Remote Script installed",
       ok: false,
-      detail: "ausente",
-      hint: "Rode `node scripts/install-remote-script.mjs` na raiz do repo.",
+      detail: "missing",
+      hint: "Run `node scripts/install-remote-script.mjs` from the repo root.",
     };
   }
 
@@ -43,23 +43,23 @@ export function describeRemoteScriptInstall(target: string, expectedSource: stri
       detail: `symlink -> ${actual}`,
       hint: ok
         ? undefined
-        : "Reinstale para apontar para o current checkout: `node scripts/install-remote-script.mjs --force`.",
+        : "Reinstall so it points to the current checkout: `node scripts/install-remote-script.mjs --force`.",
     };
   }
 
   if (stat.isDirectory()) {
     return {
-      name: "Remote Script instalado",
+      name: "Remote Script installed",
       ok: true,
-      detail: "cópia",
+      detail: "copy",
     };
   }
 
   return {
-    name: "Remote Script instalado",
+    name: "Remote Script installed",
     ok: false,
-    detail: "arquivo inesperado",
-    hint: "Remova o arquivo e rode `node scripts/install-remote-script.mjs`.",
+    detail: "unexpected file",
+    hint: "Remove the file and run `node scripts/install-remote-script.mjs`.",
   };
 }
 
@@ -76,7 +76,7 @@ export function versionMatchCheck(
     detail: `bridge=${bridge} pkg=${pkg}`,
     hint: ok
       ? undefined
-      : "Reinstale o Remote Script deste checkout e reinicie/reative o Control Surface no Ableton Live.",
+      : "Reinstall the Remote Script from this checkout and restart/reactivate the Control Surface in Ableton Live.",
   };
 }
 

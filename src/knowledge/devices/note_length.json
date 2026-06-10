@@ -56,7 +56,7 @@
       "default": 0,
       "unit": "%",
       "automatable": true,
-      "description": "Trigger on note-on (-) ou note-off (+)."
+      "description": "Trigger on note-on (-) or note-off (+)."
     },
     {
       "index": 5,

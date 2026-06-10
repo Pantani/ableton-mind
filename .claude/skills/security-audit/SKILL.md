@@ -26,6 +26,10 @@ Each finding must include:
 - Suggested fix.
 - Verification command or review step.
 
+## Report Format
+
+Write _workspace/quality-audit/security-{N}.md with findings that include all required fields from the "Finding Requirements" section above.
+
 ## Non-Goals
 
 Do not report generic "dependency exists" noise without an affected path. Do not run external write or publish actions while auditing.

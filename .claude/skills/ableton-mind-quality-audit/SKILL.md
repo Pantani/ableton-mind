@@ -24,8 +24,8 @@ Use ableton-mind-build for feature phase execution. Use this skill when the goal
 
 ## Phase 0 - Context And Mode
 
-1. Read PLAN.md, _workspace/PROGRESS.md, _workspace/tech-debt.md if present, latest _workspace/qa reports and latest _workspace/quality-audit reports.
-2. Read package.json, pyproject.toml, ruff.toml, biome/eslint/tsconfig/vitest config, .github/workflows and Dockerfile.
+1. Read `PLAN.md`, `_workspace/PROGRESS.md`, `_workspace/tech-debt.md` if present, latest `_workspace/qa` reports and latest `_workspace/quality-audit` reports.
+2. Read `package.json`, `pyproject.toml`, `ruff.toml`, biome/eslint/tsconfig/vitest config, `.github/workflows` and `Dockerfile`.
 3. Check git status. Preserve unrelated local changes.
 4. Choose mode:
 
@@ -124,7 +124,7 @@ Do not pretend hardware, publish, registry or credentialed checks passed. Report
 ## Test Scenarios
 
 Normal flow:
-- User: "criar time para uma auditoria completa, testar todos os comandos, ver seguranca/usabilidade/refactor/testes."
+- User: "create a team for a complete audit, test every command, check security/usability/refactor/tests."
 - Expected: create/read briefing, launch all tracks, classify commands, run safe matrix, write report/backlog, then fix scoped findings only when requested or included in the briefing.
 
 Error flow:

@@ -72,7 +72,7 @@ The npm artifact, DXT/MCPB bundle, Docker build and central manifest version syn
 
 ### MINOR: Doctor reports symlink as copy
 
-- Evidence: installer check sees symlink; doctor follows it and reports `copia`.
+- Evidence: installer check sees symlink; doctor follows it and reports `copy`.
 - Risk: install diagnostics are misleading.
 - Suggested fix: use `lstatSync` and print symlink target.
 - Verification: installer check and doctor agree on symlink/copy.
