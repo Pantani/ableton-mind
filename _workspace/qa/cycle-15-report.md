@@ -32,7 +32,7 @@ Applied already in Cycle 15: Drum Buss Drive (Cycle 14) preceded but now `Dynami
 
 ## Knowledge — 45 devices (90% PLAN.md §5) 🎯
 
-New Cycle 15: Cabinet (guitar IR sim), Dynamic Tube (3-type sat with curve units), Filter Delay (3 lines L/L+R/R), Grain Delay (granular pitch/spray), Utility (essential mixing).
+New Cycle 15: Cabinet (guitar IR simulator), Dynamic Tube (3-type sat with curve units), Filter Delay (3 lines L/L+R/R), Grain Delay (granular pitch/spray), Utility (essential mixing).
 
 ## Recipes — 12
 

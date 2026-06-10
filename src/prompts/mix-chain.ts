@@ -14,7 +14,7 @@ export const mixChainPrompt: PromptDefinition = {
     },
     {
       name: "track_index",
-      description: "Index da track destino (default 0; master = -1)",
+      description: "Destination track index (default 0; master = -1)",
       required: false,
     },
   ],
@@ -28,8 +28,8 @@ export const mixChainPrompt: PromptDefinition = {
     const recommendations: Record<string, string[]> = {
       drums: [
         `1. \`apply_recipe { recipe_id: 'racks/parallel-comp', overrides: { track_index: ${idx} } }\``,
-        "2. Drum Buss para glue: load + tweak Drive (curva não-linear, comece em 0.2-0.4) e Boom Freq.",
-        "3. EQ Eight para shape — corte mud (200-400 Hz) e brilhe (8-12 kHz).",
+        "2. Drum Buss for glue: load + tweak Drive (non-linear curve, start at 0.2-0.4) and Boom Freq.",
+        "3. EQ Eight for shape: cut mud (200-400 Hz) and brighten (8-12 kHz).",
       ],
       bass: [
         `1. \`apply_recipe { recipe_id: 'mixing/bass-glue', overrides: { track_index: ${idx} } }\``,
@@ -37,12 +37,12 @@ export const mixChainPrompt: PromptDefinition = {
       ],
       vocal: [
         `1. \`apply_recipe { recipe_id: 'mixing/vocal-chain', overrides: { track_index: ${idx} } }\``,
-        "2. De-essing (não temos recipe; setup manual EQ Eight bell @ 6-8 kHz dynamic).",
-        "3. Add Reverb (send-style) com Predelay 30 ms.",
+        "2. De-essing (no recipe yet; set up manual EQ Eight bell @ 6-8 kHz dynamic).",
+        "3. Add Reverb (send-style) with Predelay 30 ms.",
       ],
       master: [
         "1. `apply_recipe { recipe_id: 'mixing/master-bus', overrides: { limiter_ceiling: -0.3 } }` (track_index -1).",
-        "2. Spectrum analyzer (instance Spectrum) para checar balance final.",
+        "2. Spectrum analyzer (Spectrum instance) to check the final balance.",
       ],
     };
     const steps = recommendations[s] ?? [

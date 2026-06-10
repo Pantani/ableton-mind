@@ -1,15 +1,15 @@
 /**
- * ableton-mind doctor — diagnostico de instalação.
+ * ableton-mind doctor - installation diagnostics.
  *
  * Checks:
  *  - Node >= 20
- *  - Remote Script symlink/cópia em ~/Music/Ableton/User Library/Remote Scripts/AbletonMind
- *  - Porta 9876 escutando (= Live carregou o script)
- *  - dist/ buildado (build:dxt-ready)
- *  - Knowledge base válida (carrega todos os devices)
- *  - Recipes válidas (carrega todas)
+ *  - Remote Script symlink/copy at ~/Music/Ableton/User Library/Remote Scripts/AbletonMind
+ *  - Port 9876 listening (= Live loaded the script)
+ *  - dist/ built (build:dxt-ready)
+ *  - Valid knowledge base (loads all devices)
+ *  - Valid recipes (loads all recipes)
  *
- * Phase 7. Uso: `npx ableton-mind-doctor` ou `node dist/cli/doctor.js`.
+ * Phase 7. Usage: `npx ableton-mind-doctor` or `node dist/cli/doctor.js`.
  */
 
 import { existsSync, readFileSync, statSync } from "node:fs";
@@ -50,7 +50,7 @@ async function checkNode(): Promise<Check> {
     name: "Node.js >= 20",
     ok: major >= 20,
     detail: `v${process.versions.node}`,
-    hint: "Atualize Node para 20+: https://nodejs.org",
+    hint: "Update Node to 20+: https://nodejs.org",
   };
 }
 
@@ -63,22 +63,22 @@ async function checkRemoteScript(): Promise<Check> {
   const target = paths[process.platform];
   if (!target) {
     return {
-      name: "Remote Script instalado",
+      name: "Remote Script installed",
       ok: false,
-      detail: `Plataforma ${process.platform} não suportada`,
+      detail: `Platform ${process.platform} is not supported`,
     };
   }
   const exists = existsSync(target);
-  let detail = "ausente";
+  let detail = "missing";
   if (exists) {
     const st = statSync(target);
-    detail = st.isSymbolicLink() ? "symlink (dev)" : "cópia";
+    detail = st.isSymbolicLink() ? "symlink (dev)" : "copy";
   }
   return {
-    name: "Remote Script instalado",
+    name: "Remote Script installed",
     ok: exists,
     detail,
-    hint: "Rode `node scripts/install-remote-script.mjs` na raiz do repo.",
+    hint: "Run `node scripts/install-remote-script.mjs` from the repo root.",
   };
 }
 
@@ -90,24 +90,24 @@ async function checkBridgePort(): Promise<Check> {
     const timer = setTimeout(() => {
       sock.destroy();
       resolve({
-        name: `Bridge em ${host}:${port}`,
+        name: `Bridge at ${host}:${port}`,
         ok: false,
         detail: "timeout",
-        hint: "Abra o Live e ative AbletonMind em Preferences → Link/Tempo/MIDI → Control Surface.",
+        hint: "Open Live and enable AbletonMind in Preferences -> Link/Tempo/MIDI -> Control Surface.",
       });
     }, 1500);
     sock.once("connect", () => {
       clearTimeout(timer);
       sock.end();
-      resolve({ name: `Bridge em ${host}:${port}`, ok: true, detail: "respondendo" });
+      resolve({ name: `Bridge at ${host}:${port}`, ok: true, detail: "responding" });
     });
     sock.once("error", (err) => {
       clearTimeout(timer);
       resolve({
-        name: `Bridge em ${host}:${port}`,
+        name: `Bridge at ${host}:${port}`,
         ok: false,
         detail: err.message,
-        hint: "Live aberto? Control Surface AbletonMind selecionado?",
+        hint: "Is Live open? Is AbletonMind selected as a Control Surface?",
       });
     });
   });
@@ -119,25 +119,25 @@ async function checkKnowledge(): Promise<Check> {
     return {
       name: "Knowledge base",
       ok: true,
-      detail: `${devices.length} devices carregados`,
+      detail: `${devices.length} devices loaded`,
     };
   } catch (err) {
     return {
       name: "Knowledge base",
       ok: false,
       detail: (err as Error).message,
-      hint: "Algum JSON em src/knowledge/devices/ está inválido.",
+      hint: "Some JSON in src/knowledge/devices/ is invalid.",
     };
   }
 }
 
 /**
- * TD-039: Doctor confirma que `package.json::version` == `dxt/manifest.json::version`.
- * ADR-0009 exige que essas versões marchem para release ser válido.
+ * TD-039: Doctor confirms `package.json::version` == `dxt/manifest.json::version`.
+ * ADR-0009 requires these versions to move together for a valid release.
  *
- * Em runtime instalado (npm i -g), `dxt/manifest.json` pode não estar
- * empacotado — nesse caso, marcamos como `ok: true` com detail "skip
- * (manifest not bundled)" para não quebrar usuários.
+ * In an installed runtime (`npm i -g`), `dxt/manifest.json` may not be bundled.
+ * In that case, mark `ok: true` with detail "skip (manifest not bundled)" so
+ * installed users are not broken.
  */
 async function checkVersionSync(): Promise<Check> {
   try {
@@ -151,7 +151,7 @@ async function checkVersionSync(): Promise<Check> {
       return {
         name: "Version sync (pkg ↔ DXT)",
         ok: true,
-        detail: "skip (package.json não encontrado)",
+        detail: "skip (package.json not found)",
       };
     }
     const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as { version?: string };
@@ -159,7 +159,7 @@ async function checkVersionSync(): Promise<Check> {
       return {
         name: "Version sync (pkg ↔ DXT)",
         ok: true,
-        detail: `skip (dxt/manifest.json ausente, pkg=${pkg.version ?? "?"})`,
+        detail: `skip (dxt/manifest.json missing, pkg=${pkg.version ?? "?"})`,
       };
     }
     const dxt = JSON.parse(readFileSync(dxtPath, "utf8")) as { version?: string };
@@ -168,7 +168,7 @@ async function checkVersionSync(): Promise<Check> {
       name: "Version sync (pkg ↔ DXT)",
       ok,
       detail: ok ? `v${pkg.version}` : `pkg=${pkg.version} ≠ dxt=${dxt.version}`,
-      hint: "Atualize ambos para a mesma versão (ADR-0009).",
+      hint: "Update both to the same version (ADR-0009).",
     };
   } catch (err) {
     return {
@@ -180,8 +180,8 @@ async function checkVersionSync(): Promise<Check> {
 }
 
 /**
- * Doctor 7º check (Cycle 20): MCP primitives surface. Catches regressions tipo
- * "registry de tools quebrou import e voltou 0".
+ * Doctor 7th check (Cycle 20): MCP primitives surface. Catches regressions like
+ * "tool registry import broke and returned to 0".
  */
 async function checkMcpPrimitives(): Promise<Check> {
   const tools = allTools.length;
@@ -192,7 +192,7 @@ async function checkMcpPrimitives(): Promise<Check> {
     name: "MCP primitives",
     ok,
     detail: `${tools} tools / ${prompts} prompts / ${resources} resources`,
-    hint: "Esperado: ≥30 tools, ≥5 prompts, ≥3 resources. Cheque imports em src/tools/index.ts, src/prompts/index.ts, src/resources/index.ts.",
+    hint: "Expected: >=30 tools, >=5 prompts, >=3 resources. Check imports in src/tools/index.ts, src/prompts/index.ts, src/resources/index.ts.",
   };
 }
 
@@ -202,14 +202,14 @@ async function checkRecipes(): Promise<Check> {
     return {
       name: "Recipes",
       ok: true,
-      detail: `${recipes.length} recipes carregadas`,
+      detail: `${recipes.length} recipes loaded`,
     };
   } catch (err) {
     return {
       name: "Recipes",
       ok: false,
       detail: (err as Error).message,
-      hint: "Algum JSON em recipes/ está inválido.",
+      hint: "Some JSON in recipes/ is invalid.",
     };
   }
 }
@@ -233,7 +233,9 @@ async function main(): Promise<void> {
   }
   const failed = checks.filter((c) => !c.ok).length;
   const summary =
-    failed === 0 ? `${GREEN}✓ tudo ok` : `${RED}✗ ${failed} check${failed > 1 ? "s" : ""} falharam`;
+    failed === 0
+      ? `${GREEN}✓ all checks passed`
+      : `${RED}✗ ${failed} check${failed > 1 ? "s" : ""} failed`;
   out(`\n${summary}${RESET}\n`);
   process.exit(failed === 0 ? 0 : 1);
 }
