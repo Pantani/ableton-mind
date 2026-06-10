@@ -33,7 +33,7 @@ For a local source checkout, point the client at `dist/index.js`:
 
 Use the absolute path from your machine.
 
-## 3. Claude Desktop `.mcpb` (after RC)
+## 3. Claude Desktop `.mcpb` (local bundle)
 
 The repo can build a bundle locally:
 
@@ -41,7 +41,7 @@ The repo can build a bundle locally:
 npm run build:dxt
 ```
 
-Drag the generated `.mcpb` into Claude Desktop. Public downloads will be linked after `v0.1.0-rc.1`.
+Drag the generated `.mcpb` into Claude Desktop. Public downloads will be linked after the final `0.1.0` publish gate.
 
 ## 4. npm global (after publish)
 
@@ -74,6 +74,6 @@ docker run --rm -it \
 
 ## 6. Smithery
 
-`smithery.yaml` is present for the release path. Publish after the RC/package gates are green.
+`smithery.yaml` is present for the release path. Publish after the final manual release gate.
 
 Full details in [Distribution](../distribution).

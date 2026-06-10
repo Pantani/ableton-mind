@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-label="ableton-mind social preview">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fcff50"/>
+      <stop offset="1" stop-color="#ff7a1a"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0b0e"/>
+      <stop offset="1" stop-color="#161620"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1f1f28" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#grid)" opacity="0.5"/>
+
+  <!-- eyebrow -->
+  <circle cx="92" cy="106" r="6" fill="url(#g)"/>
+  <text x="112" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" font-weight="600" letter-spacing="6" fill="#c8c8d0">MODEL CONTEXT PROTOCOL</text>
+
+  <!-- title -->
+  <text x="80" y="260" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="140" font-weight="800" fill="#f4f4f6">ableton-mind</text>
+
+  <!-- subtitle -->
+  <text x="80" y="340" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="40" font-weight="700" fill="url(#g)">Ableton Live MCP server</text>
+
+  <!-- description -->
+  <text x="80" y="420" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="26" fill="#b8b8c2">Produce music in Ableton Live from plain language — describe a track to</text>
+  <text x="80" y="458" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="26" fill="#b8b8c2">Claude, Cursor or Codex and it builds clips, devices and arrangements.</text>
+
+  <!-- repo url -->
+  <text x="80" y="540" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#7a7a86">github.com/Pantani/ableton-mind</text>
+
+  <!-- decorative LOM-like node network on the right -->
+  <g transform="translate(960,360)" stroke="url(#g)" stroke-width="2" fill="none" opacity="0.9">
+    <line x1="0" y1="0" x2="-120" y2="-80"/>
+    <line x1="0" y1="0" x2="-120" y2="80"/>
+    <line x1="0" y1="0" x2="120" y2="-80"/>
+    <line x1="0" y1="0" x2="120" y2="80"/>
+    <line x1="0" y1="0" x2="0" y2="-140"/>
+  </g>
+  <g transform="translate(960,360)">
+    <circle r="14" fill="#f4f4f6"/>
+    <circle cx="-120" cy="-80" r="10" fill="#fcff50"/>
+    <circle cx="-120" cy="80" r="10" fill="#ff7a1a"/>
+    <circle cx="120" cy="-80" r="10" fill="#ff7a1a"/>
+    <circle cx="120" cy="80" r="10" fill="#fcff50"/>
+    <circle cx="0" cy="-140" r="10" fill="#fcff50"/>
+  </g>
+</svg>

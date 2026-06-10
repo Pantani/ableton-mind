@@ -34,7 +34,7 @@ Reinicie o Live depois de copiar.
 
 ## npm ou .mcpb nao funciona
 
-No estado atual desta passada de docs, os canais publicos npm e release bundle ainda nao foram publicados. Use build via source ate o blocker de package validation fechar:
+Os canais publicos npm e release bundle ainda nao foram publicados. Use build via source ate o gate manual final de publicacao rodar:
 
 ```bash
 npm ci

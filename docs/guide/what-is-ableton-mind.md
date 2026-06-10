@@ -25,7 +25,7 @@ Most AI music workflows stop at advice. `ableton-mind` is designed around three 
 
 ## Current status
 
-The code has passed a real Ableton Live 12.4.1 smoke test for core transport/session/track operations. Public npm and `.mcpb` release channels are still blocked until TD-048 package validation is green, so use the source install path for now.
+The code has passed a real Ableton Live 12.4.1 smoke test for core transport/session/track operations, and the `0.1.0` package validation gates are green. Public npm and `.mcpb` release channels are not published yet, so use the source install or local bundle path until the final manual publish gate runs.
 
 ## Next steps
 

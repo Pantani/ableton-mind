@@ -34,7 +34,7 @@ features:
     details: Mudanças no LOM viram MCP notifications. O LLM "vê" o usuário tocar, gravar, mudar tempo.
   - icon: 📦
     title: Caminho de distribuicao
-    details: Source install funciona hoje. .mcpb one-click, npm, Docker e Smithery estao configurados, mas o RC publico espera package validation.
+    details: Source install funciona hoje. .mcpb one-click, npm, Docker e Smithery estao validados para 0.1.0; canais publicos esperam o gate manual de publicacao.
 ---
 
 ## Dois caminhos
@@ -54,9 +54,9 @@ features:
 | 4 — Automation envelopes | linear/hold |
 | 5 — Preview/verify | snapshot+diff |
 | 6 — Push 1/2/3 | pad/button/mode |
-| 7 — Distribuição | source ok; RC bloqueado por TD-048 |
-| 8 — Long tail | em aberto |
+| 7 — Distribuição | DXT/Docker/Smithery/CI/release ready |
+| 8 — Long tail | resources entregues; M4L/VST3/Live Link pendentes |
 
 > Atualmente: **33 tools MCP**, **5 prompts**, **3 resources MCP**, **55 device schemas**, **14 recipes** em 7/7 categorias, **verify loop 23/23** e **smoke real PASS no Ableton Live 12.4.1** para core bridge/session/transport/track.
 
-Os canais publicos npm e release bundle ainda nao foram publicados. O proximo passo de engenharia e TD-048: deixar `npm run typecheck`, `npm test`, `npm run build` e `npm run build:dxt:check` verdes, depois cortar `v0.1.0-rc.1`.
+Os gates de validacao estao verdes para `0.1.0`, incluindo typecheck, lint, testes, build, `.mcpb`, docs build, dry-runs de package e doctor. Os canais publicos npm, GitHub Release, MCP Registry, Smithery/Glama e Docker/ghcr.io ainda nao foram publicados; eles esperam o gate manual final. TD-030, smoke de hardware Push 2/3, continua bloqueado ate existir hardware fisico disponivel.

@@ -25,7 +25,7 @@ Muitos fluxos de IA para musica param em conselho. `ableton-mind` foi desenhado 
 
 ## Estado atual
 
-O codigo ja passou smoke real no Ableton Live 12.4.1 para operacoes centrais de transport/session/track. Os canais publicos npm e `.mcpb` ainda estao bloqueados ate o TD-048 de package validation ficar verde, entao use instalacao via source por enquanto.
+O codigo ja passou smoke real no Ableton Live 12.4.1 para operacoes centrais de transport/session/track, e os gates de package validation do `0.1.0` estao verdes. Os canais publicos npm e `.mcpb` ainda nao foram publicados, entao use instalacao via source ou bundle local ate o gate manual final rodar.
 
 ## Proximos passos
 

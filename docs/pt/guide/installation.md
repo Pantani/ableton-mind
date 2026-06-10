@@ -33,7 +33,7 @@ Para checkout local, aponte o cliente para `dist/index.js`:
 
 Use o path absoluto da sua maquina.
 
-## 3. Claude Desktop `.mcpb` (apos RC)
+## 3. Claude Desktop `.mcpb` (bundle local)
 
 O repo ja consegue montar bundle local:
 
@@ -41,7 +41,7 @@ O repo ja consegue montar bundle local:
 npm run build:dxt
 ```
 
-Arraste o `.mcpb` gerado para o Claude Desktop. Downloads publicos entram depois de `v0.1.0-rc.1`.
+Arraste o `.mcpb` gerado para o Claude Desktop. Downloads publicos entram depois do gate manual final do `0.1.0`.
 
 ## 4. npm global (apos publicacao)
 
@@ -76,7 +76,7 @@ Util para CI e sandboxes; para uso interativo no desktop, source ou `.mcpb` tend
 
 ## 6. Smithery
 
-`smithery.yaml` existe para o caminho de release. Publique depois que os gates de RC/package estiverem verdes.
+`smithery.yaml` existe para o caminho de release. Publique depois do gate manual final de release.
 
 ## Detalhes completos
 

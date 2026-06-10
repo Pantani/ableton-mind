@@ -34,7 +34,7 @@ Restart Live after copying.
 
 ## npm or .mcpb install does not work
 
-As of the current docs pass, public npm and release bundle channels are not published yet. Build from source until the package validation blocker is closed:
+Public npm and release bundle channels are not published yet. Build from source until the final manual publish gate runs:
 
 ```bash
 npm ci

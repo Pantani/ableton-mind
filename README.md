@@ -2,7 +2,7 @@
 
 Definitive MCP (Model Context Protocol) server for **Ableton Live**. Exposes the full **Live Object Model** to LLMs (Claude, Cursor, etc.) with an embedded native device knowledge base, declarative music recipes, an integrated verify loop, and reactive listeners.
 
-> Status: **alpha** — core smoke passed against Ableton Live 12.4.1 on macOS, but `v0.1.0-rc.1` is still blocked by package validation (TD-048). API unstable. Don't use in production yet.
+> Status: **alpha / v0.1.0 release-ready** — core smoke passed against Ableton Live 12.4.1 on macOS and package validation is green. Public npm/GitHub/MCP registry releases still require the final manual publish gate. API unstable. Don't use in production yet.
 
 📚 **Full documentation:** [pantani.github.io/ableton-mind/](https://pantani.github.io/ableton-mind/)
 
@@ -22,7 +22,7 @@ Full spec in [`PLAN.md`](PLAN.md). Frozen contracts in [`_workspace/contracts/`]
 
 | Capability | ahujasid/ableton-mcp | AbletonOSC + MCP wrapper | **ableton-mind** |
 |---|---|---|---|
-| MCP tools | 22 | ~30 | **31+** |
+| MCP tools | 22 | ~30 | **33** |
 | LOM coverage | ~10% | ~95% | **~100%** |
 | Knowledge base | none | none | **55 devices, scales, drum kits** |
 | Recipes | none | none | **14 across 7 categories** |
@@ -117,10 +117,10 @@ Checks Node version, Remote Script install, bridge port, knowledge base integrit
 ## Distribution
 
 - **Source today:** `npm ci && npm run build && npm run install:remote-script`.
-- **Claude Desktop one-click:** `npm run build:dxt` builds `build/ableton-mind-<ver>.mcpb`; public release bundle waits on TD-048.
+- **Claude Desktop one-click:** `npm run build:dxt` builds `build/ableton-mind-<ver>.mcpb`; the release bundle is validated locally and waits only on the manual publish gate.
 - **Docker:** `docker build -t ableton-mind . && docker run --rm -i --network host ableton-mind`.
 - **Smithery:** [`smithery.yaml`](smithery.yaml) ready for the release path.
-- **npm:** not published yet; publish after RC/package gates are green.
+- **npm:** not published yet; `npm publish --dry-run` is green, publish only after explicit release approval.
 
 ## Roadmap
 
@@ -135,8 +135,8 @@ See [`PLAN.md §12`](PLAN.md) and [`_workspace/PROGRESS.md`](_workspace/PROGRESS
 | 4 — Automation envelopes | ✅ |
 | 5 — Preview/verify | ✅ snapshot+diff (bounce planned) |
 | 6 — Push | ✅ pad/button/mode LEDs |
-| 7 — Distribution | 🔴 package validation blocker TD-048 |
-| 8 — Long tail | pending |
+| 7 — Distribution | ✅ DXT/Docker/Smithery/CI/release ready |
+| 8 — Long tail | 🔵 resources delivered; M4L/VST3/Live Link pending |
 
 ## License
 

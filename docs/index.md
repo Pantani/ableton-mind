@@ -34,7 +34,7 @@ features:
     details: LOM property changes become MCP notifications. The LLM "sees" the user play, record, change tempo.
   - icon: 📦
     title: Distribution path
-    details: Source install works today. One-click .mcpb, npm, Docker and Smithery are wired but the public RC waits on package validation.
+    details: Source install works today. One-click .mcpb, npm, Docker and Smithery are validated for 0.1.0, with public channels waiting on the manual publish gate.
 ---
 
 ## Two ways in
@@ -47,4 +47,4 @@ features:
 
 **33 MCP tools**, **5 prompts**, **3 MCP resources**, **55 device schemas**, **14 recipes** across 7/7 categories, **verify loop 23/23**, and **real Ableton Live 12.4.1 smoke PASS** for core bridge/session/transport/track flows.
 
-Public npm and release bundles are not published yet. The next engineering step is TD-048: make `npm run typecheck`, `npm test`, `npm run build` and `npm run build:dxt:check` green, then cut `v0.1.0-rc.1`.
+Validation gates are green for `0.1.0`, including typecheck, lint, tests, build, `.mcpb`, docs build, package dry-runs and doctor. Public npm, GitHub Release, MCP Registry, Smithery/Glama and Docker/ghcr.io channels are not published yet; they wait on the final manual publish gate. TD-030 Push 2/3 hardware smoke remains hardware-blocked until physical hardware is available.
