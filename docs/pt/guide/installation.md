@@ -1,41 +1,82 @@
 # Instalação
 
-Quatro canais. Escolha pela audiência.
+O caminho funcional hoje e **instalacao via source**. Os canais publicos npm, GitHub Release e `.mcpb` one-click estao configurados no repo, mas ainda nao foram publicados.
 
-## 1. Claude Desktop `.mcpb` (recomendado)
-
-Bundle one-click. Baixe `ableton-mind.mcpb` na [release mais recente](https://github.com/Pantani/ableton-mind/releases) e dê duplo-clique. O Claude Desktop registra o servidor e roda o setup do Remote Script automaticamente.
-
-## 2. npm global
+## 1. Instalacao via source (atual)
 
 ```bash
-npm install -g ableton-mind
-ableton-mind install:remote-script
+git clone https://github.com/Pantani/ableton-mind.git
+cd ableton-mind
+npm ci
+npm run build
+npm run install:remote-script
 ```
 
-Em `claude_desktop_config.json`:
+Depois ative `AbletonMind` no Live:
+
+**Live -> Preferences -> Link, Tempo & MIDI -> Control Surface -> AbletonMind**.
+
+## 2. Config do cliente MCP
+
+Para checkout local, aponte o cliente para `dist/index.js`:
 
 ```json
 {
   "mcpServers": {
-    "ableton-mind": { "command": "ableton-mind" }
+    "ableton-mind": {
+      "command": "node",
+      "args": ["/absolute/path/to/ableton-mind/dist/index.js"]
+    }
   }
 }
 ```
 
-## 3. Docker
+Use o path absoluto da sua maquina.
+
+## 3. Claude Desktop `.mcpb` (apos RC)
+
+O repo ja consegue montar bundle local:
+
+```bash
+npm run build:dxt
+```
+
+Arraste o `.mcpb` gerado para o Claude Desktop. Downloads publicos entram depois de `v0.1.0-rc.1`.
+
+## 4. npm global (apos publicacao)
+
+Comando planejado depois da publicacao:
+
+```bash
+npm install -g ableton-mind
+ableton-mind
+ableton-mind-doctor
+```
+
+Estado atual do registry: `ableton-mind` ainda nao esta publicado no npm.
+
+## 5. Docker
+
+Build local:
+
+```bash
+docker build -t ableton-mind .
+docker run --rm -i --network host ableton-mind
+```
+
+No macOS/Windows com Docker Desktop, talvez seja necessario usar `host.docker.internal` como host da bridge:
 
 ```bash
 docker run --rm -it \
   -e ABLETON_MIND_HOST=host.docker.internal \
-  ghcr.io/pantani/ableton-mind:latest
+  ableton-mind
 ```
 
-Útil para CI e sandboxes — não para uso interativo no desktop (o transport MCP é stdio).
+Util para CI e sandboxes; para uso interativo no desktop, source ou `.mcpb` tendem a ser mais simples.
 
-## 4. Smithery
+## 6. Smithery
 
-Listing em `smithery.yaml`. Quem usa Smithery para descobrir servidores MCP encontra `ableton-mind` lá.
+`smithery.yaml` existe para o caminho de release. Publique depois que os gates de RC/package estiverem verdes.
 
 ## Detalhes completos
 

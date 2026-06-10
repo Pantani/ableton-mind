@@ -2,7 +2,11 @@
 
 Como o `ableton-mind` chega ao usuário final. Cada canal tem audiência diferente.
 
-## 1. Claude Desktop `.mcpb` (recomendado)
+## Estado de release
+
+O caminho via source funciona hoje. Os canais publicos npm, GitHub Release e download `.mcpb` ainda nao foram publicados; `v0.1.0-rc.1` espera o TD-048 de package validation.
+
+## 1. Claude Desktop `.mcpb` (build local hoje, bundle publico depois do RC)
 
 One-click install. Geração:
 
@@ -15,7 +19,7 @@ Arraste o `.mcpb` sobre o Claude Desktop. Ele configura `claude_desktop_config.j
 
 User config (host/port/log_level) editável pelo próprio Claude Desktop UI conforme `dxt/manifest.json::user_config`.
 
-## 2. npm (after v1.0)
+## 2. npm (apos publicacao)
 
 ```bash
 npm install -g ableton-mind
@@ -24,6 +28,7 @@ ableton-mind-doctor         # diagnóstico
 ```
 
 Pre-1.0 fica `npm pack`/local install. CI valida `npm publish --dry-run`.
+Estado atual do registry: `ableton-mind` ainda nao esta publicado no npm.
 
 ## 3. Docker
 
@@ -62,7 +67,7 @@ docker run --rm -i \
 ```
 Ableton Live precisa aceitar conexão externa. O Remote Script padrão escuta em `0.0.0.0` se você setar `ABLETON_MIND_HOST=0.0.0.0` no User Library.
 
-**Opção C — Não use Docker em Windows.** Use o `.mcpb` ou `npm` local. Docker é primariamente para Linux/CI deployment.
+**Opção C — Não use Docker em Windows.** Use source install hoje, ou `.mcpb` depois do RC. Docker é primariamente para Linux/CI deployment.
 
 ## 4. Smithery
 
@@ -72,7 +77,7 @@ Ableton Live precisa aceitar conexão externa. O Remote Script padrão escuta em
 smithery publish
 ```
 
-Smithery hospeda o container e cria endpoint MCP. Usuário aponta Claude Desktop para o Smithery URL.
+Smithery hospeda o container e cria endpoint MCP. Usuário aponta Claude Desktop para o Smithery URL. Este e um canal de release, ainda nao uma listagem publica publicada.
 
 ## 5. Dev install
 

@@ -4,28 +4,28 @@ layout: home
 hero:
   name: ableton-mind
   text: The definitive MCP for Ableton Live
-  tagline: "\"Make me a 128 BPM tech house with a punchy kick, rolling bassline, swung hi-hats.\" — the LLM does it in Live. No guesswork, no visual hack."
+  tagline: "\"Make me a 128 BPM tech house with a punchy kick, rolling bassline, swung hi-hats.\" — the assistant builds it in Live, reads it back, and tells you what changed."
   actions:
     - theme: brand
-      text: Get started
-      link: /guide/getting-started
+      text: I'm an artist
+      link: /guide/what-is-ableton-mind
     - theme: alt
-      text: Install
-      link: /guide/installation
+      text: Prompt cookbook
+      link: /guide/prompt-cookbook
     - theme: alt
-      text: GitHub
-      link: https://github.com/Pantani/ableton-mind
+      text: Developer reference
+      link: /architecture
 
 features:
   - icon: 🎛️
-    title: Full LOM
-    details: ~180 tools covering the 21 Live Object Model domains — transport, tracks, clips, devices, automation, modulation, browser, arrangement, push.
+    title: Live tools, not guesses
+    details: 33 MCP tools today, targeting ~180 across the 21 Live Object Model domains — transport, tracks, clips, devices, automation, browser, arrangement, Push and more.
   - icon: 🧠
     title: Embedded knowledge base
     details: 55+ Live 12 native devices with parameter schemas (name, range, default, unit). The LLM never guesses "Osc 1 Position".
   - icon: 🍳
     title: Music recipes
-    details: Declarative JSON for drum kits, basslines, racks and arrangements per genre. The server expands recipes into tool sequences.
+    details: 14 declarative JSON recipes for drums, bass, chords, racks, arrangements, mixing and live performance.
   - icon: 🔁
     title: Verify loop
     details: After every batch, re-read state and diff against intent. Tools return { ok, verified, diff } — not just ok.
@@ -33,10 +33,18 @@ features:
     title: Reactive listeners
     details: LOM property changes become MCP notifications. The LLM "sees" the user play, record, change tempo.
   - icon: 📦
-    title: Full distribution
-    details: One-click DXT for Claude Desktop, npm publish with provenance, Docker for CI, Smithery listing.
+    title: Distribution path
+    details: Source install works today. One-click .mcpb, npm, Docker and Smithery are wired but the public RC waits on package validation.
 ---
 
-## Status
+## Two ways in
 
-**31 MCP tools**, **55 device schemas (~800 indexed params)**, **14 recipes** across 7/7 categories, **verify loop 23/23**, **7 `event.*` notifications**.
+**I make music.** Start with [What is ableton-mind?](./guide/what-is-ableton-mind), then [install from source](./guide/installation), make [your first Live set](./guide/first-live-set), and keep the [prompt cookbook](./guide/prompt-cookbook) open.
+
+**I'm a developer.** Jump to the [architecture](./architecture), [tools reference](./tools/), [knowledge base](./knowledge/), [recipes](./recipes/) and [distribution notes](./distribution).
+
+## Current status
+
+**33 MCP tools**, **5 prompts**, **3 MCP resources**, **55 device schemas**, **14 recipes** across 7/7 categories, **verify loop 23/23**, and **real Ableton Live 12.4.1 smoke PASS** for core bridge/session/transport/track flows.
+
+Public npm and release bundles are not published yet. The next engineering step is TD-048: make `npm run typecheck`, `npm test`, `npm run build` and `npm run build:dxt:check` green, then cut `v0.1.0-rc.1`.

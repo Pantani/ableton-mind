@@ -4,28 +4,28 @@ layout: home
 hero:
   name: ableton-mind
   text: O MCP definitivo para Ableton Live
-  tagline: "\"Crie um tech house de 128 BPM com kick punchy, bassline rolling, hi-hats com swing.\" — o LLM faz no Live. Sem palpite, sem cola visual."
+  tagline: "\"Crie um tech house de 128 BPM com kick punchy, bassline rolling, hi-hats com swing.\" — o assistente constroi no Live, le de volta e diz o que mudou."
   actions:
     - theme: brand
-      text: Começar
-      link: /guide/getting-started
+      text: Sou artista
+      link: /pt/guide/what-is-ableton-mind
     - theme: alt
-      text: Instalar
-      link: /guide/installation
+      text: Prompt cookbook
+      link: /pt/guide/prompt-cookbook
     - theme: alt
-      text: GitHub
-      link: https://github.com/Pantani/ableton-mind
+      text: Referencia dev
+      link: /pt/architecture
 
 features:
   - icon: 🎛️
-    title: 100% LOM
-    details: ~180 tools cobrindo os 21 domínios do Live Object Model — transport, tracks, clips, devices, automation, modulação, browser, arrangement, push.
+    title: Tools reais, nao palpite
+    details: 33 tools MCP hoje, mirando ~180 nos 21 dominios do Live Object Model — transport, tracks, clips, devices, automation, browser, arrangement, Push e mais.
   - icon: 🧠
     title: Knowledge base embutida
     details: 55+ devices nativos do Live 12 com schema de parâmetros (nome, range, default, unidade). LLM nunca chuta "Osc 1 Position".
   - icon: 🍳
     title: Recipes musicais
-    details: JSON declarativo para drum kits, basslines, racks e arranjos por gênero. O servidor expande recipes em sequências de tools.
+    details: 14 recipes JSON declarativas para drums, bass, chords, racks, arrangements, mixing e live performance.
   - icon: 🔁
     title: Verify loop
     details: Depois de cada batch, re-lê o estado e diffa contra a intenção. Tools retornam { ok, verified, diff } — não só ok.
@@ -33,28 +33,30 @@ features:
     title: Listeners reativos
     details: Mudanças no LOM viram MCP notifications. O LLM "vê" o usuário tocar, gravar, mudar tempo.
   - icon: 📦
-    title: Distribuição completa
-    details: DXT one-click pro Claude Desktop, npm publish com provenance, Docker para CI, Smithery listing.
+    title: Caminho de distribuicao
+    details: Source install funciona hoje. .mcpb one-click, npm, Docker e Smithery estao configurados, mas o RC publico espera package validation.
 ---
 
-## Stack
+## Dois caminhos
 
-- **TypeScript + Node 20+** — servidor MCP, `@modelcontextprotocol/sdk`, Zod.
-- **Python 3.11** (Live 12) — Remote Script bridge dentro do Live, TCP NDJSON JSON-RPC 2.0 em `127.0.0.1:9876`.
-- **Idempotente, transacional, reversível, schema-aware** — invariantes em [PLAN.md §2](https://github.com/Pantani/ableton-mind/blob/main/PLAN.md).
+**Eu faco musica.** Comece por [O que e ableton-mind?](./guide/what-is-ableton-mind), depois [instale via source](./guide/installation), faca [seu primeiro set no Live](./guide/first-live-set) e deixe o [prompt cookbook](./guide/prompt-cookbook) aberto.
+
+**Sou dev.** Va direto para [arquitetura](./architecture), [tools](./tools/), [knowledge base](./knowledge/), [recipes](./recipes/) e [distribution](./distribution).
 
 ## Status
 
 | Phase | Status |
 |---|---|
-| 0 — Spike | código pronto, smoke real validado |
+| 0 — Spike | smoke real validado |
 | 1 — Paridade `ahujasid` | 22/22 tools |
 | 2 — Listeners → MCP notifications | 7 eventos `event.*` |
 | 3 — Knowledge base | 55/50+ devices |
 | 4 — Automation envelopes | linear/hold |
 | 5 — Preview/verify | snapshot+diff |
 | 6 — Push 1/2/3 | pad/button/mode |
-| 7 — Distribuição | DXT/Docker/Smithery/CI |
+| 7 — Distribuição | source ok; RC bloqueado por TD-048 |
 | 8 — Long tail | em aberto |
 
-> Atualmente: **31 tools MCP**, **55 device schemas (~800 params indexados)**, **14 recipes** em 7/7 categorias, **verify loop 23/23**, **7 eventos `event.*`**.
+> Atualmente: **33 tools MCP**, **5 prompts**, **3 resources MCP**, **55 device schemas**, **14 recipes** em 7/7 categorias, **verify loop 23/23** e **smoke real PASS no Ableton Live 12.4.1** para core bridge/session/transport/track.
+
+Os canais publicos npm e release bundle ainda nao foram publicados. O proximo passo de engenharia e TD-048: deixar `npm run typecheck`, `npm test`, `npm run build` e `npm run build:dxt:check` verdes, depois cortar `v0.1.0-rc.1`.
