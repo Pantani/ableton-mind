@@ -5,15 +5,17 @@
 
 ## Executive Summary
 
-**Fix Wave 1 update:** the immediate code issues from the audit have been addressed: runtime version metadata, CLI help/version routing, DXT tool parity, release/prepublish gates, doctor symlink/version detection and the TS complexity gate are now covered by tests and passing locally. The remaining blocker is operational: the installed Ableton Remote Script still points at another checkout and the running bridge reports `0.0.21` while this checkout/package is `0.1.0`.
+**Fix Wave 1 update:** the immediate code issues from the audit have been addressed: runtime version metadata, CLI help/version routing, DXT tool parity, release/prepublish gates, doctor symlink/version detection and the TS complexity gate are now covered by tests and passing locally.
+
+**Live smoke update:** Ableton Live is open and activated. Read-only bridge smoke passed against Live `12.4.1`: `system.hello`, `system.ping`, `track.list`, `session.get_info`, `session.snapshot` and MCP server bootstrap all succeeded with bridge/package `0.1.0`. The installed Remote Script symlink still points at another checkout, so `ableton-mind-doctor` intentionally remains red on install-target consistency.
 
 The repo has a strong baseline: typecheck, lint, Vitest, Python bridge tests, docs build, dependency boundaries, package dry-run, MCPB build, Docker build and runtime dependency audit all pass after `npm ci`.
 
-The release should not proceed yet without an explicit waiver or fix for the stale Live bridge/Remote Script mismatch. The current smoke connects to a bridge reporting `0.0.21` from another checkout, while this release candidate is `0.1.0`.
+The release should not proceed yet without an explicit waiver or fix for install-target provenance. The active Live bridge now reports `0.1.0`, but the installed Remote Script symlink still points at another checkout, so the runtime can drift again after reload.
 
 Top quality risks:
 
-1. Stale Remote Script/bridge invalidates local Live smoke for this checkout until reinstall/reload.
+1. Installed Remote Script symlink target remains inconsistent until reinstall/reload, despite the active bridge passing read-only smoke.
 2. Automation payload validation remains too permissive.
 3. Unverifiable operations still overstate verification confidence.
 4. Some release/install/Push/recipe tests remain missing.
@@ -25,32 +27,32 @@ Top quality risks:
 | Node setup | PASS after `npm ci` |
 | TypeScript typecheck | PASS |
 | Biome lint | PASS |
-| Vitest | PASS-WITH-SKIPS, 166 passed / 4 skipped |
+| Vitest | PASS-WITH-SKIPS, 168 passed / 4 skipped |
 | Build | PASS |
 | DXT/MCPB | PASS |
 | Docs build | PASS |
 | Dependency cruiser | PASS |
 | TS complexity | PASS |
 | Python complexity/lint | PASS |
-| Python bridge tests | PASS-WITH-SKIPS, 101 passed / 2 skipped |
+| Python bridge tests | PASS-WITH-SKIPS, 104 passed / 2 skipped |
 | npm pack dry-run | PASS |
 | npm publish dry-run | PASS |
 | Runtime npm audit | PASS |
 | Full npm audit | PASS |
 | Docker build | PASS |
-| Doctor | FAILS CORRECTLY on stale target/version mismatch |
+| Doctor | FAILS CORRECTLY on install-target mismatch |
 | Live/Push hardware | BLOCKED / not run for mutation |
 
 ## Findings By Severity
 
-### BLOCKER: Live smoke does not prove this checkout/release
+### BLOCKER: Live smoke/install target consistency
 
 - Owner: runtime-release-auditor, python-bridge-engineer, distribution-docs-engineer.
-- Evidence: package/manifests are `0.1.0`; `node dist/index.js` handshake reports bridge version `0.0.21`; `install-remote-script --check` points installed Remote Script at `/Users/pantani/Desktop/projects/art/ableton-mind/live/AbletonMind`, not this worktree.
-- Risk: release can be approved with Live running a stale bridge from another checkout.
+- Evidence: package/manifests are `0.1.0`; current read-only smoke reports bridge `0.1.0`; `install-remote-script --check` still points installed Remote Script at `/Users/pantani/Desktop/projects/art/ableton-mind/live/AbletonMind`, not this worktree.
+- Risk: release can be approved while install-target provenance remains ambiguous.
 - Suggested fix: reinstall/reactivate Remote Script from the current checkout, restart Live, and make doctor compare bridge version/path against current package/source.
 - Verification: `node dist/index.js` logs bridge version `0.1.0`; `node dist/cli/doctor.js` warns/fails on mismatch.
-- Status: code fixed; operationally blocked until current Remote Script is installed/reactivated and Live smoke is rerun.
+- Status: read-only Live smoke passed; install-target consistency remains open until current checkout symlink is installed and doctor is fully green.
 
 ### MAJOR: `npm run complexity` fails in local LLM/copilot
 
@@ -204,11 +206,11 @@ Top quality risks:
 
 ## Recommended Fix Order
 
-1. Fix doctor/path/version detection and reinstall/re-smoke the current bridge.
-2. Centralize runtime version metadata.
-3. Add help/version handling for the main binary.
-4. Fix DXT manifest parity test/generation.
-5. Add release workflow gates.
-6. Resolve complexity failures in local-copilot.
-7. Add high-value missing tests: doctor CLI, installer, Push Python, recipes invalid JSON, package scripts.
-8. Harden bridge remote bind/frame limits and automation validation.
+1. Repoint/reinstall the Remote Script from this checkout, reload/reactivate in Live, and get doctor fully green.
+2. Fix `browser.get_categories` Live runtime access; current Live smoke returns unavailable while Live is open.
+3. Harden automation payload validation with finite/range/count checks.
+4. Model unverifiable operations explicitly instead of returning `verified: true`.
+5. Add the remaining high-value tests: installer, Push Python, invalid recipe JSON and package-script edge cases.
+6. Decide Docker lockfile/source-map/package policy.
+7. Update stale Remote Script README and PT docs examples.
+8. Re-enable skipped tests where practical.

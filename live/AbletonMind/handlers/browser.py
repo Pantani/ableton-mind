@@ -41,11 +41,7 @@ class BrowserGetCategoriesHandler(Handler):
     INPUT = BrowserGetCategoriesInput
 
     def execute(self, params: BrowserGetCategoriesInput) -> dict:
-        # The Live browser doesn't come via Song; it comes via Application. In
-        # real runtime, `self.ctrl.application` or similar. Phase 1: rely on
-        # `getattr(self.ctrl, "application", None)` or fallback if headless.
-        app = getattr(self.ctrl, "application", None) or getattr(self.ctrl, "_application", None)
-        browser = getattr(app, "browser", None) if app is not None else None
+        browser = _browser(self.ctrl)
 
         if browser is None:
             # In tests / headless: return empty list but don't error.
@@ -70,7 +66,11 @@ class BrowserGetCategoriesHandler(Handler):
 
 def _browser(ctrl):
     """Returns `application.browser` or None."""
-    app = getattr(ctrl, "application", None) or getattr(ctrl, "_application", None)
+    app = getattr(ctrl, "application", None)
+    if callable(app):
+        app = app()
+    if app is None:
+        app = getattr(ctrl, "_application", None)
     return getattr(app, "browser", None) if app is not None else None
 
 

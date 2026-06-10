@@ -298,6 +298,27 @@ class TestBrowserGetCategories(unittest.TestCase):
         self.assertIn("instruments", keys)
         self.assertIn("audio_effects", keys)
 
+    def test_lists_categories_when_application_is_method(self):
+        class MethodApplicationCtrl:
+            def __init__(self, song, application):
+                self._song = song
+                self._application = application
+
+            def song(self):
+                return self._song
+
+            def application(self):
+                return self._application
+
+        song = _seed_song()
+        ctrl = MethodApplicationCtrl(song, FakeApplication())
+        h = BrowserGetCategoriesHandler(ctrl)
+        r = h.execute(BrowserGetCategoriesInput())
+        self.assertTrue(r["available"])
+        keys = {c["key"] for c in r["categories"]}
+        self.assertIn("instruments", keys)
+        self.assertIn("audio_effects", keys)
+
 
 # ============================================================================
 # Cycle 4

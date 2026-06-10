@@ -4,10 +4,11 @@
 
 ## Immediate Fixes
 
-1. **BLOCKER - Current Live smoke points at stale bridge** — CODE FIXED / OPERATIONAL BLOCKED
+1. **BLOCKER - Current Live smoke points at stale bridge** — READ-ONLY LIVE SMOKE PASS / INSTALL TARGET STILL OPEN
    - Fixed: doctor now detects wrong Remote Script symlink target and bridge/package version mismatch.
-   - Still blocked: installed Remote Script currently points at `/Users/pantani/Desktop/projects/art/ableton-mind/live/AbletonMind`; running bridge reports `0.0.21` while this checkout is `0.1.0`.
-   - Verify after reinstall/reactivation: `node dist/cli/doctor.js`, `node dist/index.js` handshake shows bridge version `0.1.0`.
+   - Verified: running Live bridge reports `0.1.0`, Live `12.4.1`, Python `3.11.6`; MCP boot registers 33 tools / 5 prompts / 3 resources.
+   - Still open: installed Remote Script symlink points at `/Users/pantani/Desktop/projects/art/ableton-mind/live/AbletonMind`, so `node dist/cli/doctor.js` still fails one install-target check.
+   - Verify after reinstall/reactivation: `node dist/cli/doctor.js` returns all green and `node dist/index.js` handshake shows bridge version `0.1.0`.
 
 2. **MAJOR - Runtime TS versions stale** — DONE
    - Fix: centralize version metadata used by startup log, MCP server metadata and handshake.
@@ -50,6 +51,7 @@
 
 ## Later Fixes
 
+- Fix `browser.get_categories` Live runtime access path; current Live smoke returns `available=false` / `browser unavailable (headless/no app)` even while Live is open.
 - Switch Dockerfile to `npm ci` / `npm ci --omit=dev`.
 - Decide source map package policy.
 - Mark installer bin executable or test npm shim behavior.
