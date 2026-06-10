@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Audio tuner with chromatic display, adjustable reference pitch and hold mode.",
+  "description": "Audio tuner with chromatic display, adjustable reference pitch, and hold mode.",
   "source": "curated (Cycle 8)",
   "completeness": "complete",
   "parameters": [

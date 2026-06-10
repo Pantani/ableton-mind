@@ -1,5 +1,5 @@
 /**
- * JSON-RPC 2.0 types and schemas from `_workspace/contracts/jsonrpc.md`.
+ * JSON-RPC 2.0 types and schemas defined by `_workspace/contracts/jsonrpc.md`.
  *
  * Mirrors the frozen Phase 0 contract 1:1. Any change here requires an ADR
  * and PROPOSED-change.md in the workspace.
@@ -9,11 +9,11 @@ import { z } from "zod";
 
 // ---------- Envelope -----------------------------------------------------
 
-/** JSON-RPC ID: number or string (the spec accepts both; we always use number). */
+/** JSON-RPC ID: number or string (the spec accepts both; we usually use number). */
 export const jsonRpcIdSchema = z.union([z.number().int(), z.string()]);
 export type JsonRpcId = z.infer<typeof jsonRpcIdSchema>;
 
-/** Request: has `id`, `method` and optional `params`. */
+/** Request: has `id`, `method`, and optional `params`. */
 export const jsonRpcRequestSchema = z.object({
   jsonrpc: z.literal("2.0"),
   id: jsonRpcIdSchema,
@@ -48,7 +48,7 @@ export const jsonRpcErrorResponseSchema = z.object({
 export const jsonRpcResponseSchema = z.union([jsonRpcSuccessSchema, jsonRpcErrorResponseSchema]);
 export type JsonRpcResponse = z.infer<typeof jsonRpcResponseSchema>;
 
-/** Notification: no `id`, server -> client. */
+/** Notification: no `id`, server to client. */
 export const jsonRpcNotificationSchema = z.object({
   jsonrpc: z.literal("2.0"),
   method: z.string().min(1),
@@ -56,7 +56,7 @@ export const jsonRpcNotificationSchema = z.object({
 });
 export type JsonRpcNotification = z.infer<typeof jsonRpcNotificationSchema>;
 
-/** Any incoming bridge message, either a response or a notification. */
+/** Any incoming bridge message; can be a response or notification. */
 export const jsonRpcIncomingSchema = z.union([
   jsonRpcSuccessSchema,
   jsonRpcErrorResponseSchema,
@@ -103,7 +103,7 @@ export class JsonRpcRemoteError extends Error {
   }
 }
 
-/** Transport error (timeout, socket closed, parse failed). */
+/** Transport error (timeout, closed socket, parse failure). */
 export class JsonRpcTransportError extends Error {
   public override readonly cause?: unknown;
 
@@ -114,7 +114,7 @@ export class JsonRpcTransportError extends Error {
   }
 }
 
-/** Serializes a request as NDJSON (one line). */
+/** Serializes one request to NDJSON. */
 export function encodeRequest(req: JsonRpcRequest): string {
   return `${JSON.stringify(req)}\n`;
 }

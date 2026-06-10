@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "11.0",
-  "description": "Reverb that combines algorithmic modes (Room/Hall/Plate/Shimmer) with convolution (IR samples). Modes: Convolution / Algorithm / Serial / Parallel.",
+  "description": "Reverb that combines algorithmic processing (Room/Hall/Plate/Shimmer) with convolution (IR samples). Modes: Convolution / Algorithm / Serial / Parallel.",
   "source": "curated (Cycle 9)",
   "completeness": "complete",
   "parameters": [

@@ -47,7 +47,7 @@ export const soundDesignPrompt: PromptDefinition = {
         "Filter Reso: subtle",
       ],
       stab: ["Env Decay: 0.1-0.3s", "Env Sustain: 0", "Filter Reso: high"],
-      drone: ["Env Attack: 5s+", "Env Sustain: 1", "LFO mod on Pitch (subtle)", "Reverb wet"],
+      drone: ["Env Attack: 5s+", "Env Sustain: 1", "Subtle LFO pitch modulation", "Reverb wet"],
     };
     const tips = startParams[target.toLowerCase()] ?? [
       "Explore params via `device_get_parameters`.",

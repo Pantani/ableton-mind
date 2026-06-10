@@ -42,7 +42,7 @@ export const mixChainPrompt: PromptDefinition = {
       ],
       master: [
         "1. `apply_recipe { recipe_id: 'mixing/master-bus', overrides: { limiter_ceiling: -0.3 } }` (track_index -1).",
-        "2. Spectrum analyzer (Spectrum instance) to check final balance.",
+        "2. Spectrum analyzer (Spectrum instance) to check the final balance.",
       ],
     };
     const steps = recommendations[s] ?? [

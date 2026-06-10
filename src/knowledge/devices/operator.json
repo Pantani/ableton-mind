@@ -5,7 +5,7 @@
   "category": "instrument",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "FM synthesizer with four operators (A/B/C/D), 11 routing algorithms, filter, LFO and advanced voicing (Mono/Glide/Velocity).",
+  "description": "FM synthesizer with 4 operators (A/B/C/D), 11 routing algorithms, filter, LFO, and advanced voicing (Mono/Glide/Velocity).",
   "source": "curated (Cycle 6)",
   "completeness": "complete",
   "parameters": [
@@ -204,7 +204,7 @@
       "unit": "linear",
       "automatable": true,
       "modulatable": true,
-      "description": "Default 0 -> modulator is silent by default."
+      "description": "Default 0 means the modulator is silent by default."
     },
     {
       "index": 20,

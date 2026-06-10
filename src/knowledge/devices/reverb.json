@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Algorithmic reverb with early reflections, diffusion network, input/output filters and quality switch (Eco/Mid/High).",
+  "description": "Algorithmic reverb with early reflections, diffusion network, input/output filters, and quality switch (Eco/Mid/High).",
   "source": "curated (Cycle 6)",
   "completeness": "complete",
   "parameters": [

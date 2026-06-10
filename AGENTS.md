@@ -62,7 +62,7 @@ Full tree in [PLAN.md §3.3](PLAN.md). Key directories when scaffolding begins:
 
 ## Roadmap phases (PLAN.md §12)
 
-Work proceeds in 8 phases. Phase 0 is the spike: scaffold the TS server, minimal Python bridge with ~5 handlers, one MCP tool (`play`) working end-to-end. Do not skip ahead — paridade with `ahujasid` (Phase 1) and `AbletonOSC` (Phase 2) come before knowledge base (Phase 3) and advanced coverage (Phase 4).
+Work proceeds in 8 phases. Phase 0 is the spike: scaffold the TS server, minimal Python bridge with ~5 handlers, one MCP tool (`play`) working end-to-end. Do not skip ahead: parity with `ahujasid` (Phase 1) and `AbletonOSC` (Phase 2) comes before knowledge base (Phase 3) and advanced coverage (Phase 4).
 
 ## Working in this repo today
 

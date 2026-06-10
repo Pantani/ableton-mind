@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Routing helper that sends audio to hardware/outboard gear through Output Routing and receives it back through Input Routing. Includes latency compensation.",
+  "description": "Routing helper that sends audio to hardware/outboard via Output Routing and receives it back via Input Routing. Includes latency compensation.",
   "source": "curated (Cycle 16)",
   "completeness": "complete",
   "parameters": [

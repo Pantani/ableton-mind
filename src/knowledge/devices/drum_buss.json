@@ -18,7 +18,7 @@
       "unit": "curve",
       "automatable": true,
       "modulatable": true,
-      "description": "Non-linear curve; 0.5 is not audibly half."
+      "description": "Non-linear curve; 0.5 is not half of perceived intensity."
     },
     {
       "index": 1,

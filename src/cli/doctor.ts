@@ -3,7 +3,7 @@
  *
  * Checks:
  *  - Node >= 20
- *  - Remote Script symlink/copy in ~/Music/Ableton/User Library/Remote Scripts/AbletonMind
+ *  - Remote Script symlink/copy at ~/Music/Ableton/User Library/Remote Scripts/AbletonMind
  *  - Port 9876 listening (= Live loaded the script)
  *  - dist/ built (build:dxt-ready)
  *  - Valid knowledge base (loads all devices)
@@ -84,7 +84,7 @@ async function checkBridgePort(): Promise<Check> {
         name: `Bridge at ${host}:${port}`,
         ok: false,
         detail: "timeout",
-        hint: "Open Live and activate AbletonMind in Preferences -> Link/Tempo/MIDI -> Control Surface.",
+        hint: "Open Live and enable AbletonMind in Preferences -> Link/Tempo/MIDI -> Control Surface.",
       });
     }, 1500);
     sock.once("connect", () => {
@@ -98,7 +98,7 @@ async function checkBridgePort(): Promise<Check> {
         name: `Bridge at ${host}:${port}`,
         ok: false,
         detail: err.message,
-        hint: "Is Live open? Is the AbletonMind Control Surface selected?",
+        hint: "Is Live open? Is AbletonMind selected as a Control Surface?",
       });
     });
   });
@@ -146,18 +146,18 @@ async function checkKnowledge(): Promise<Check> {
       name: "Knowledge base",
       ok: false,
       detail: (err as Error).message,
-      hint: "A JSON file in src/knowledge/devices/ is invalid.",
+      hint: "Some JSON in src/knowledge/devices/ is invalid.",
     };
   }
 }
 
 /**
- * TD-039: Doctor confirms that `package.json::version` == `dxt/manifest.json::version`.
+ * TD-039: Doctor confirms `package.json::version` == `dxt/manifest.json::version`.
  * ADR-0009 requires these versions to move together for a valid release.
  *
- * In an installed runtime (`npm i -g`), `dxt/manifest.json` may not be
- * packaged. In that case, mark `ok: true` with detail "skip
- * (manifest not bundled)" so installed users do not break.
+ * In an installed runtime (`npm i -g`), `dxt/manifest.json` may not be bundled.
+ * In that case, mark `ok: true` with detail "skip (manifest not bundled)" so
+ * installed users are not broken.
  */
 async function checkVersionSync(): Promise<Check> {
   try {
@@ -201,7 +201,7 @@ async function checkVersionSync(): Promise<Check> {
 
 /**
  * Doctor 7th check (Cycle 20): MCP primitives surface. Catches regressions like
- * "the tools registry import broke and returned 0".
+ * "tool registry import broke and returned to 0".
  */
 async function checkMcpPrimitives(): Promise<Check> {
   const tools = allTools.length;
@@ -229,7 +229,7 @@ async function checkRecipes(): Promise<Check> {
       name: "Recipes",
       ok: false,
       detail: (err as Error).message,
-      hint: "A JSON file in recipes/ is invalid.",
+      hint: "Some JSON in recipes/ is invalid.",
     };
   }
 }
@@ -257,7 +257,9 @@ async function main(): Promise<void> {
   }
   const failed = checks.filter((c) => !c.ok).length;
   const summary =
-    failed === 0 ? `${GREEN}✓ all ok` : `${RED}✗ ${failed} check${failed > 1 ? "s" : ""} failed`;
+    failed === 0
+      ? `${GREEN}✓ all checks passed`
+      : `${RED}✗ ${failed} check${failed > 1 ? "s" : ""} failed`;
   out(`\n${summary}${RESET}\n`);
   process.exit(failed === 0 ? 0 : 1);
 }
