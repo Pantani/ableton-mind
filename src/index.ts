@@ -27,6 +27,18 @@ import { allTools } from "./tools/index.js";
 import { logger } from "./utils/logger.js";
 
 async function main(): Promise<void> {
+  const argv = process.argv.slice(2);
+  if (argv[0] === "chat" || argv[0] === "llm-run") {
+    const { runChat } = await import("./cli/chat.js");
+    await runChat(argv.slice(1));
+    return;
+  }
+  if (argv[0] === "ask") {
+    const { runAsk } = await import("./cli/chat.js");
+    await runAsk(argv.slice(1));
+    return;
+  }
+
   logger.info("ableton-mind starting", {
     version: "0.0.1",
     node: process.versions.node,

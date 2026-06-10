@@ -85,6 +85,27 @@ Env vars:
 | `ABLETON_MIND_TIMEOUT_MS` | `5000` | Per-request timeout |
 | `ABLETON_MIND_LOG_LEVEL` | `info` | `debug` \| `info` \| `warn` \| `error` |
 
+## Local copilot
+
+Run a local LLM against a curated subset of the same Ableton tools:
+
+```bash
+ollama pull qwen2.5:3b      # optional; the UI can pull too
+node dist/index.js chat     # opens http://127.0.0.1:4142
+node dist/index.js ask "What is in this set?"
+```
+
+The default tier is read-only (`safe`). Use `--write` for simple changes or `--creative` for recipes/browser load.
+
+| Var | Default | |
+|---|---|---|
+| `ABLETON_MIND_LLM_BASE_URL` | `http://127.0.0.1:11434/v1` | OpenAI-compatible endpoint |
+| `ABLETON_MIND_LLM_MODEL` | `qwen2.5:3b` | Local model id |
+| `ABLETON_MIND_LLM_TIER` | `safe` | `safe` \| `standard` \| `creative` |
+| `ABLETON_MIND_CHAT_PORT` | `4142` | Browser UI port |
+
+See [Local copilot](docs/guide/local-copilot.md).
+
 ## Doctor CLI
 
 ```bash

@@ -4,7 +4,10 @@ All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.c
 
 ## [Unreleased]
 
-No unreleased changes yet.
+### Added
+
+- Local LLM copilot MVP: `ableton-mind chat` / `llm-run` browser UI, `ableton-mind ask`, Ollama/OpenAI-compatible client, safe/standard/creative tool tiers, loopback-only chat server, and focused unit coverage.
+- Harness extension for the local-copilot track plus `_workspace/tdmcp-compatible-features.md`, mapping portable `tdmcp` features to Ableton Mind priorities.
 
 ## [0.1.0] — 2026-06-10 — Release closure
 
