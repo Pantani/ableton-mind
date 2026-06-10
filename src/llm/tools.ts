@@ -204,16 +204,19 @@ export const LLM_TOOLS: LlmTool[] = [
   ),
   wrap(
     deviceSetParameterTool,
-    obj(
-      {
-        track_index: trackIndex,
-        device_index: int("Device index on the track."),
-        parameter_index: int("Parameter index. Use either this or parameter_name."),
-        parameter_name: str("Parameter name. Use this when possible."),
-        value: num("Parameter value."),
-      },
-      ["track_index", "device_index", "value"],
-    ),
+    {
+      ...obj(
+        {
+          track_index: trackIndex,
+          device_index: int("Device index on the track."),
+          parameter_index: int("Parameter index. Use either this or parameter_name."),
+          parameter_name: str("Parameter name. Use this when possible."),
+          value: num("Parameter value."),
+        },
+        ["track_index", "device_index", "value"],
+      ),
+      anyOf: [{ required: ["parameter_index"] }, { required: ["parameter_name"] }],
+    },
     true,
   ),
   wrap(

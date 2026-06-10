@@ -73,6 +73,16 @@ describe("LLM tool tiers", () => {
     expect(tools[0].function.parameters).toHaveProperty("type", "object");
   });
 
+  it("advertises the device parameter locator requirement", () => {
+    const tool = toOpenAITools(resolveTools("standard")).find(
+      (candidate) => candidate.function.name === "device_set_parameter",
+    );
+
+    expect(tool?.function.parameters).toMatchObject({
+      anyOf: [{ required: ["parameter_index"] }, { required: ["parameter_name"] }],
+    });
+  });
+
   it("validates args and dispatches to the underlying tool", async () => {
     const call = vi.fn(async (method: string) => {
       expect(method).toBe("session.get_info");
