@@ -1,6 +1,6 @@
 ---
 name: ableton-mind-build
-description: Orchestrates the 7-agent ableton-mind team for concrete build, scaffold, phase execution, continuation, QA gate or roadmap-cycle work.
+description: Orchestrates the 8-agent ableton-mind team for concrete build, scaffold, phase execution, local-copilot work, continuation, QA gate or roadmap-cycle work.
 ---
 
 # ableton-mind-build — Team Orchestrator
@@ -18,6 +18,7 @@ Use this skill whenever the user asks to execute, implement, continue, scaffold,
 | C — Recipes | recipe-designer | JSON music recipes |
 | D — Distribution | distribution-docs-engineer | MCPB/DXT, npm, Docker, docs, CI, CLI |
 | E — QA | qa-integration | parity, contract drift, recipe lint, smoke, gate |
+| F — Local Copilot | local-copilot-engineer | local LLM, chat, ask, tool tiers, safety policy |
 
 ## Phase 0 — Always Gather Context First
 
@@ -41,7 +42,7 @@ The architect writes _workspace/cycle-briefing-{N}.md with: PLAN phase, one-sent
 
 ## Execution
 
-Run tracks in parallel only when their write scopes do not conflict and the current tooling/user permission allows sub-agents. Phase 0 spike is sequential: contract, bridge, server, integration. Later phases can run server, bridge, knowledge, recipes, distribution and QA in parallel as dependencies allow.
+Run tracks in parallel only when their write scopes do not conflict and the current tooling/user permission allows sub-agents. Phase 0 spike is sequential: contract, bridge, server, integration. Later phases can run server, bridge, knowledge, recipes, distribution, local-copilot and QA in parallel as dependencies allow. Local-copilot work owns `src/llm/` and `src/cli/chat.ts`; coordinate with distribution for public docs and with QA for safety-tier tests.
 
 ## Integration
 

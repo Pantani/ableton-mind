@@ -70,11 +70,11 @@ Work proceeds in 8 phases. Phase 0 is the spike: scaffold the TS server, minimal
 - When the user asks to "start Phase 0" or scaffold, reference `tdmcp` structure but don't blindly copy — adapt to Ableton's domain.
 - No commands to run yet (no `package.json`, no test suite, nothing to build). When scaffolding lands, update this file with the actual `npm` / `pnpm` / `pytest` commands.
 
-## Harness: 7-agent parallel team
+## Harness: 8-agent parallel team
 
-**Goal:** build, extend, and maintain ableton-mind following PLAN.md, with 5 tracks running in parallel under a lead (architect) and a continuous QA.
+**Goal:** build, extend, and maintain ableton-mind following PLAN.md, with 6 tracks running in parallel under a lead (architect) and a continuous QA.
 
-**Trigger:** any request to **execute/implement/continue/scaffold/redo/sync/evaluate a phase** of the project → invoke the `ableton-mind-build` skill. Conceptual questions about PLAN.md can be answered directly, without dispatching the team.
+**Trigger:** any request to **execute/implement/continue/scaffold/redo/sync/evaluate a phase** of the project, including local LLM/copilot work → invoke the `ableton-mind-build` skill. Conceptual questions about PLAN.md can be answered directly, without dispatching the team.
 
 **Team (all `model: opus`):**
 - `architect` — lead, ADRs, integration, phase gate
@@ -84,13 +84,15 @@ Work proceeds in 8 phases. Phase 0 is the spike: scaffold the TS server, minimal
 - `recipe-designer` — JSON music recipes
 - `distribution-docs-engineer` — DXT, npm, Docker, docs, CI
 - `qa-integration` — cross-checks (parity, contract drift, recipe lint), gate
+- `local-copilot-engineer` — local LLM, `chat`/`ask`, tool tiers, safety policy
 
 **Workspace:** `_workspace/` holds `PROGRESS.md`, `decisions/`, `contracts/`, `cycle-briefing-*.md`, `qa/*-report.md`, and summaries per cycle+track. Nothing lands in `src/`/`live/`/`recipes/`/`docs/` without QA approval.
 
-**Parallel execution:** Phase × Tracks matrix in `.Codex/skills/ableton-mind-build/SKILL.md`. Phase 0 (Spike) is sequential; Phases 1-7 launch tracks in parallel (`run_in_background: true`).
+**Parallel execution:** Phase × Tracks matrix in `.claude/skills/ableton-mind-build/SKILL.md`. Phase 0 (Spike) is sequential; Phases 1-7 launch tracks in parallel (`run_in_background: true`).
 
 ## Harness change history
 
 | Date | Change | Target | Reason |
 |------|--------|--------|--------|
-| 2026-06-08 | Initial build — 7 agents + 7 skills + orchestrator + workspace | `.Codex/agents/`, `.Codex/skills/`, `_workspace/PROGRESS.md` | `/harness assemble a team to execute this plan across multiple phases in parallel` |
+| 2026-06-08 | Initial build — 7 agents + 7 skills + orchestrator + workspace | `.claude/agents/`, `.claude/skills/`, `_workspace/PROGRESS.md` | `/harness assemble a team to execute this plan across multiple phases in parallel` |
+| 2026-06-10 | Added local-copilot track + tdmcp-compatible backlog | `.claude/agents/local-copilot-engineer.md`, `.claude/skills/local-copilot/`, `_workspace/tdmcp-compatible-features.md` | Port tdmcp local LLM feature and compatible backlog to ableton-mind |

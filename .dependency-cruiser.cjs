@@ -36,18 +36,6 @@ module.exports = {
 
     // ── R3 ───────────────────────────────────────────────────────────────
     {
-      name: "tools-cannot-touch-knowledge",
-      comment:
-        "Knowledge performs filesystem I/O; tools must receive it through " +
-        "`ctx` (Phase 1+ plan). Today no tool imports knowledge; this rule " +
-        "freezes that boundary before shortcuts appear.",
-      severity: "error",
-      from: { path: "^src/tools/" },
-      to: { path: "^src/knowledge/" },
-    },
-
-    // ── R4 ───────────────────────────────────────────────────────────────
-    {
       name: "server-cannot-depend-on-tools",
       comment:
         "Inversion: tools are injected through `CreateServerOptions.tools`. " +
@@ -58,18 +46,42 @@ module.exports = {
       to: { path: "^src/tools/" },
     },
 
+    // ── R4 ───────────────────────────────────────────────────────────────
+    {
+      name: "entrypoints-only-import-cli",
+      comment:
+        "CLI modules are entrypoint concerns. Application modules must not " +
+        "depend on them; only src/index.ts can dispatch to CLI commands.",
+      severity: "error",
+      from: { path: "^src/(?!index\\.ts$)(?!cli/)" },
+      to: { path: "^src/cli/" },
+    },
+
     // ── R5 ───────────────────────────────────────────────────────────────
+    {
+      name: "lower-layers-do-not-import-llm",
+      comment:
+        "The local LLM copilot is an orchestration layer used by the CLI, " +
+        "not a dependency for server/tools/resources/support modules.",
+      severity: "error",
+      from: {
+        path: "^src/(server|tools|resources|prompts|live-client|knowledge|recipes|feedback|utils)/",
+      },
+      to: { path: "^src/llm/" },
+    },
+
+    // ── R6 ───────────────────────────────────────────────────────────────
     {
       name: "live-client-isolated-from-upper-layers",
       comment:
         "Lower layer: live-client may only depend upward on `utils`. Reaching " +
-        "server/tools/knowledge inverts the hierarchy and creates cycles.",
+        "server/tools/knowledge/resources/prompts/cli/llm inverts the hierarchy.",
       severity: "error",
       from: { path: "^src/live-client/" },
-      to: { path: "^src/(server|tools|knowledge)/" },
+      to: { path: "^src/(server|tools|knowledge|resources|prompts|cli|llm)/" },
     },
 
-    // ── R6 ───────────────────────────────────────────────────────────────
+    // ── R7 ───────────────────────────────────────────────────────────────
     {
       name: "utils-must-stay-leaf",
       comment:
@@ -77,10 +89,10 @@ module.exports = {
         "any module that already consumes it (server, live-client).",
       severity: "error",
       from: { path: "^src/utils/" },
-      to: { path: "^src/(tools|server|live-client|knowledge)/" },
+      to: { path: "^src/(tools|resources|prompts|server|live-client|knowledge|cli|llm)/" },
     },
 
-    // ── R7 ───────────────────────────────────────────────────────────────
+    // ── R8 ───────────────────────────────────────────────────────────────
     {
       name: "knowledge-must-stay-pure",
       comment:
@@ -88,10 +100,43 @@ module.exports = {
         "on logger/server/tools/live-client because that would break embedding.",
       severity: "error",
       from: { path: "^src/knowledge/" },
-      to: { path: "^src/(tools|server|live-client|utils)/" },
+      to: { path: "^src/(tools|resources|prompts|server|live-client|utils|cli|llm)/" },
     },
 
-    // ── R8 ───────────────────────────────────────────────────────────────
+    // ── R9 ───────────────────────────────────────────────────────────────
+    {
+      name: "resources-cannot-import-tools",
+      comment:
+        "MCP resources expose readable state and indexes; they must not " +
+        "execute or depend on tools.",
+      severity: "error",
+      from: { path: "^src/resources/" },
+      to: { path: "^src/tools/" },
+    },
+
+    // ── R10 ──────────────────────────────────────────────────────────────
+    {
+      name: "prompts-are-static",
+      comment:
+        "Prompt templates must stay independent from runtime entrypoints, " +
+        "tools, server and transport layers.",
+      severity: "error",
+      from: { path: "^src/prompts/" },
+      to: { path: "^src/(tools|resources|server|live-client|cli|llm)/" },
+    },
+
+    // ── R11 ──────────────────────────────────────────────────────────────
+    {
+      name: "tools-cannot-import-entrypoints-or-cli",
+      comment:
+        "MCP tools should remain reusable and must not depend on process " +
+        "entrypoints, CLI or LLM orchestration.",
+      severity: "error",
+      from: { path: "^src/tools/" },
+      to: { path: "^src/(index\\.ts$|cli/|llm/)" },
+    },
+
+    // ── R12 ──────────────────────────────────────────────────────────────
     {
       name: "no-prod-import-from-tests-or-scripts",
       comment:
@@ -102,25 +147,26 @@ module.exports = {
       to: { path: "^(tests|scripts)/" },
     },
 
-    // ── R9 ───────────────────────────────────────────────────────────────
+    // ── R13 ──────────────────────────────────────────────────────────────
     {
-      name: "no-orphans",
+      name: "tests-cannot-import-dist-or-live-runtime",
       comment:
-        "Module imported by nobody: probably forgotten during a refactor. " +
-        "Warn (not error) because entry points and barrels can be false " +
-        "positives while the project grows (Phases 1-7).",
-      severity: "warn",
-      from: {
-        orphan: true,
-        pathNot: [
-          "(^|/)\\.[^/]+\\.(js|cjs|mjs|ts|cts|mts|json)$", // dot-files
-          "\\.d\\.ts$",
-          "(^|/)tsconfig\\.json$",
-          "(^|/)(babel|webpack|tsup|vitest|biome)\\.config\\.(js|cjs|mjs|ts)$",
-          "^src/index\\.ts$", // entry point
-        ],
-      },
-      to: {},
+        "TypeScript tests should validate source modules, not generated " +
+        "dist files or the Python Remote Script.",
+      severity: "error",
+      from: { path: "^tests/" },
+      to: { path: "^(dist|live)/" },
+    },
+
+    // ── R14 ──────────────────────────────────────────────────────────────
+    {
+      name: "scripts-cannot-import-src",
+      comment:
+        "Operational scripts should not become coupled to runtime " +
+        "TypeScript internals.",
+      severity: "error",
+      from: { path: "^scripts/" },
+      to: { path: "^src/" },
     },
   ],
 
@@ -131,11 +177,9 @@ module.exports = {
     tsConfig: {
       fileName: "tsconfig.json",
     },
-    tsPreCompilationDeps: true,
     includeOnly: "^(src|tests|scripts)/",
     exclude: {
       path: [
-        "\\.test\\.ts$", // tests are not part of the production graph
         "^node_modules/",
         "^dist/",
         "^coverage/",
