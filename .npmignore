@@ -31,9 +31,6 @@ tsconfig.json
 tsup.config.ts
 .dependency-cruiser.cjs
 
-# Live bridge: distributed through scripts/install-remote-script.mjs after install
-live/
-
 # Workspace + ADRs (internal)
 _workspace/
 
@@ -46,11 +43,9 @@ docs/
 PLAN.md
 CLAUDE.md
 AGENTS.md
-CHANGELOG.md
 
 # Scripts dev
 scripts/build-dxt.mjs
-scripts/install-remote-script.mjs
 scripts/extract-device-schemas.mjs
 
 # Logs

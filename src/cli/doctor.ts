@@ -142,8 +142,9 @@ async function checkKnowledge(): Promise<Check> {
 async function checkVersionSync(): Promise<Check> {
   try {
     const here = path.dirname(fileURLToPath(import.meta.url));
-    // dist/cli/doctor.js → repoRoot = ../../..
-    const repoRoot = path.resolve(here, "..", "..", "..");
+    // src/cli/doctor.ts and dist/cli/doctor.js both resolve to repo root via ../..
+    // when run from a source checkout or a published npm package.
+    const repoRoot = path.resolve(here, "..", "..");
     const pkgPath = path.join(repoRoot, "package.json");
     const dxtPath = path.join(repoRoot, "dxt", "manifest.json");
     if (!existsSync(pkgPath)) {

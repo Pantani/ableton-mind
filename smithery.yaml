@@ -46,7 +46,7 @@ metadata:
     - llm
     - claude
   tools:
-    count: 31
+    count: 33
     categories:
       - transport
       - track

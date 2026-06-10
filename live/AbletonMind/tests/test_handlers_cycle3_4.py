@@ -11,10 +11,10 @@ Cobre:
 """
 import unittest
 
-from AbletonMind.errors import RpcError
-from AbletonMind.handlers import REGISTRY
-from AbletonMind.handlers.browser import BrowserGetCategoriesHandler
-from AbletonMind.handlers.clip import (
+from ..errors import RpcError
+from ..handlers import REGISTRY
+from ..handlers.browser import BrowserGetCategoriesHandler
+from ..handlers.clip import (
     ClipAddNotesHandler,
     ClipFireHandler,
     ClipSetLoopHandler,
@@ -22,16 +22,16 @@ from AbletonMind.handlers.clip import (
     ClipStopHandler,
     CreateMidiClipHandler,
 )
-from AbletonMind.handlers.scene import SceneFireHandler
-from AbletonMind.handlers.session import SessionGetInfoHandler
-from AbletonMind.handlers.track import (
+from ..handlers.scene import SceneFireHandler
+from ..handlers.session import SessionGetInfoHandler
+from ..handlers.track import (
     TrackGetInfoHandler,
     TrackSetNameHandler,
     TrackSetVolumeHandler,
     TrackUpsertHandler,
     _volume_to_db,
 )
-from AbletonMind.schemas import (
+from ..schemas import (
     BrowserGetCategoriesInput,
     ClipAddNotesInput,
     ClipFireInput,

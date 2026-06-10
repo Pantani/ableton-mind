@@ -20,8 +20,8 @@ import threading
 import time
 import unittest
 
-from live.AbletonMind.bridge import BridgeServer
-from live.AbletonMind.tests._fakes.live_api import (
+from ..bridge import BridgeServer
+from ._fakes.live_api import (
     FakeCtrl,
     FakeReturnTrack,
     FakeSong,
@@ -51,10 +51,9 @@ class BridgeFixture:
         deadline = time.time() + 2.0
         while time.time() < deadline:
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(0.2)
-                s.connect(("127.0.0.1", self.port))
-                s.close()
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.settimeout(0.2)
+                    s.connect(("127.0.0.1", self.port))
                 return
             except OSError:
                 time.sleep(0.02)

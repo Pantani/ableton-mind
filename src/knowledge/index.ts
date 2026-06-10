@@ -7,13 +7,14 @@
  * Phase 3 expands: 50+ devices, packs, grooves, MIDI standards.
  */
 
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { z } from "zod";
 
-const KNOWLEDGE_DIR = dirname(fileURLToPath(import.meta.url));
+const HERE = dirname(fileURLToPath(import.meta.url));
+const KNOWLEDGE_DIR_CANDIDATES = [HERE, join(HERE, "..")];
 
 // ----- Schemas ---------------------------------------------------------------
 
@@ -77,8 +78,29 @@ export type ScalesPayload = z.infer<typeof scalesSchema>;
 
 // ----- Loaders ---------------------------------------------------------------
 
+let cachedKnowledgeRoot: string | null = null;
+async function knowledgeRoot(): Promise<string> {
+  if (cachedKnowledgeRoot) return cachedKnowledgeRoot;
+  for (const candidate of KNOWLEDGE_DIR_CANDIDATES) {
+    try {
+      const [devices, scales] = await Promise.all([
+        stat(join(candidate, "devices")),
+        stat(join(candidate, "scales.json")),
+      ]);
+      if (devices.isDirectory() && scales.isFile()) {
+        cachedKnowledgeRoot = candidate;
+        return candidate;
+      }
+    } catch {
+      // Not this bundle shape; try the next candidate.
+    }
+  }
+  cachedKnowledgeRoot = HERE;
+  return HERE;
+}
+
 async function readJson(rel: string): Promise<unknown> {
-  const buf = await readFile(join(KNOWLEDGE_DIR, rel), "utf8");
+  const buf = await readFile(join(await knowledgeRoot(), rel), "utf8");
   return JSON.parse(buf);
 }
 

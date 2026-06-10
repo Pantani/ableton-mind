@@ -4,7 +4,31 @@ All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.c
 
 ## [Unreleased]
 
-### In preparation for `v0.1.0-rc.1`
+No unreleased changes yet.
+
+## [0.1.0] — 2026-06-10 — Release closure
+
+### Added
+
+- npm package now exposes `ableton-mind-install-remote-script` and includes the `live/AbletonMind/` Remote Script runtime needed after global install.
+- MCP Registry, DXT, Safeskill, Smithery and Glama metadata are synced for the `0.1.0` release surface.
+- `.mcpb` bundles include server output, knowledge assets, Remote Script runtime files, installer script, and release metadata.
+
+### Fixed
+
+- TD-048 Python gate: `test:bridge` now uses `python3` from the repo root with a stable package discovery root.
+- Python bridge tests now use a single package-relative `AbletonMind.*` import path.
+- DXT manifest validation now passes the available `@anthropic-ai/mcpb` validator by adding prompt `text` fields and removing the unsupported speculative top-level `resources` field.
+
+### Release notes
+
+- Local LLM/copilot/chat is not part of the stable `0.1.0` surface in this checkout; no stable bin or export is exposed for it.
+- TD-030 Push 2/3 hardware smoke remains hardware-blocked and is deferred until physical hardware is available.
+- Publishing still requires the final manual gate: no tag, push, npm publish, registry submission, or Docker push is automatic from this local closure.
+
+<!-- Historical RC preparation notes retained for audit. -->
+
+### Historical RC preparation notes
 
 - Real smoke test against Live (TD-004) — passed in Cycle 21 against Ableton Live 12.4.1 on macOS.
 - Package validation blocker (TD-048): `typecheck`, tests, build and DXT check must be green before RC.

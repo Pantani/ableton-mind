@@ -7,7 +7,10 @@
  * `.mcpb` (zip) structure:
  *   manifest.json                ← dxt/manifest.json
  *   dist/                        ← tsup output
- *   src/knowledge/               ← devices, scales (embedded)
+ *   knowledge/                   ← devices, scales (embedded)
+ *   live/AbletonMind/            ← Remote Script runtime (no tests/cache)
+ *   scripts/install-remote-script.mjs
+ *   server.json + registry metadata
  *   README.md
  *   LICENSE
  *
@@ -195,6 +198,15 @@ async function gatherEntries() {
     }
   }
 
+  async function addFilteredDir(srcDir, prefix, shouldSkip) {
+    const files = await walkFiles(srcDir);
+    for (const f of files) {
+      if (shouldSkip(f.rel)) continue;
+      const data = await fs.readFile(f.full);
+      entries.push({ rel: `${prefix}/${f.rel}`, data });
+    }
+  }
+
   // Manifest at the .mcpb root.
   await add("manifest.json", path.join(REPO_ROOT, "dxt", "manifest.json"));
 
@@ -204,9 +216,29 @@ async function gatherEntries() {
   // Embedded knowledge (static JSON files).
   await addDir(path.join(REPO_ROOT, "src", "knowledge"), "knowledge");
 
+  // Remote Script runtime. It is bundled for user access, but Claude Desktop
+  // does not install it into Ableton automatically.
+  await addFilteredDir(path.join(REPO_ROOT, "live", "AbletonMind"), "live/AbletonMind", (rel) => {
+    const normalized = rel.replaceAll("\\", "/");
+    return (
+      normalized.startsWith("tests/") ||
+      normalized.includes("/__pycache__/") ||
+      normalized.endsWith(".pyc") ||
+      normalized.endsWith(".pyo")
+    );
+  });
+  await add("scripts/install-remote-script.mjs", path.join(REPO_ROOT, "scripts", "install-remote-script.mjs"));
+
+  // Registry/listing metadata useful to users and release automation.
+  await add("server.json", path.join(REPO_ROOT, "server.json"));
+  await add("safeskill.manifest.json", path.join(REPO_ROOT, "safeskill.manifest.json"));
+  await add("smithery.yaml", path.join(REPO_ROOT, "smithery.yaml"));
+  await add("glama.json", path.join(REPO_ROOT, "glama.json"));
+
   // README + LICENSE
   await add("README.md", path.join(REPO_ROOT, "README.md"));
   await add("LICENSE", path.join(REPO_ROOT, "LICENSE"));
+  await add("CHANGELOG.md", path.join(REPO_ROOT, "CHANGELOG.md"));
 
   return entries;
 }

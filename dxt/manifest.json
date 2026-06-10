@@ -2,7 +2,7 @@
   "dxt_version": "0.1",
   "name": "ableton-mind",
   "display_name": "Ableton Mind",
-  "version": "0.0.21",
+  "version": "0.1.0",
   "description": "Definitive MCP server for Ableton Live: complete LOM coverage, embedded knowledge base and music recipes.",
   "long_description": "ableton-mind exposes the complete Live Object Model to LLMs (Claude, Cursor, etc.) through idempotent tool calls, transactions (single-step undo), an integrated verify loop, an embedded knowledge base for 50+ native Live devices and declarative music recipes for drums, basslines and racks. Unlike thin MCP wrappers, it targets near-total LOM coverage and is designed so the LLM never guesses parameters: devices are addressed by name through the knowledge base.",
   "author": {
@@ -99,43 +99,28 @@
   "prompts": [
     {
       "name": "create_genre_track",
-      "description": "Compose a full track in a specified genre using kit + bassline + chords + arrangement recipes."
+      "description": "Compose a full track in a specified genre using kit + bassline + chords + arrangement recipes.",
+      "text": "Create a complete Ableton Live sketch in the requested genre. Read the current session first, choose matching drum, bass, chord and arrangement recipes, apply them through ableton-mind tools, then verify the resulting tracks, clips, devices and tempo."
     },
     {
       "name": "build_mix_chain",
-      "description": "Build a mixing chain for a specific source (drums/bass/vocal/master)."
+      "description": "Build a mixing chain for a specific source (drums/bass/vocal/master).",
+      "text": "Build a mixing chain for the requested source. Inspect the selected track, choose appropriate native Ableton devices from the embedded knowledge base, apply settings by parameter name, then verify the final device chain and mixer state."
     },
     {
       "name": "build_arrangement",
-      "description": "Lay out a song arrangement (intro/build/drop/break/outro) using session scenes."
+      "description": "Lay out a song arrangement (intro/build/drop/break/outro) using session scenes.",
+      "text": "Arrange the current Ableton set into the requested structure. Use session scenes, clips, locators and automation where available, preserve existing musical material, and verify the final arrangement against the intended sections."
     },
     {
       "name": "sound_design_session",
-      "description": "Explore a synth's parameter space to find a sound (lead/pad/bass/etc)."
+      "description": "Explore a synth's parameter space to find a sound (lead/pad/bass/etc).",
+      "text": "Create or refine a sound-design patch for the requested role. Use the embedded device knowledge base to address parameters by name, make reversible changes, and verify the resulting device parameters."
     },
     {
       "name": "process_vocal_take",
-      "description": "Process a recorded vocal take with a complete chain."
-    }
-  ],
-  "resources": [
-    {
-      "uri": "live://session/state",
-      "name": "session_state",
-      "description": "Deep snapshot of the current Live session.",
-      "mimeType": "application/json"
-    },
-    {
-      "uri": "live://knowledge/devices",
-      "name": "knowledge_devices",
-      "description": "Index of 55 embedded device schemas.",
-      "mimeType": "application/json"
-    },
-    {
-      "uri": "live://recipes/index",
-      "name": "recipes_index",
-      "description": "Index of 14 embedded music recipes.",
-      "mimeType": "application/json"
+      "description": "Process a recorded vocal take with a complete chain.",
+      "text": "Process the selected vocal take with a complete Ableton-native chain. Read the track state, add cleanup, dynamics, tone and ambience processing as needed, then verify the resulting devices and parameter settings."
     }
   ]
 }

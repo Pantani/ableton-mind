@@ -15,15 +15,15 @@ import threading
 import time
 import unittest
 
-from AbletonMind.bridge import BridgeServer
-from AbletonMind.errors import RpcError
-from AbletonMind.handlers.browser import BrowserLoadItemHandler
-from AbletonMind.handlers.device import (
+from ..bridge import BridgeServer
+from ..errors import RpcError
+from ..handlers.browser import BrowserLoadItemHandler
+from ..handlers.device import (
     DeviceGetParametersHandler,
     DeviceSetParameterHandler,
 )
-from AbletonMind.listeners import ListenerManager
-from AbletonMind.schemas import (
+from ..listeners import ListenerManager
+from ..schemas import (
     BrowserLoadItemInput,
     DeviceGetParametersInput,
     DeviceSetParameterInput,
