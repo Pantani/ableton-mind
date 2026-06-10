@@ -216,54 +216,54 @@ export async function runHeadlessPrompt(
   return output;
 }
 
-export async function runChat(argv: string[] = [], deps: ChatRuntimeDeps = {}): Promise<void> {
-  const writeStdout = deps.writeStdout ?? ((chunk: string) => process.stdout.write(chunk));
-  const writeStderr = deps.writeStderr ?? ((chunk: string) => process.stderr.write(chunk));
-  let opts: ChatCliOptions;
+function parseChatOptions(
+  argv: string[],
+  writeStderr: (chunk: string) => void,
+): ChatCliOptions | undefined {
   try {
-    opts = parseChatArgs(argv);
+    return parseChatArgs(argv);
   } catch (err) {
     writeStderr(`ableton-mind chat: ${(err as Error).message}\n\n${HELP}\n`);
     process.exitCode = 1;
-    return;
+    return undefined;
   }
-  if (opts.help) {
-    writeStdout(`${HELP}\n`);
-    return;
-  }
+}
 
-  const load = deps.loadConfig ?? loadLlmConfig;
-  const makeClient =
-    deps.createClient ?? ((config: LlmRuntimeConfig) => LlmClient.fromRuntime(config));
-  const launchServer = deps.startChatServer ?? startChatServer;
-  const launchBrowser = deps.openBrowser ?? openBrowser;
-  const ensureOllama = deps.ensureOllamaUp ?? ensureOllamaUp;
-  const makeContext = deps.createContext ?? createChatContext;
+function chatRuntime(deps: ChatRuntimeDeps) {
+  return {
+    load: deps.loadConfig ?? loadLlmConfig,
+    makeClient: deps.createClient ?? ((config: LlmRuntimeConfig) => LlmClient.fromRuntime(config)),
+    launchServer: deps.startChatServer ?? startChatServer,
+    launchBrowser: deps.openBrowser ?? openBrowser,
+    ensureOllama: deps.ensureOllamaUp ?? ensureOllamaUp,
+    makeContext: deps.createContext ?? createChatContext,
+  };
+}
 
-  const config = applyChatFlagOverrides(load(process.env), opts);
-  const client = makeClient(config);
-  const context = await makeContext();
-  const headless = opts.prompt !== undefined;
-  const log = (msg: string) => (headless ? writeStderr(msg) : writeStdout(msg));
+async function runHeadlessChat(
+  context: { ctx: ToolContext; close: () => Promise<void> },
+  client: LlmClient,
+  opts: ChatCliOptions,
+  config: Pick<LlmRuntimeConfig, "llmTier" | "llmMaxSteps">,
+  writeStdout: (chunk: string) => void,
+): Promise<void> {
+  await runHeadlessPrompt(context.ctx, client, opts.prompt ?? "", config, writeStdout);
+  await context.close();
+}
 
-  await ensureOllama(client, config.llmBaseUrl, opts.autoStartOllama, (msg) => log(`${msg}\n`));
-
-  if (headless) {
-    await runHeadlessPrompt(context.ctx, client, opts.prompt ?? "", config, writeStdout);
-    await context.close();
-    return;
-  }
-
-  const serverConfig = opts.readOnly ? { ...config, llmLockedTier: "safe" as LlmTier } : config;
-  const handle = await launchServer(context.ctx, serverConfig);
-  const health = await client.health();
-
-  writeStdout(`\n  ableton-mind local copilot -> ${handle.url}\n`);
+function writeChatStatus(
+  writeStdout: (chunk: string) => void,
+  handleUrl: string,
+  config: LlmRuntimeConfig,
+  contextDetail: string,
+  health: { ok: boolean; modelReady: boolean; detail: string },
+): void {
+  writeStdout(`\n  ableton-mind local copilot -> ${handleUrl}\n`);
   writeStdout(`  model: ${config.llmModel}  |  endpoint: ${config.llmBaseUrl}\n`);
   writeStdout(
     `  tier: ${config.llmTier}  |  temperature: ${config.llmTemperature ?? DEFAULT_LLM_TEMPERATURE}\n`,
   );
-  writeStdout(`  bridge: ${context.detail}\n`);
+  writeStdout(`  bridge: ${contextDetail}\n`);
   if (!health.ok) {
     writeStdout(`  LLM endpoint unreachable: ${health.detail}\n`);
   } else if (!health.modelReady) {
@@ -272,8 +272,12 @@ export async function runChat(argv: string[] = [], deps: ChatRuntimeDeps = {}): 
     writeStdout(`  status: ${health.detail}\n`);
   }
   writeStdout("\n  Press Ctrl-C to stop.\n\n");
-  if (opts.openBrowser) launchBrowser(handle.url);
+}
 
+async function waitForShutdown(
+  handle: { close: () => Promise<void> },
+  context: { close: () => Promise<void> },
+) {
   await new Promise<void>((resolve) => {
     const stop = () => {
       process.off("SIGINT", stop);
@@ -288,12 +292,77 @@ export async function runChat(argv: string[] = [], deps: ChatRuntimeDeps = {}): 
   });
 }
 
+export async function runChat(argv: string[] = [], deps: ChatRuntimeDeps = {}): Promise<void> {
+  const writeStdout = deps.writeStdout ?? ((chunk: string) => process.stdout.write(chunk));
+  const writeStderr = deps.writeStderr ?? ((chunk: string) => process.stderr.write(chunk));
+  const opts = parseChatOptions(argv, writeStderr);
+  if (!opts) return;
+  if (opts.help) {
+    writeStdout(`${HELP}\n`);
+    return;
+  }
+
+  const runtime = chatRuntime(deps);
+  const config = applyChatFlagOverrides(runtime.load(process.env), opts);
+  const client = runtime.makeClient(config);
+  const context = await runtime.makeContext();
+  const headless = opts.prompt !== undefined;
+  const log = (msg: string) => (headless ? writeStderr(msg) : writeStdout(msg));
+
+  await runtime.ensureOllama(client, config.llmBaseUrl, opts.autoStartOllama, (msg) =>
+    log(`${msg}\n`),
+  );
+
+  if (headless) {
+    await runHeadlessChat(context, client, opts, config, writeStdout);
+    return;
+  }
+
+  const serverConfig = opts.readOnly ? { ...config, llmLockedTier: "safe" as LlmTier } : config;
+  const handle = await runtime.launchServer(context.ctx, serverConfig);
+  const health = await client.health();
+
+  writeChatStatus(writeStdout, handle.url, config, context.detail, health);
+  if (opts.openBrowser) runtime.launchBrowser(handle.url);
+
+  await waitForShutdown(handle, context);
+}
+
 const ASK_HELP = `ableton-mind ask - one-shot local LLM prompt
 
 Usage: ableton-mind ask [flags] "<prompt>"
 
 Flags mirror chat: --read-only, --write, --creative, --model, --base-url, --no-ollama.
 Add --json to print {"ok":true,"answer":"...","tier":"..."}.`;
+
+function appendFlag(args: string[], enabled: boolean, flag: string): void {
+  if (enabled) args.push(flag);
+}
+
+function appendOption(args: string[], flag: string, value: unknown): void {
+  if (typeof value === "string") args.push(flag, value);
+}
+
+function askChatArgs(
+  prompt: string,
+  values: {
+    "no-ollama"?: boolean;
+    "read-only"?: boolean;
+    write?: boolean;
+    creative?: boolean;
+    model?: string;
+    "base-url"?: string;
+  },
+): string[] {
+  const args = ["--prompt", prompt, "--no-open"];
+  appendFlag(args, values["no-ollama"] === true, "--no-ollama");
+  appendFlag(args, values["read-only"] === true, "--read-only");
+  appendFlag(args, values.write === true, "--write");
+  appendFlag(args, values.creative === true, "--creative");
+  appendOption(args, "--model", values.model);
+  appendOption(args, "--base-url", values["base-url"]);
+  return args;
+}
 
 export async function runAsk(argv: string[] = [], deps: ChatRuntimeDeps = {}): Promise<void> {
   const writeStdout = deps.writeStdout ?? ((chunk: string) => process.stdout.write(chunk));
@@ -318,27 +387,14 @@ export async function runAsk(argv: string[] = [], deps: ChatRuntimeDeps = {}): P
   }
   const prompt = positionals.join(" ");
   let answer = "";
-  await runChat(
-    [
-      "--prompt",
-      prompt,
-      "--no-open",
-      ...(values["no-ollama"] === true ? ["--no-ollama"] : []),
-      ...(values["read-only"] === true ? ["--read-only"] : []),
-      ...(values.write === true ? ["--write"] : []),
-      ...(values.creative === true ? ["--creative"] : []),
-      ...(typeof values.model === "string" ? ["--model", values.model] : []),
-      ...(typeof values["base-url"] === "string" ? ["--base-url", values["base-url"]] : []),
-    ],
-    {
-      ...deps,
-      writeStdout: (chunk) => {
-        answer += chunk;
-        if (values.json !== true) writeStdout(chunk);
-      },
-      writeStderr,
+  await runChat(askChatArgs(prompt, values), {
+    ...deps,
+    writeStdout: (chunk) => {
+      answer += chunk;
+      if (values.json !== true) writeStdout(chunk);
     },
-  );
+    writeStderr,
+  });
   if (values.json === true) {
     const config = loadLlmConfig(process.env);
     writeStdout(

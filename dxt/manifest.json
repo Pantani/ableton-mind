@@ -88,12 +88,120 @@
       "description": "List all tracks (regular, return, master) in the Live session."
     },
     {
+      "name": "track_get_info",
+      "description": "Read detailed state for one regular, return or master track."
+    },
+    {
       "name": "track_create",
       "description": "Create a new MIDI or audio track at an optional index."
     },
     {
+      "name": "track_upsert",
+      "description": "Find or create a track by name and type."
+    },
+    {
+      "name": "track_set_name",
+      "description": "Rename a track with read-after-write verification."
+    },
+    {
+      "name": "track_set_volume",
+      "description": "Set a track mixer volume with read-after-write verification."
+    },
+    {
       "name": "create_midi_clip",
       "description": "Create an empty MIDI clip in a session clip slot."
+    },
+    {
+      "name": "clip_add_notes",
+      "description": "Add MIDI notes to a session clip."
+    },
+    {
+      "name": "clip_fire",
+      "description": "Trigger a session clip slot."
+    },
+    {
+      "name": "clip_stop",
+      "description": "Stop a playing session clip."
+    },
+    {
+      "name": "clip_set_name",
+      "description": "Rename a clip with read-after-write verification."
+    },
+    {
+      "name": "clip_set_loop",
+      "description": "Configure clip loop bounds and looping state."
+    },
+    {
+      "name": "clip_set_envelope",
+      "description": "Write clip automation envelope points."
+    },
+    {
+      "name": "scene_fire",
+      "description": "Trigger a session scene."
+    },
+    {
+      "name": "session_get_info",
+      "description": "Read session-level song, scene and track summary."
+    },
+    {
+      "name": "browser_get_categories",
+      "description": "List Ableton browser categories exposed by the bridge."
+    },
+    {
+      "name": "browser_load_item",
+      "description": "Load a browser item onto a target track or context."
+    },
+    {
+      "name": "device_get_parameters",
+      "description": "List device parameters with knowledge-base metadata where available."
+    },
+    {
+      "name": "device_set_parameter",
+      "description": "Set a device parameter by name with verification."
+    },
+    {
+      "name": "arrangement_add_automation_point",
+      "description": "Add an arrangement automation point."
+    },
+    {
+      "name": "session_snapshot",
+      "description": "Capture a structured snapshot of the current Live set."
+    },
+    {
+      "name": "session_diff",
+      "description": "Compare two session snapshots."
+    },
+    {
+      "name": "render_preview",
+      "description": "Render or describe an audio preview for the current session."
+    },
+    {
+      "name": "list_recipes",
+      "description": "List available declarative music recipes."
+    },
+    {
+      "name": "apply_recipe",
+      "description": "Apply a declarative recipe to the current Live set."
+    },
+    {
+      "name": "list_prompts",
+      "description": "List prompt templates bundled with the server."
+    },
+    {
+      "name": "list_resources",
+      "description": "List MCP resources bundled with the server."
+    },
+    {
+      "name": "push_set_pad_color",
+      "description": "Set an Ableton Push pad color."
+    },
+    {
+      "name": "push_set_button_led",
+      "description": "Set an Ableton Push button LED state."
+    },
+    {
+      "name": "push_set_mode",
+      "description": "Switch Ableton Push mode."
     }
   ],
   "prompts": [

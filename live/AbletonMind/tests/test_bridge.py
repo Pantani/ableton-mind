@@ -38,11 +38,14 @@ def _free_port() -> int:
 
 
 class BridgeFixture:
-    def __init__(self, song: FakeSong = None):
+    def __init__(self, song: FakeSong = None, max_frame_bytes: int = None):
         self.ctrl = FakeCtrl(song=song)
         self.port = _free_port()
+        kwargs = {}
+        if max_frame_bytes is not None:
+            kwargs["max_frame_bytes"] = max_frame_bytes
         self.server = BridgeServer(
-            ctrl=self.ctrl, host="127.0.0.1", port=self.port, headless=True
+            ctrl=self.ctrl, host="127.0.0.1", port=self.port, headless=True, **kwargs
         )
 
     def start(self) -> None:
@@ -131,6 +134,30 @@ class TestBridgeEndToEnd(unittest.TestCase):
         resp = _rpc(self.sock, "", {}, raw="{not json")
         self.assertEqual(resp["error"]["code"], -32700)
 
+    def test_oversized_frame_is_rejected_before_dispatch(self):
+        self.tearDown()
+        self.fx = BridgeFixture(max_frame_bytes=96)
+        self.fx.start()
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect(("127.0.0.1", self.fx.port))
+
+        raw = json.dumps(
+            {
+                "jsonrpc": "2.0",
+                "id": 99,
+                "method": "system.ping",
+                "params": {"blob": "x" * 200},
+            }
+        )
+        self.sock.sendall((raw + "\n").encode("utf-8"))
+        self.sock.settimeout(2.0)
+        line = self.sock.recv(4096).decode("utf-8").strip()
+        resp = json.loads(line)
+        self.assertEqual(resp["id"], None)
+        self.assertEqual(resp["error"]["code"], -32600)
+        self.assertEqual(resp["error"]["message"], "frame too large")
+        self.assertEqual(resp["error"]["data"]["max_bytes"], 96)
+
     # ---------- transport
 
     def test_set_tempo_idempotent_via_socket(self):
@@ -176,6 +203,16 @@ class TestBridgeEndToEnd(unittest.TestCase):
         )
         self.assertEqual(r2["error"]["code"], -32005)
         self.assertEqual(r2["error"]["data"]["existing_clip_name"], "x")
+
+
+class TestBridgeSecurityDefaults(unittest.TestCase):
+    def test_rejects_remote_bind_without_explicit_opt_in(self):
+        with self.assertRaises(ValueError):
+            BridgeServer(host="0.0.0.0", port=0, headless=True)
+
+    def test_allows_remote_bind_with_explicit_opt_in(self):
+        server = BridgeServer(host="0.0.0.0", port=0, headless=True, allow_remote=True)
+        self.assertEqual(server.host, "0.0.0.0")
 
 
 if __name__ == "__main__":

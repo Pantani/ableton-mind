@@ -57,6 +57,9 @@ interface StreamChunk {
   }>;
 }
 
+type StreamDelta = NonNullable<NonNullable<StreamChunk["choices"]>[number]["delta"]>;
+type StreamToolDelta = NonNullable<StreamDelta["tool_calls"]>[number];
+
 export function applySettings(current: LlmConfig, patch: SettingsPatch): LlmConfig {
   const next: LlmConfig = { ...current };
   if (patch.model?.trim()) next.llmModel = patch.model.trim();
@@ -78,21 +81,31 @@ export class ChatAccumulator {
   push(chunk: StreamChunk): void {
     const delta = chunk.choices?.[0]?.delta;
     if (!delta) return;
-    if (typeof delta.content === "string" && delta.content.length > 0) {
-      this.content += delta.content;
-      this.onToken?.(delta.content);
-    }
+    this.pushContent(delta.content);
     for (const part of delta.tool_calls ?? []) {
-      const idx = part.index ?? 0;
-      let slot = this.calls[idx];
-      if (!slot) {
-        slot = { id: "", name: "", args: "" };
-        this.calls[idx] = slot;
-      }
-      if (part.id) slot.id = part.id;
-      if (part.function?.name) slot.name = part.function.name;
-      if (part.function?.arguments) slot.args += part.function.arguments;
+      this.pushToolDelta(part);
     }
+  }
+
+  private pushContent(content: string | null | undefined): void {
+    if (typeof content !== "string" || content.length === 0) return;
+    this.content += content;
+    this.onToken?.(content);
+  }
+
+  private toolSlot(index: number): { id: string; name: string; args: string } {
+    const existing = this.calls[index];
+    if (existing) return existing;
+    const slot = { id: "", name: "", args: "" };
+    this.calls[index] = slot;
+    return slot;
+  }
+
+  private pushToolDelta(part: StreamToolDelta): void {
+    const slot = this.toolSlot(part.index ?? 0);
+    if (part.id) slot.id = part.id;
+    if (part.function?.name) slot.name = part.function.name;
+    if (part.function?.arguments) slot.args += part.function.arguments;
   }
 
   finish(): ChatMessage {

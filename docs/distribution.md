@@ -13,6 +13,8 @@ Ableton integration has two pieces:
 
 Hosted channels can run the MCP server, but they cannot control a local Ableton Live instance unless the Remote Script bridge is reachable from that server.
 
+The Remote Script bridge binds to `127.0.0.1` by default and rejects non-loopback hosts unless `ABLETON_MIND_ALLOW_REMOTE=1` is set. Use that only behind a trusted OS/network boundary.
+
 ## Source install
 
 Use this path when developing the repo or validating a local checkout.
@@ -140,6 +142,8 @@ docker run --rm -i \
 ```
 
 If the container cannot reach the bridge, use npm or `.mcpb` locally instead.
+
+For a container or hosted MCP server that truly needs to reach Live from another host, set `ABLETON_MIND_HOST` on the Remote Script side and opt in with `ABLETON_MIND_ALLOW_REMOTE=1`. Do not expose the bridge on an untrusted network.
 
 ## Release workflow
 

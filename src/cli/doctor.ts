@@ -12,24 +12,23 @@
  * Phase 7. Uso: `npx ableton-mind-doctor` ou `node dist/cli/doctor.js`.
  */
 
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadAllDevices } from "../knowledge/index.js";
+import { helloResultSchema } from "../live-client/handshake.js";
+import { TcpJsonRpcClient } from "../live-client/index.js";
 import { allPrompts } from "../prompts/index.js";
 import { listRecipes } from "../recipes/index.js";
 import { allResources } from "../resources/index.js";
 import { allTools } from "../tools/index.js";
+import { PACKAGE_VERSION } from "../version.js";
+import { type DoctorCheck, describeRemoteScriptInstall, versionMatchCheck } from "./doctor-core.js";
 
-interface Check {
-  name: string;
-  ok: boolean;
-  detail?: string;
-  hint?: string;
-}
+type Check = DoctorCheck;
 
 const RESET = "\x1b[0m";
 const GREEN = "\x1b[32m";
@@ -68,18 +67,10 @@ async function checkRemoteScript(): Promise<Check> {
       detail: `Plataforma ${process.platform} não suportada`,
     };
   }
-  const exists = existsSync(target);
-  let detail = "ausente";
-  if (exists) {
-    const st = statSync(target);
-    detail = st.isSymbolicLink() ? "symlink (dev)" : "cópia";
-  }
-  return {
-    name: "Remote Script instalado",
-    ok: exists,
-    detail,
-    hint: "Rode `node scripts/install-remote-script.mjs` na raiz do repo.",
-  };
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  const repoRoot = path.resolve(here, "..", "..");
+  const expectedSource = path.join(repoRoot, "live", "AbletonMind");
+  return describeRemoteScriptInstall(target, expectedSource);
 }
 
 async function checkBridgePort(): Promise<Check> {
@@ -111,6 +102,35 @@ async function checkBridgePort(): Promise<Check> {
       });
     });
   });
+}
+
+async function checkBridgeVersion(): Promise<Check> {
+  const host = process.env.ABLETON_MIND_HOST ?? "127.0.0.1";
+  const port = Number(process.env.ABLETON_MIND_PORT ?? 9876);
+  const client = new TcpJsonRpcClient({
+    host,
+    port,
+    defaultTimeoutMs: 5000,
+    autoReconnect: false,
+  });
+  try {
+    await client.connect();
+    const raw = await client.call("system.hello", {
+      client: "ableton-mind/doctor",
+      version: PACKAGE_VERSION,
+    });
+    const result = helloResultSchema.parse(raw);
+    return versionMatchCheck(PACKAGE_VERSION, result.version);
+  } catch (err) {
+    return {
+      name: "Bridge version",
+      ok: false,
+      detail: (err as Error).message,
+      hint: "Live aberto? Control Surface AbletonMind selecionado e atualizado?",
+    };
+  } finally {
+    await client.close().catch(() => undefined);
+  }
 }
 
 async function checkKnowledge(): Promise<Check> {
@@ -219,10 +239,14 @@ const out = (msg: string): void => console.log(msg);
 
 async function main(): Promise<void> {
   out(`\n${DIM}ableton-mind doctor${RESET}\n`);
+  const bridgePort = await checkBridgePort();
   const checks: Check[] = [
     await checkNode(),
     await checkRemoteScript(),
-    await checkBridgePort(),
+    bridgePort,
+    bridgePort.ok
+      ? await checkBridgeVersion()
+      : { name: "Bridge version", ok: true, detail: "skip (bridge offline)" },
     await checkKnowledge(),
     await checkRecipes(),
     await checkVersionSync(),

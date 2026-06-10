@@ -150,6 +150,134 @@ async function handlePull(
   if (!res.writableEnded) res.end();
 }
 
+function writeJson(res: ServerResponse, body: unknown): void {
+  res.writeHead(200, { "content-type": "application/json" });
+  res.end(JSON.stringify(body));
+}
+
+async function handleHealth(
+  res: ServerResponse,
+  client: LlmClient,
+  settings: LlmConfig,
+  config: ChatServerConfig,
+) {
+  const health = await client.health();
+  writeJson(res, {
+    ...health,
+    model: settings.llmModel,
+    baseUrl: settings.llmBaseUrl,
+    hasKey: Boolean(settings.llmApiKey),
+    defaultTier: config.llmTier,
+    lockedTier: config.llmLockedTier,
+    maxSteps: config.llmMaxSteps,
+    temperature: settings.llmTemperature ?? DEFAULT_LLM_TEMPERATURE,
+  });
+}
+
+async function handleModels(res: ServerResponse, client: LlmClient): Promise<void> {
+  writeJson(res, { models: await client.listModels() });
+}
+
+async function handleSettings(
+  req: IncomingMessage,
+  res: ServerResponse,
+  update: (patch: { model?: string; baseUrl?: string; apiKey?: string }) => LlmConfig,
+): Promise<void> {
+  const patch = (await readJsonBody(req)) as { model?: string; baseUrl?: string; apiKey?: string };
+  const settings = update(patch);
+  writeJson(res, {
+    ok: true,
+    model: settings.llmModel,
+    baseUrl: settings.llmBaseUrl,
+    hasKey: Boolean(settings.llmApiKey),
+  });
+}
+
+interface ChatHttpRuntime {
+  ctx: ToolContext;
+  config: ChatServerConfig;
+  currentSettings: () => LlmConfig;
+  clientFor: () => LlmClient;
+  updateSettings: (patch: { model?: string; baseUrl?: string; apiKey?: string }) => LlmConfig;
+}
+
+async function handleGetRoute(
+  requestPath: string,
+  res: ServerResponse,
+  runtime: ChatHttpRuntime,
+): Promise<boolean> {
+  if (requestPath === "/") {
+    res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    res.end(CHAT_HTML);
+    return true;
+  }
+  if (requestPath === "/health") {
+    await handleHealth(res, runtime.clientFor(), runtime.currentSettings(), runtime.config);
+    return true;
+  }
+  if (requestPath === "/models") {
+    await handleModels(res, runtime.clientFor());
+    return true;
+  }
+  return false;
+}
+
+async function handlePostRoute(
+  requestPath: string,
+  req: IncomingMessage,
+  res: ServerResponse,
+  runtime: ChatHttpRuntime,
+): Promise<boolean> {
+  if (requestPath === "/settings") {
+    await handleSettings(req, res, runtime.updateSettings);
+    return true;
+  }
+  if (requestPath === "/chat") {
+    await handleChat(req, res, runtime.ctx, runtime.clientFor(), runtime.config);
+    return true;
+  }
+  if (requestPath === "/pull") {
+    await handlePull(req, res, runtime.clientFor());
+    return true;
+  }
+  return false;
+}
+
+async function handleKnownRoute(
+  method: string,
+  requestPath: string,
+  req: IncomingMessage,
+  res: ServerResponse,
+  runtime: ChatHttpRuntime,
+): Promise<boolean> {
+  if (method === "GET") return handleGetRoute(requestPath, res, runtime);
+  if (method === "POST") return handlePostRoute(requestPath, req, res, runtime);
+  return false;
+}
+
+async function handleChatHttpRequest(
+  req: IncomingMessage,
+  res: ServerResponse,
+  runtime: ChatHttpRuntime,
+): Promise<void> {
+  const method = req.method ?? "GET";
+  const requestPath = (req.url ?? "/").split("?")[0] ?? "/";
+  if (!isLoopbackRequest(req)) {
+    res.writeHead(403, { "content-type": "text/plain" });
+    res.end("forbidden: cross-origin or non-loopback request rejected");
+    return;
+  }
+  if (await handleKnownRoute(method, requestPath, req, res, runtime)) return;
+  res.writeHead(404, { "content-type": "text/plain" });
+  res.end("not found");
+}
+
+function writeUnhandledError(res: ServerResponse, err: unknown): void {
+  const message = err instanceof Error ? err.message : String(err);
+  if (!res.headersSent) res.writeHead(500, { "content-type": "text/plain" });
+  if (!res.writableEnded) res.end(`error: ${message}`);
+}
+
 export function startChatServer(
   ctx: ToolContext,
   config: ChatServerConfig,
@@ -161,80 +289,19 @@ export function startChatServer(
     llmTemperature: config.llmTemperature,
   };
   const clientFor = () => new LlmClient(settings);
+  const currentSettings = () => settings;
+  const updateSettings = (patch: {
+    model?: string;
+    baseUrl?: string;
+    apiKey?: string;
+  }): LlmConfig => {
+    settings = applySettings(settings, patch);
+    return settings;
+  };
+  const runtime = { ctx, config, currentSettings, clientFor, updateSettings };
 
   const server = createServer((req, res) => {
-    const method = req.method ?? "GET";
-    const path = (req.url ?? "/").split("?")[0];
-
-    const run = async () => {
-      if (!isLoopbackRequest(req)) {
-        res.writeHead(403, { "content-type": "text/plain" });
-        res.end("forbidden: cross-origin or non-loopback request rejected");
-        return;
-      }
-      if (method === "GET" && path === "/") {
-        res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-        res.end(CHAT_HTML);
-        return;
-      }
-      if (method === "GET" && path === "/health") {
-        const health = await clientFor().health();
-        res.writeHead(200, { "content-type": "application/json" });
-        res.end(
-          JSON.stringify({
-            ...health,
-            model: settings.llmModel,
-            baseUrl: settings.llmBaseUrl,
-            hasKey: Boolean(settings.llmApiKey),
-            defaultTier: config.llmTier,
-            lockedTier: config.llmLockedTier,
-            maxSteps: config.llmMaxSteps,
-            temperature: settings.llmTemperature ?? DEFAULT_LLM_TEMPERATURE,
-          }),
-        );
-        return;
-      }
-      if (method === "GET" && path === "/models") {
-        const models = await clientFor().listModels();
-        res.writeHead(200, { "content-type": "application/json" });
-        res.end(JSON.stringify({ models }));
-        return;
-      }
-      if (method === "POST" && path === "/settings") {
-        const patch = (await readJsonBody(req)) as {
-          model?: string;
-          baseUrl?: string;
-          apiKey?: string;
-        };
-        settings = applySettings(settings, patch);
-        res.writeHead(200, { "content-type": "application/json" });
-        res.end(
-          JSON.stringify({
-            ok: true,
-            model: settings.llmModel,
-            baseUrl: settings.llmBaseUrl,
-            hasKey: Boolean(settings.llmApiKey),
-          }),
-        );
-        return;
-      }
-      if (method === "POST" && path === "/chat") {
-        await handleChat(req, res, ctx, clientFor(), config);
-        return;
-      }
-      if (method === "POST" && path === "/pull") {
-        await handlePull(req, res, clientFor());
-        return;
-      }
-      res.writeHead(404, { "content-type": "text/plain" });
-      res.end("not found");
-    };
-
-    run().catch((err) => {
-      const message = err instanceof Error ? err.message : String(err);
-      if (!res.headersSent) res.writeHead(500, { "content-type": "text/plain" });
-      if (!res.writableEnded) res.end(`error: ${message}`);
-    });
+    handleChatHttpRequest(req, res, runtime).catch((err) => writeUnhandledError(res, err));
   });
 
   return new Promise((resolve) => {

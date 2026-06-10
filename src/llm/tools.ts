@@ -339,12 +339,28 @@ export interface ToolOutcome {
   payload: string;
 }
 
-export async function dispatchTool(
-  ctx: ToolContext,
+interface PreparedToolCall {
+  tool: LlmTool;
+  args: unknown;
+}
+
+function parseToolArgs(name: string, rawArgs: string): ToolOutcome | { parsed: unknown } {
+  try {
+    return { parsed: rawArgs.trim() ? JSON.parse(rawArgs) : {} };
+  } catch (err) {
+    return {
+      ok: false,
+      summary: `bad JSON args for ${name}`,
+      payload: `Error: arguments were not valid JSON: ${(err as Error).message}`,
+    };
+  }
+}
+
+function prepareToolCall(
   name: string,
   rawArgs: string,
-  tools: LlmTool[] = LLM_TOOLS,
-): Promise<ToolOutcome> {
+  tools: LlmTool[],
+): ToolOutcome | PreparedToolCall {
   const tool = tools.find((candidate) => candidate.name === name);
   if (!tool) {
     return {
@@ -354,18 +370,10 @@ export async function dispatchTool(
     };
   }
 
-  let parsed: unknown;
-  try {
-    parsed = rawArgs.trim() ? JSON.parse(rawArgs) : {};
-  } catch (err) {
-    return {
-      ok: false,
-      summary: `bad JSON args for ${name}`,
-      payload: `Error: arguments were not valid JSON: ${(err as Error).message}`,
-    };
-  }
+  const parsed = parseToolArgs(name, rawArgs);
+  if ("ok" in parsed) return parsed;
 
-  const args = tool.schema.safeParse(parsed);
+  const args = tool.schema.safeParse(parsed.parsed);
   if (!args.success) {
     return {
       ok: false,
@@ -373,15 +381,27 @@ export async function dispatchTool(
       payload: `Error: invalid arguments: ${args.error.message}`,
     };
   }
+  return { tool, args: args.data };
+}
 
+function resultOk(result: unknown): boolean {
+  if (typeof result !== "object" || result === null || !("ok" in result)) return true;
+  return Boolean((result as { ok?: unknown }).ok);
+}
+
+async function runPreparedTool(
+  ctx: ToolContext,
+  name: string,
+  prepared: PreparedToolCall,
+): Promise<ToolOutcome> {
   try {
-    const result = await tool.run(ctx, args.data);
-    const payload = JSON.stringify(result, null, 2);
-    const ok =
-      typeof result === "object" && result !== null && "ok" in result
-        ? Boolean((result as { ok?: unknown }).ok)
-        : true;
-    return { ok, summary: `${name}: ${ok ? "ok" : "failed"}`, payload };
+    const result = await prepared.tool.run(ctx, prepared.args);
+    const ok = resultOk(result);
+    return {
+      ok,
+      summary: `${name}: ${ok ? "ok" : "failed"}`,
+      payload: JSON.stringify(result, null, 2),
+    };
   } catch (err) {
     return {
       ok: false,
@@ -389,4 +409,15 @@ export async function dispatchTool(
       payload: `Error: ${(err as Error).message}`,
     };
   }
+}
+
+export async function dispatchTool(
+  ctx: ToolContext,
+  name: string,
+  rawArgs: string,
+  tools: LlmTool[] = LLM_TOOLS,
+): Promise<ToolOutcome> {
+  const prepared = prepareToolCall(name, rawArgs, tools);
+  if ("ok" in prepared) return prepared;
+  return runPreparedTool(ctx, name, prepared);
 }

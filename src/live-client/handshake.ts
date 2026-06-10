@@ -8,6 +8,7 @@
 import { z } from "zod";
 
 import { logger } from "../utils/logger.js";
+import { PACKAGE_VERSION } from "../version.js";
 import type { TcpJsonRpcClient } from "./tcp-client.js";
 
 export const helloParamsSchema = z.object({
@@ -26,7 +27,7 @@ export const helloResultSchema = z.object({
 export type HelloResult = z.infer<typeof helloResultSchema>;
 
 /** TS client version published in the handshake. Stays in sync with package.json. */
-export const TS_CLIENT_VERSION = "0.0.1";
+export const TS_CLIENT_VERSION = PACKAGE_VERSION;
 
 /** Expected protocol version (frozen Phase 0). */
 export const EXPECTED_PROTOCOL_VERSION = "0.1";

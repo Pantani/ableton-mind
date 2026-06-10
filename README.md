@@ -83,6 +83,8 @@ Env vars:
 | `ABLETON_MIND_HOST` | `127.0.0.1` | Python bridge host |
 | `ABLETON_MIND_PORT` | `9876` | Bridge TCP port |
 | `ABLETON_MIND_TIMEOUT_MS` | `5000` | Per-request timeout |
+| `ABLETON_MIND_MAX_FRAME_BYTES` | `1048576` | Max incoming JSON-RPC frame |
+| `ABLETON_MIND_MAX_PENDING_REQUESTS` | `128` | Max in-flight JSON-RPC calls |
 | `ABLETON_MIND_LOG_LEVEL` | `info` | `debug` \| `info` \| `warn` \| `error` |
 
 ## Local copilot

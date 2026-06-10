@@ -43,6 +43,11 @@ jobs:
           cache: npm
           registry-url: "https://registry.npmjs.org"
 
+      - name: Use Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Verify tag matches package.json and manifest versions
         run: |
           TAG="${GITHUB_REF_NAME#v}"
@@ -85,11 +90,26 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Bridge tests
+        run: npm run test:bridge
+
+      - name: Docs build
+        run: npm run docs:build
+
+      - name: Runtime dependency audit
+        run: npm audit --omit=dev
+
       - name: Build
         run: npm run build
 
+      - name: Pack dry run
+        run: npm pack --dry-run --json
+
       - name: Build .mcpb bundle
         run: npm run build:dxt
+
+      - name: Validate MCPB manifest
+        run: npx --yes @anthropic-ai/mcpb validate dxt/manifest.json
 
       - name: Publish GitHub Release
         env:

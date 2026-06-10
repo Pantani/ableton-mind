@@ -34,6 +34,10 @@ export interface TcpClientOptions {
   port?: number;
   /** Default timeout per request, in ms. */
   defaultTimeoutMs?: number;
+  /** Maximum bytes for one incoming NDJSON frame before disconnecting. */
+  maxFrameBytes?: number;
+  /** Maximum in-flight JSON-RPC requests before rejecting new calls. */
+  maxPendingRequests?: number;
   /** Initial backoff in ms for reconnect. */
   reconnectInitialMs?: number;
   /** Maximum backoff in ms for reconnect. */
@@ -52,6 +56,8 @@ interface PendingRequest {
 const DEFAULT_HOST = "127.0.0.1";
 const DEFAULT_PORT = 9876;
 const DEFAULT_TIMEOUT_MS = 5000;
+const DEFAULT_MAX_FRAME_BYTES = 1_048_576;
+const DEFAULT_MAX_PENDING_REQUESTS = 128;
 const DEFAULT_RECONNECT_INITIAL_MS = 100;
 const DEFAULT_RECONNECT_MAX_MS = 5000;
 
@@ -71,9 +77,19 @@ interface ResolvedTcpOptions {
   host: string;
   port: number;
   defaultTimeoutMs: number;
+  maxFrameBytes: number;
+  maxPendingRequests: number;
   reconnectInitialMs: number;
   reconnectMaxMs: number;
   autoReconnect: boolean;
+}
+
+function resolvePositiveIntOption(
+  explicit: number | undefined,
+  envName: string,
+  fallback: number,
+): number {
+  return explicit ?? parsePositiveInt(process.env[envName]) ?? fallback;
 }
 
 /**
@@ -84,11 +100,22 @@ interface ResolvedTcpOptions {
 function resolveTcpOptions(options: TcpClientOptions): ResolvedTcpOptions {
   return {
     host: options.host ?? process.env.ABLETON_MIND_HOST ?? DEFAULT_HOST,
-    port: options.port ?? parsePositiveInt(process.env.ABLETON_MIND_PORT) ?? DEFAULT_PORT,
-    defaultTimeoutMs:
-      options.defaultTimeoutMs ??
-      parsePositiveInt(process.env.ABLETON_MIND_TIMEOUT_MS) ??
+    port: resolvePositiveIntOption(options.port, "ABLETON_MIND_PORT", DEFAULT_PORT),
+    defaultTimeoutMs: resolvePositiveIntOption(
+      options.defaultTimeoutMs,
+      "ABLETON_MIND_TIMEOUT_MS",
       DEFAULT_TIMEOUT_MS,
+    ),
+    maxFrameBytes: resolvePositiveIntOption(
+      options.maxFrameBytes,
+      "ABLETON_MIND_MAX_FRAME_BYTES",
+      DEFAULT_MAX_FRAME_BYTES,
+    ),
+    maxPendingRequests: resolvePositiveIntOption(
+      options.maxPendingRequests,
+      "ABLETON_MIND_MAX_PENDING_REQUESTS",
+      DEFAULT_MAX_PENDING_REQUESTS,
+    ),
     reconnectInitialMs: options.reconnectInitialMs ?? DEFAULT_RECONNECT_INITIAL_MS,
     reconnectMaxMs: options.reconnectMaxMs ?? DEFAULT_RECONNECT_MAX_MS,
     autoReconnect: options.autoReconnect ?? true,
@@ -113,6 +140,8 @@ export class TcpJsonRpcClient extends EventEmitter {
   private readonly host: string;
   private readonly port: number;
   private readonly defaultTimeoutMs: number;
+  private readonly maxFrameBytes: number;
+  private readonly maxPendingRequests: number;
   private readonly reconnectInitialMs: number;
   private readonly reconnectMaxMs: number;
   private readonly autoReconnect: boolean;
@@ -132,6 +161,8 @@ export class TcpJsonRpcClient extends EventEmitter {
     this.host = resolved.host;
     this.port = resolved.port;
     this.defaultTimeoutMs = resolved.defaultTimeoutMs;
+    this.maxFrameBytes = resolved.maxFrameBytes;
+    this.maxPendingRequests = resolved.maxPendingRequests;
     this.reconnectInitialMs = resolved.reconnectInitialMs;
     this.reconnectMaxMs = resolved.reconnectMaxMs;
     this.autoReconnect = resolved.autoReconnect;
@@ -208,6 +239,11 @@ export class TcpJsonRpcClient extends EventEmitter {
     if (this.state !== "connected" || !this.socket) {
       throw new JsonRpcTransportError(`cannot call ${method}: state=${this.state}`);
     }
+    if (this.pending.size >= this.maxPendingRequests) {
+      throw new JsonRpcTransportError(
+        `max pending JSON-RPC requests exceeded: ${this.maxPendingRequests}`,
+      );
+    }
     const id = this.nextId++;
     const payload = encodeRequest({ jsonrpc: "2.0", id, method, params });
 
@@ -244,7 +280,7 @@ export class TcpJsonRpcClient extends EventEmitter {
     sock.on("data", (chunk: string) => this.onData(chunk));
     sock.on("error", (err) => {
       logger.warn("socket error", { message: err.message });
-      this.emit("error", err);
+      this.emitError(err instanceof Error ? err : new Error(String(err)));
     });
     sock.on("close", (hadError) => {
       logger.warn("socket closed", { hadError });
@@ -259,11 +295,26 @@ export class TcpJsonRpcClient extends EventEmitter {
     while (newlineIdx >= 0) {
       const line = this.buffer.slice(0, newlineIdx);
       this.buffer = this.buffer.slice(newlineIdx + 1);
+      if (this.frameTooLarge(line)) {
+        this.failConnection(
+          new JsonRpcTransportError(`incoming JSON-RPC frame exceeded ${this.maxFrameBytes} bytes`),
+        );
+        return;
+      }
       if (line.trim().length > 0) {
         this.processLine(line);
       }
       newlineIdx = this.buffer.indexOf("\n");
     }
+    if (this.frameTooLarge(this.buffer)) {
+      this.failConnection(
+        new JsonRpcTransportError(`incoming JSON-RPC frame exceeded ${this.maxFrameBytes} bytes`),
+      );
+    }
+  }
+
+  private frameTooLarge(frame: string): boolean {
+    return Buffer.byteLength(frame, "utf8") > this.maxFrameBytes;
   }
 
   private processLine(line: string): void {
@@ -275,7 +326,7 @@ export class TcpJsonRpcClient extends EventEmitter {
         error: (err as Error).message,
         line: line.slice(0, 200),
       });
-      this.emit("error", err);
+      this.emitError(err instanceof Error ? err : new Error(String(err)));
       return;
     }
 
@@ -312,7 +363,7 @@ export class TcpJsonRpcClient extends EventEmitter {
   }
 
   private handleDisconnect(): void {
-    if (this.state === "closed") return;
+    if (this.state === "closed" || (this.state === "disconnected" && this.socket === null)) return;
     this.socket = null;
     this.buffer = "";
     this.rejectAllPending(new JsonRpcTransportError("socket disconnected"));
@@ -321,6 +372,25 @@ export class TcpJsonRpcClient extends EventEmitter {
 
     if (!this.autoReconnect) return;
     this.scheduleReconnect();
+  }
+
+  private failConnection(reason: JsonRpcTransportError): void {
+    logger.warn("closing bridge connection", { message: reason.message });
+    this.buffer = "";
+    this.rejectAllPending(reason);
+    const sock = this.socket;
+    this.socket = null;
+    if (this.state !== "closed") {
+      this.state = "disconnected";
+      this.emit("disconnect");
+    }
+    this.emitError(reason);
+    sock?.destroy();
+    if (this.autoReconnect) this.scheduleReconnect();
+  }
+
+  private emitError(err: Error): void {
+    if (this.listenerCount("error") > 0) this.emit("error", err);
   }
 
   private scheduleReconnect(): void {
