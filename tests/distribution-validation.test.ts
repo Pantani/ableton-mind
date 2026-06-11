@@ -168,6 +168,8 @@ describe("hosted catalog release docs", () => {
     expect(distribution).toContain(
       "https://glama.ai/mcp/servers/Pantani/ableton-mind/admin/dockerfile",
     );
+    expect(distribution).toContain('["npm ci", "npm run build"]');
+    expect(distribution).toContain('["node", "dist/index.js"]');
     expect(distribution).toContain("Make Release");
     expect(distribution).not.toMatch(/Glama (?:channels are|are|is) published/);
   });

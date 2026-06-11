@@ -114,8 +114,18 @@ https://glama.ai/mcp/servers/Pantani/ableton-mind/admin/dockerfile
 
 Valores sugeridos para o admin da Glama neste repo:
 
-- Build steps: `npm ci` e depois `npm run build`
-- Start command/CMD: `node dist/index.js`
+- Build steps:
+
+```json
+["npm ci", "npm run build"]
+```
+
+- CMD arguments:
+
+```json
+["node", "dist/index.js"]
+```
+
 - Variaveis de ambiente obrigatorias: nenhuma
 - Variaveis de ambiente opcionais: `ABLETON_MIND_HOST`, `ABLETON_MIND_PORT`, `ABLETON_MIND_LOG_LEVEL`, `ABLETON_MIND_TIMEOUT_MS`
 
