@@ -4,7 +4,7 @@ Como o `ableton-mind` chega ao usuario final no release `0.1.0`.
 
 ## Estado do release
 
-`0.1.0` esta publicado no npm, GitHub Releases, MCP Registry oficial e Glama. O metadata da Smithery existe em `smithery.yaml`, mas a listagem hospedada pode atrasar por indexacao. Nao assuma que ghcr.io esta no ar sem checar o container registry.
+`0.1.0` esta publicado no npm, GitHub Releases e MCP Registry oficial. A Glama tem uma listagem do servidor, mas o release hospedado da Glama e uma acao separada que precisa ser concluida na UI admin da Glama. O metadata da Smithery existe em `smithery.yaml`, mas a listagem hospedada pode atrasar por indexacao. Nao assuma que ghcr.io esta no ar sem checar o container registry.
 
 A integracao com Ableton tem duas partes:
 
@@ -93,11 +93,33 @@ node -e "const p=require('./package.json'),s=require('./server.json'); console.l
 
 ## Smithery e Glama
 
-`smithery.yaml` e `glama.json` sao metadata para canais de catalogo/hosting. Glama esta ao vivo em:
+`smithery.yaml` e `glama.json` sao metadata para canais de catalogo/hosting. A Glama tem listagem em:
 
 ```text
 https://glama.ai/mcp/servers/Pantani/ableton-mind
 ```
+
+Uma listagem na Glama nao e a mesma coisa que um release na Glama. Para criar o release hospedado da Glama, use acesso de maintainer na Glama:
+
+1. Claim o servidor pelo fluxo de score/listing da Glama, se ele ainda nao estiver claimed.
+2. Abra a pagina admin do Dockerfile:
+
+```text
+https://glama.ai/mcp/servers/Pantani/ableton-mind/admin/dockerfile
+```
+
+3. Configure build spec, argumentos do comando, schema de variaveis de ambiente e parametros placeholder.
+4. Clique Deploy e aguarde o build test iniciar o MCP server com sucesso.
+5. Clique Make Release, informe a versao e publique.
+
+Valores sugeridos para o admin da Glama neste repo:
+
+- Build steps: `npm ci` e depois `npm run build`
+- Start command/CMD: `node dist/index.js`
+- Variaveis de ambiente obrigatorias: nenhuma
+- Variaveis de ambiente opcionais: `ABLETON_MIND_HOST`, `ABLETON_MIND_PORT`, `ABLETON_MIND_LOG_LEVEL`, `ABLETON_MIND_TIMEOUT_MS`
+
+Use o guia da Glama para conferir os labels atuais da UI: https://glama.ai/blog/2026-03-15-how-to-make-a-release
 
 ```bash
 smithery publish

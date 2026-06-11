@@ -4,7 +4,7 @@ How `ableton-mind` reaches end users for the `0.1.0` release.
 
 ## Release status
 
-`0.1.0` is published on npm, GitHub Releases, the official MCP Registry, and Glama. Smithery metadata is present in `smithery.yaml`, but the hosted listing can lag indexing. Do not assume ghcr.io is live without checking the container registry.
+`0.1.0` is published on npm, GitHub Releases and the official MCP Registry. Glama has a server listing, but a Glama hosted release is a separate release action that must be completed in the Glama admin UI. Smithery metadata is present in `smithery.yaml`, but the hosted listing can lag indexing. Do not assume ghcr.io is live without checking the container registry.
 
 Ableton integration has two pieces:
 
@@ -93,11 +93,33 @@ node -e "const p=require('./package.json'),s=require('./server.json'); console.l
 
 ## Smithery and Glama
 
-`smithery.yaml` and `glama.json` are listing metadata for hosted catalog channels. Glama is live at:
+`smithery.yaml` and `glama.json` are listing metadata for hosted catalog channels. Glama is listed at:
 
 ```text
 https://glama.ai/mcp/servers/Pantani/ableton-mind
 ```
+
+A Glama listing is not the same thing as a Glama release. To create the hosted Glama release, use maintainer access on Glama:
+
+1. Claim the server from the Glama server score/listing flow if it has not been claimed yet.
+2. Open the Dockerfile admin page:
+
+```text
+https://glama.ai/mcp/servers/Pantani/ableton-mind/admin/dockerfile
+```
+
+3. Configure the build spec, command arguments, environment variable schema and placeholder parameters.
+4. Click Deploy and wait for the build test to start the MCP server successfully.
+5. Click Make Release, enter the version and publish.
+
+Suggested Glama admin values for this repo:
+
+- Build steps: `npm ci` then `npm run build`
+- Start command/CMD: `node dist/index.js`
+- Required environment variables: none
+- Optional environment variables: `ABLETON_MIND_HOST`, `ABLETON_MIND_PORT`, `ABLETON_MIND_LOG_LEVEL`, `ABLETON_MIND_TIMEOUT_MS`
+
+Use Glama's guide for the exact current UI labels: https://glama.ai/blog/2026-03-15-how-to-make-a-release
 
 ```bash
 smithery publish

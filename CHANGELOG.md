@@ -14,6 +14,7 @@ All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.c
 ### Changed
 
 - Clarified status docs for Phase 8: slice 1 is read-only Max for Live/plug-in introspection and Link/remote status discovery only; broader M4L/VST3/remote DAW/mobile work remains pending.
+- Clarified Glama distribution docs: a Glama listing is not a Glama release, and the hosted release requires the Glama admin Deploy -> Make Release flow.
 
 ## [0.1.0] — 2026-06-10 — Release closure
 
