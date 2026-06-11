@@ -5,7 +5,7 @@
   "category": "instrument",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Multi-sample player com zones, key/velocity mapping, 3 envelopes (Amp/Pitch/Filter), 3 LFOs, filter multi-mode, modulation matrix, MIDI key/velocity tracking.",
+  "description": "Multi-sample player with zones, key/velocity mapping, 3 envelopes (Amp/Pitch/Filter), 3 LFOs, multi-mode filter, modulation matrix and MIDI key/velocity tracking.",
   "source": "curated (Cycle 9 — TD-024)",
   "completeness": "complete",
   "parameters": [

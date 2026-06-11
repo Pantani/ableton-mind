@@ -5,7 +5,7 @@
   "category": "drum_rack",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "Container de 128 drum pads (slots MIDI 0..127), cada pad pode hospedar Simpler/Sampler/Operator/Drum Cell/Impulse. Pads roteiam para 16 chains (1-16) ou retornos A-D.",
+  "description": "Container for 128 drum pads (MIDI slots 0..127); each pad can host Simpler/Sampler/Operator/Drum Cell/Impulse. Pads route to 16 chains (1-16) or returns A-D.",
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [
@@ -138,5 +138,5 @@
       "return_chains": ["A", "B", "C", "D"]
     }
   },
-  "todo": ["Phase 5: introspection de cada pad individual via knowledge separada."]
+  "todo": ["Phase 5: introspect each individual pad through separate knowledge."]
 }

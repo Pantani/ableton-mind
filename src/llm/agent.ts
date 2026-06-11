@@ -1,6 +1,6 @@
 import { allPrompts } from "../prompts/index.js";
 import type { ToolContext } from "../server/context.js";
-import type { ChatMessage, LlmClient } from "./client.js";
+import type { ChatMessage, LlmClient, OpenAITool, ToolCall } from "./client.js";
 import { DEFAULT_LLM_MAX_STEPS, type LlmTier, MAX_LLM_MAX_STEPS } from "./config.js";
 import { type LlmTool, dispatchTool, resolveTools, toOpenAITools } from "./tools.js";
 
@@ -61,6 +61,113 @@ function isAbort(err: unknown): boolean {
   return err instanceof Error && (err.name === "AbortError" || err.message === "cancelled");
 }
 
+function resolveMaxSteps(maxSteps: number | undefined): number {
+  if (maxSteps === undefined || !Number.isFinite(maxSteps)) return DEFAULT_LLM_MAX_STEPS;
+  return Math.min(MAX_LLM_MAX_STEPS, Math.max(1, Math.trunc(maxSteps)));
+}
+
+type AssistantResult =
+  | { kind: "assistant"; message: ChatMessage }
+  | { kind: "cancelled" }
+  | { kind: "error"; message: string };
+
+async function requestAssistant(
+  client: LlmClient,
+  messages: ChatMessage[],
+  tools: OpenAITool[],
+  emit: (event: AgentEvent) => void,
+  signal: AbortSignal | undefined,
+): Promise<AssistantResult> {
+  try {
+    const message = await client.chatStream(messages, tools, {
+      signal,
+      onToken: (text) => emit({ type: "token", text }),
+    });
+    return { kind: "assistant", message };
+  } catch (err) {
+    return isAbort(err)
+      ? { kind: "cancelled" }
+      : { kind: "error", message: (err as Error).message };
+  }
+}
+
+async function appendToolResults(
+  ctx: ToolContext,
+  calls: ToolCall[],
+  toolset: LlmTool[],
+  messages: ChatMessage[],
+  emit: (event: AgentEvent) => void,
+): Promise<void> {
+  for (const call of calls) {
+    emit({
+      type: "tool",
+      name: call.function.name,
+      status: "start",
+      args: call.function.arguments,
+    });
+    const outcome = await dispatchTool(ctx, call.function.name, call.function.arguments, toolset);
+    emit({
+      type: "tool",
+      name: call.function.name,
+      status: "done",
+      ok: outcome.ok,
+      summary: outcome.summary,
+    });
+    messages.push({
+      role: "tool",
+      tool_call_id: call.id,
+      name: call.function.name,
+      content: outcome.payload,
+    });
+  }
+}
+
+function appendAnswer(
+  messages: ChatMessage[],
+  emit: (event: AgentEvent) => void,
+  content: string,
+): ChatMessage[] {
+  emit({ type: "answer", content });
+  messages.push({ role: "assistant", content });
+  return messages;
+}
+
+type StepResult = { done: true; messages: ChatMessage[] } | { done: false };
+
+async function runAgentStep(
+  ctx: ToolContext,
+  client: LlmClient,
+  messages: ChatMessage[],
+  tools: OpenAITool[],
+  toolset: LlmTool[],
+  emit: (event: AgentEvent) => void,
+  signal: AbortSignal | undefined,
+): Promise<StepResult> {
+  const assistant = await requestAssistant(client, messages, tools, emit, signal);
+  if (assistant.kind === "cancelled") {
+    emit({ type: "error", message: "cancelled" });
+    return { done: true, messages };
+  }
+  if (assistant.kind === "error") {
+    emit({ type: "error", message: assistant.message });
+    messages.push({
+      role: "assistant",
+      content: `(failed to reach the LLM: ${assistant.message})`,
+    });
+    return { done: true, messages };
+  }
+
+  messages.push(assistant.message);
+  const calls = assistant.message.tool_calls ?? [];
+  if (calls.length === 0) {
+    emit({ type: "answer", content: assistant.message.content ?? "" });
+    return { done: true, messages };
+  }
+
+  await appendToolResults(ctx, calls, toolset, messages, emit);
+  return { done: false };
+}
+
 export async function runAgentTurn(
   ctx: ToolContext,
   client: LlmClient,
@@ -73,10 +180,7 @@ export async function runAgentTurn(
   const creative = toolset.some((tool) => tool.creativeOnly);
   const messages = ensureSystem(history, readOnly, creative);
   const tools = toOpenAITools(toolset);
-  const maxSteps =
-    opts.maxSteps !== undefined && Number.isFinite(opts.maxSteps)
-      ? Math.min(MAX_LLM_MAX_STEPS, Math.max(1, Math.trunc(opts.maxSteps)))
-      : DEFAULT_LLM_MAX_STEPS;
+  const maxSteps = resolveMaxSteps(opts.maxSteps);
 
   for (let step = 0; step < maxSteps; step++) {
     if (opts.signal?.aborted) {
@@ -84,57 +188,11 @@ export async function runAgentTurn(
       return messages;
     }
 
-    let assistant: ChatMessage;
-    try {
-      assistant = await client.chatStream(messages, tools, {
-        signal: opts.signal,
-        onToken: (text) => emit({ type: "token", text }),
-      });
-    } catch (err) {
-      if (isAbort(err)) {
-        emit({ type: "error", message: "cancelled" });
-        return messages;
-      }
-      const message = (err as Error).message;
-      emit({ type: "error", message });
-      messages.push({ role: "assistant", content: `(failed to reach the LLM: ${message})` });
-      return messages;
-    }
-
-    messages.push(assistant);
-    const calls = assistant.tool_calls ?? [];
-    if (calls.length === 0) {
-      emit({ type: "answer", content: assistant.content ?? "" });
-      return messages;
-    }
-
-    for (const call of calls) {
-      emit({
-        type: "tool",
-        name: call.function.name,
-        status: "start",
-        args: call.function.arguments,
-      });
-      const outcome = await dispatchTool(ctx, call.function.name, call.function.arguments, toolset);
-      emit({
-        type: "tool",
-        name: call.function.name,
-        status: "done",
-        ok: outcome.ok,
-        summary: outcome.summary,
-      });
-      messages.push({
-        role: "tool",
-        tool_call_id: call.id,
-        name: call.function.name,
-        content: outcome.payload,
-      });
-    }
+    const stepResult = await runAgentStep(ctx, client, messages, tools, toolset, emit, opts.signal);
+    if (stepResult.done) return stepResult.messages;
   }
 
   const content =
     "(stopped after the maximum number of tool steps. Try a smaller request, use a recipe, or hand this to Claude/Codex.)";
-  emit({ type: "answer", content });
-  messages.push({ role: "assistant", content });
-  return messages;
+  return appendAnswer(messages, emit, content);
 }

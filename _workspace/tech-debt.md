@@ -7,9 +7,8 @@
 | ID | Severity | Origin | Item | Fix | Owner |
 |---|---|---|---|---|---|
 | TD-030 | low | Cycle 10 | Push hardware smoke blocked: no Push 2/3 visible over USB/CoreMIDI | connect Push 2/3 and run real sysex smoke | qa-integration |
-| TD-048 | high | Cycle 23 | Package validation red before rc.1 (`typecheck`, tests, build, DXT check) | fix TS/test/build failures, then rerun release gate | ts-server-engineer + distribution-docs-engineer |
 
-**2 open.** TD-030 is environment-blocked; TD-048 is a release-gate blocker discovered while closing TD-005.
+**1 open.** TD-030 is environment-blocked.
 
 ## Closed (most recent)
 
@@ -24,5 +23,6 @@
 | **TD-004** | **21** | **🎯 Real smoke Live 12.4.1 PASS** |
 | **TD-046, TD-047** | **22** | **system.hello version stubs (pkg.json + Live API multi-path)** |
 | **TD-005** | **23** | **npm install environment verified on real machine; validation failures split to TD-048** |
+| **TD-048** | **24** | **package validation gate restored: typecheck, lint, tests, build, docs, DXT, audit, pack** |
 
-**46 TDs closed in 23 cycles.** Remaining: TD-030 (Push hardware) and TD-048 (package validation gate).
+**47 TDs closed in 24 cycles.** Remaining: TD-030 (Push hardware).

@@ -40,7 +40,7 @@
       "unit": "semitones",
       "automatable": true,
       "modulatable": true,
-      "description": "Step entre choices."
+      "description": "Step between choices."
     },
     {
       "index": 3,

@@ -11,7 +11,7 @@ the `AbletonMind` class in `__init__.py`.
 Usage:
   python -m AbletonMind                       # port 9876
   python -m AbletonMind --port 9999           # custom port
-  python -m AbletonMind --host 0.0.0.0
+  python -m AbletonMind --host 0.0.0.0 --allow-remote
 """
 import argparse
 import signal
@@ -26,6 +26,11 @@ def main() -> int:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=9876)
     parser.add_argument(
+        "--allow-remote",
+        action="store_true",
+        help="Allow binding to non-loopback hosts. Unsafe unless protected by the OS/firewall.",
+    )
+    parser.add_argument(
         "--headless",
         action="store_true",
         default=True,
@@ -33,7 +38,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    server = BridgeServer(host=args.host, port=args.port, headless=True)
+    server = BridgeServer(
+        host=args.host, port=args.port, headless=True, allow_remote=args.allow_remote
+    )
     server.start()
     sys.stderr.write(
         f"AbletonMind bridge headless started on {args.host}:{args.port}\n",

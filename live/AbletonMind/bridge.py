@@ -32,11 +32,12 @@ Exception → contract-code mapping:
 - Any other exception → -32001 Live API call failed (with classname/str)
 """
 import json
+import ipaddress
 import queue
 import socket
 import threading
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from .errors import (
     INTERNAL_ERROR,
@@ -51,6 +52,16 @@ from .log import StructuredLogger
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 9876
+DEFAULT_MAX_FRAME_BYTES = 1_048_576
+
+
+def _is_loopback_host(host: str) -> bool:
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
 
 
 class BridgeServer:
@@ -61,6 +72,8 @@ class BridgeServer:
         port: int = DEFAULT_PORT,
         *,
         headless: bool = False,
+        allow_remote: bool = False,
+        max_frame_bytes: int = DEFAULT_MAX_FRAME_BYTES,
         logger: Optional[StructuredLogger] = None,
     ):
         """
@@ -69,10 +82,15 @@ class BridgeServer:
         headless — when True, dispatches on the socket's own thread. Useful for
                    tests and smoke outside Live.
         """
+        if not allow_remote and not _is_loopback_host(host):
+            raise ValueError(
+                "refusing non-loopback bridge bind without explicit allow_remote=True"
+            )
         self.ctrl = ctrl
         self.host = host
         self.port = port
         self.headless = headless or ctrl is None
+        self.max_frame_bytes = max_frame_bytes
         self.log = logger or StructuredLogger(sink=ctrl)
 
         self._stop = threading.Event()
@@ -151,25 +169,15 @@ class BridgeServer:
             self._clients.append(client)
         try:
             while not self._stop.is_set():
-                try:
-                    chunk = client.recv(4096)
-                except socket.timeout:
+                chunk = self._recv_client_chunk(client)
+                if chunk is None:
                     continue
                 if not chunk:
                     break
                 buffer += chunk
-                while b"\n" in buffer:
-                    line, buffer = buffer.split(b"\n", 1)
-                    if not line.strip():
-                        continue
-                    response = self._process_line(line)
-                    if response is None:
-                        # notification (no id) — no response
-                        continue
-                    try:
-                        client.sendall((json.dumps(response) + "\n").encode("utf-8"))
-                    except OSError:
-                        return
+                buffer, keep_open = self._process_client_buffer(client, buffer)
+                if not keep_open:
+                    return
         finally:
             with self._clients_lock:
                 try:
@@ -180,6 +188,47 @@ class BridgeServer:
                 client.close()
             except Exception:
                 pass
+
+    def _recv_client_chunk(self, client: socket.socket) -> Optional[bytes]:
+        try:
+            return client.recv(4096)
+        except socket.timeout:
+            return None
+
+    def _process_client_buffer(self, client: socket.socket, buffer: bytes) -> Tuple[bytes, bool]:
+        while b"\n" in buffer:
+            line, buffer = buffer.split(b"\n", 1)
+            if len(line) > self.max_frame_bytes:
+                self._send_frame_too_large(client, len(line))
+                return buffer, False
+            if line.strip() and not self._send_line_response(client, line):
+                return buffer, False
+        if len(buffer) > self.max_frame_bytes:
+            self._send_frame_too_large(client, len(buffer))
+            return buffer, False
+        return buffer, True
+
+    def _send_line_response(self, client: socket.socket, line: bytes) -> bool:
+        response = self._process_line(line)
+        if response is None:
+            return True
+        try:
+            client.sendall((json.dumps(response) + "\n").encode("utf-8"))
+            return True
+        except OSError:
+            return False
+
+    def _send_frame_too_large(self, client: socket.socket, actual_bytes: int) -> None:
+        response = _error_envelope(
+            None,
+            INVALID_REQUEST,
+            "frame too large",
+            {"max_bytes": self.max_frame_bytes, "actual_bytes": actual_bytes},
+        )
+        try:
+            client.sendall((json.dumps(response) + "\n").encode("utf-8"))
+        except OSError:
+            pass
 
     # ------------------------------------------------------------------ broadcast
 

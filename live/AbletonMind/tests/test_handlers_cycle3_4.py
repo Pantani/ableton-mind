@@ -1,7 +1,7 @@
 """
-Cobertura consolidada dos handlers do Cycle 3 + Cycle 4 (TD-009).
+Consolidated coverage for Cycle 3 + Cycle 4 handlers (TD-009).
 
-Cobre:
+Covers:
   Cycle 3 (TD-009 carry-over):
     - track.upsert, track.set_name, track.set_volume
     - clip.add_notes, clip.fire, clip.stop, clip.set_name
@@ -9,6 +9,7 @@ Cobre:
   Cycle 4:
     - track.get_info, scene.fire, clip.set_loop
 """
+import sys
 import unittest
 
 from ..errors import RpcError
@@ -61,7 +62,7 @@ def _seed_song():
 
 
 def _seed_clip(song, track_index, slot_index, length=4.0, name=""):
-    """Cria um clip num slot. Devolve o FakeClip."""
+    """Create a clip in a slot. Return the FakeClip."""
     track = song.tracks[track_index]
     slot = track.clip_slots[slot_index]
     CreateMidiClipHandler(FakeCtrl(song)).execute(
@@ -229,7 +230,7 @@ class TestClipFireStop(unittest.TestCase):
         self.assertTrue(r["changed"])
         self.assertTrue(r["is_playing"])
 
-        # idempotente: fire de novo → changed=False
+        # Idempotent: firing again -> changed=False.
         r = ClipFireHandler(ctrl).execute(ClipFireInput(track_index=0, clip_slot_index=0))
         self.assertFalse(r["changed"])
 
@@ -293,6 +294,54 @@ class TestBrowserGetCategories(unittest.TestCase):
         ctrl = FakeCtrl(song, application=FakeApplication())
         h = BrowserGetCategoriesHandler(ctrl)
         r = h.execute(BrowserGetCategoriesInput())
+        self.assertTrue(r["available"])
+        keys = {c["key"] for c in r["categories"]}
+        self.assertIn("instruments", keys)
+        self.assertIn("audio_effects", keys)
+
+    def test_lists_categories_when_application_is_method(self):
+        class MethodApplicationCtrl:
+            def __init__(self, song, application):
+                self._song = song
+                self._application = application
+
+            def song(self):
+                return self._song
+
+            def application(self):
+                return self._application
+
+        song = _seed_song()
+        ctrl = MethodApplicationCtrl(song, FakeApplication())
+        h = BrowserGetCategoriesHandler(ctrl)
+        r = h.execute(BrowserGetCategoriesInput())
+        self.assertTrue(r["available"])
+        keys = {c["key"] for c in r["categories"]}
+        self.assertIn("instruments", keys)
+        self.assertIn("audio_effects", keys)
+
+    def test_lists_categories_from_live_application_fallback(self):
+        class FakeLiveApplication:
+            @staticmethod
+            def get_application():
+                return FakeApplication()
+
+        class FakeLive:
+            Application = FakeLiveApplication
+
+        previous = sys.modules.get("Live")
+        sys.modules["Live"] = FakeLive
+        try:
+            song = _seed_song()
+            ctrl = FakeCtrl(song)
+            h = BrowserGetCategoriesHandler(ctrl)
+            r = h.execute(BrowserGetCategoriesInput())
+        finally:
+            if previous is None:
+                del sys.modules["Live"]
+            else:
+                sys.modules["Live"] = previous
+
         self.assertTrue(r["available"])
         keys = {c["key"] for c in r["categories"]}
         self.assertIn("instruments", keys)

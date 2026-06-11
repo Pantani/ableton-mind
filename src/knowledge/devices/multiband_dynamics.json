@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Compressor multibanda 3-band + expander/limiter por banda. Mastering / drum bus.",
+  "description": "Three-band multiband compressor + expander/limiter per band. Mastering / drum bus.",
   "source": "curated (Cycle 13)",
   "completeness": "complete",
   "parameters": [

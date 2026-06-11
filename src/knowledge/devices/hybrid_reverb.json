@@ -196,7 +196,7 @@
       "unit": "bool",
       "automatable": true,
       "modulatable": true,
-      "description": "Congela tail."
+      "description": "Freezes the tail."
     }
   ],
   "todo": []

@@ -10,6 +10,21 @@ from ._base import Handler, register
 
 _MISSING = object()
 
+_LINK_STATUS_FIELDS = (
+    ("enabled", ["link_enabled", "ableton_link_enabled", "is_link_enabled"]),
+    ("num_peers", ["link_num_peers", "num_link_peers", "link_peer_count", "link_peers"]),
+    ("is_connected", ["link_connected", "is_link_connected", "link_has_peers"]),
+    (
+        "start_stop_sync",
+        ["link_start_stop_sync_enabled", "ableton_link_start_stop_sync_enabled"],
+    ),
+    (
+        "tempo_sync",
+        ["link_tempo_sync_enabled", "ableton_link_tempo_sync_enabled", "link_sync_enabled"],
+    ),
+    ("quantum", ["link_quantum", "ableton_link_quantum"]),
+)
+
 
 def _safe_get(obj, name: str, default=_MISSING):
     if obj is None:
@@ -75,6 +90,41 @@ def _read_first(sources: list, names: list) -> tuple:
     return "", _MISSING, missing
 
 
+def _read_link_status_values(sources):
+    values = {}
+    unsupported = []
+    sources_used = set()
+    for key, names in _LINK_STATUS_FIELDS:
+        source, value, missing = _read_first(sources, names)
+        values[key] = value
+        unsupported.extend(missing)
+        if source:
+            sources_used.add(source)
+    return values, unsupported, sources_used
+
+
+def _has_link_status(values):
+    return any(
+        value is not _MISSING and value is not None
+        for value in (
+            values["enabled"],
+            values["num_peers"],
+            values["is_connected"],
+            values["start_stop_sync"],
+            values["tempo_sync"],
+            values["quantum"],
+        )
+    )
+
+
+def _link_status_source_name(sources_used):
+    if not sources_used:
+        return "none"
+    if len(sources_used) == 1:
+        return list(sources_used)[0]
+    return "mixed"
+
+
 @register("session.get_info")
 class SessionGetInfoHandler(Handler):
     INPUT = SessionGetInfoInput
@@ -123,90 +173,25 @@ class SessionLinkStatusHandler(Handler):
             raise RpcError(LIVE_NOT_RUNNING, "Live song is not available")
 
         sources = [("song", song), ("application", _ctrl_application(self.ctrl))]
-        unsupported = []
-        sources_used = set()
+        values, unsupported, sources_used = _read_link_status_values(sources)
 
-        source, enabled, missing = _read_first(
-            sources,
-            ["link_enabled", "ableton_link_enabled", "is_link_enabled"],
-        )
-        unsupported.extend(missing)
-        if source:
-            sources_used.add(source)
-
-        source, num_peers, missing = _read_first(
-            sources,
-            ["link_num_peers", "num_link_peers", "link_peer_count", "link_peers"],
-        )
-        unsupported.extend(missing)
-        if source:
-            sources_used.add(source)
-
-        source, is_connected, missing = _read_first(
-            sources,
-            ["link_connected", "is_link_connected", "link_has_peers"],
-        )
-        unsupported.extend(missing)
-        if source:
-            sources_used.add(source)
-
-        source, start_stop_sync, missing = _read_first(
-            sources,
-            ["link_start_stop_sync_enabled", "ableton_link_start_stop_sync_enabled"],
-        )
-        unsupported.extend(missing)
-        if source:
-            sources_used.add(source)
-
-        source, tempo_sync, missing = _read_first(
-            sources,
-            ["link_tempo_sync_enabled", "ableton_link_tempo_sync_enabled", "link_sync_enabled"],
-        )
-        unsupported.extend(missing)
-        if source:
-            sources_used.add(source)
-
-        source, quantum, missing = _read_first(
-            sources,
-            ["link_quantum", "ableton_link_quantum"],
-        )
-        unsupported.extend(missing)
-        if source:
-            sources_used.add(source)
-
-        parsed_num_peers = _optional_int(num_peers)
-        parsed_is_connected = _optional_bool(is_connected)
+        parsed_num_peers = _optional_int(values["num_peers"])
+        parsed_is_connected = _optional_bool(values["is_connected"])
         if parsed_is_connected is None and parsed_num_peers is not None:
             parsed_is_connected = parsed_num_peers > 0
 
-        available = any(
-            value is not _MISSING and value is not None
-            for value in (
-                enabled,
-                num_peers,
-                is_connected,
-                start_stop_sync,
-                tempo_sync,
-                quantum,
-            )
-        )
-        if not sources_used:
-            source_name = "none"
-        elif len(sources_used) == 1:
-            source_name = list(sources_used)[0]
-        else:
-            source_name = "mixed"
+        available = _has_link_status(values)
 
         return {
             "available": bool(available),
             "read_only": True,
-            "source": source_name,
-            "enabled": _optional_bool(enabled),
+            "source": _link_status_source_name(sources_used),
+            "enabled": _optional_bool(values["enabled"]),
             "is_connected": parsed_is_connected,
             "num_peers": parsed_num_peers,
-            "start_stop_sync_enabled": _optional_bool(start_stop_sync),
-            "tempo_sync_enabled": _optional_bool(tempo_sync),
-            "quantum": _optional_float(quantum),
+            "start_stop_sync_enabled": _optional_bool(values["start_stop_sync"]),
+            "tempo_sync_enabled": _optional_bool(values["tempo_sync"]),
+            "quantum": _optional_float(values["quantum"]),
             "reason": None if available else "Live song/application does not expose Ableton Link status attributes",
             "unsupported_attributes": sorted(set(unsupported)),
         }

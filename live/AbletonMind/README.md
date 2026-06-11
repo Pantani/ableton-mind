@@ -5,6 +5,9 @@ NDJSON JSON-RPC 2.0 TCP server that runs inside Ableton Live as a
 
 - Default port: `127.0.0.1:9876` (override via `ABLETON_MIND_HOST` /
   `ABLETON_MIND_PORT`).
+- Non-loopback binds are rejected by default. Set `ABLETON_MIND_ALLOW_REMOTE=1`
+  only when the OS/network layer restricts access to trusted clients.
+- Incoming NDJSON frames are capped at 1 MiB by default.
 - Stdlib only; no pip dependencies.
 - Live 12 / Python 3.11 is the Phase 0 priority. Live 11 / Python 3.7
   compatibility stays for Phase 1.
@@ -46,6 +49,20 @@ New-Item -ItemType Junction `
 2. Under **Control Surface**, choose `AbletonMind`.
 3. Leave Input / Output as `None`.
 4. Live's Log.txt should show `AbletonMind started on 127.0.0.1:9876`.
+
+## Bridge Safety
+
+The Remote Script controls Live, so the TCP bridge is loopback-only by default.
+For a remote or Docker-hosted MCP server, expose the bridge only on a trusted
+network and set:
+
+```bash
+ABLETON_MIND_HOST=0.0.0.0
+ABLETON_MIND_ALLOW_REMOTE=1
+```
+
+The TypeScript client also limits pending requests and incoming frame size with
+`ABLETON_MIND_MAX_PENDING_REQUESTS` and `ABLETON_MIND_MAX_FRAME_BYTES`.
 
 `Log.txt` locations:
 

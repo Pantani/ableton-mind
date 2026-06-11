@@ -5,7 +5,7 @@
   "category": "midi_effect",
   "vendor": "Ableton",
   "live_version_min": "8.0",
-  "description": "MIDI effect: remap velocity das notas via curve + random + fix mode.",
+  "description": "MIDI effect: remaps note velocity through curve + random + fix mode.",
   "source": "curated (Cycle 17)",
   "completeness": "complete",
   "parameters": [

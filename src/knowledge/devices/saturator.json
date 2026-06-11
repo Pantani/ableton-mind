@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Waveshaper com 6 modos (Analog Clip, Soft Sine, Medium Curve, Hard Curve, Sinoid Fold, Digital Clip), pre/post EQ e DC filter.",
+  "description": "Waveshaper with 6 modes (Analog Clip, Soft Sine, Medium Curve, Hard Curve, Sinoid Fold, Digital Clip), pre/post EQ and DC filter.",
   "source": "curated (Cycle 7)",
   "completeness": "complete",
   "parameters": [

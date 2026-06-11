@@ -1,11 +1,13 @@
 ---
 name: ableton-mind-build
-description: Orchestrates the 8-agent ableton-mind team for concrete build, scaffold, phase execution, local-copilot work, continuation, QA gate or roadmap-cycle work.
+description: Orchestrates the 8-agent ableton-mind team for concrete build, scaffold, phase execution, local-copilot work, continuation, QA gate or roadmap-cycle work. For broad quality audits, run-all-commands sweeps, security/usability/refactor review or coverage hardening, use ableton-mind-quality-audit instead.
 ---
 
 # ableton-mind-build — Team Orchestrator
 
 Use this skill whenever the user asks to execute, implement, continue, scaffold, redo, synchronize, evaluate or gate concrete work for ableton-mind. Conceptual questions about PLAN.md can be answered directly without launching a full cycle.
+
+For broad repo quality audits, command sweeps, security/usability/refactor review, missing-test coverage or release-readiness hardening, hand off to `ableton-mind-quality-audit`. That sibling harness uses a different team and report structure while preserving this build harness for PLAN.md phase execution.
 
 ## Team
 

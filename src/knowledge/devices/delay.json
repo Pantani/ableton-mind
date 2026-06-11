@@ -169,7 +169,7 @@
       "default": 0,
       "unit": "bool",
       "automatable": true,
-      "description": "Congela buffer."
+      "description": "Freezes the buffer."
     },
     {
       "index": 17,

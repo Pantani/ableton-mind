@@ -17,7 +17,7 @@
       "default": 0,
       "unit": "enum",
       "automatable": false,
-      "description": "0..10: roteamento das 4 operadores. Algo 0 = D→C→B→A (4-stack)."
+      "description": "0..10: routing for the four operators. Algo 0 = D->C->B->A (4-stack)."
     },
     {
       "index": 1,
@@ -73,7 +73,7 @@
       "default": 1,
       "unit": "x",
       "automatable": true,
-      "description": "Scale dos times de envelope (todos)."
+      "description": "Scale for all envelope times."
     },
     {
       "index": 7,
@@ -84,7 +84,7 @@
       "unit": "linear",
       "automatable": true,
       "modulatable": true,
-      "description": "Brilho geral; alias para velocity→fixed-end."
+      "description": "Overall brightness; alias for velocity->fixed-end."
     },
 
     {
@@ -96,7 +96,7 @@
       "unit": "ratio",
       "automatable": true,
       "modulatable": true,
-      "description": "Multiplicador de pitch do op A."
+      "description": "Pitch multiplier for op A."
     },
     {
       "index": 9,

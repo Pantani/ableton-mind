@@ -28,7 +28,7 @@
       "unit": "ms",
       "automatable": true,
       "modulatable": true,
-      "description": "Quando Sync=Off."
+      "description": "When Sync=Off."
     },
     {
       "index": 2,
@@ -151,7 +151,7 @@
       "unit": "%",
       "automatable": true,
       "modulatable": true,
-      "description": "Aplica groove pool global."
+      "description": "Applies the global groove pool."
     }
   ],
   "todo": []

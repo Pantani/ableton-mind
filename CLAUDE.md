@@ -68,7 +68,9 @@ Work proceeds in 8 phases. Phase 0 is the spike: scaffold the TS server, minimal
 
 - Documentation is in **English** at the repo root. Localized VitePress pages live only under `docs/pt/`.
 - When the user asks to "start Phase 0" or scaffold, reference `tdmcp` structure but don't blindly copy — adapt to Ableton's domain.
-- No commands to run yet (no `package.json`, no test suite, nothing to build). When scaffolding lands, update this file with the actual `npm` / `pnpm` / `pytest` commands.
+- The current command surface lives in `package.json`, `.github/workflows/`, Python unittest files and distribution scripts. Core gates include `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`, `npm run build:dxt:check`, `npm run docs:build`, `npm run lint:py` and `npm run test:bridge`.
+- When running local commands through Codex, prefix raw shell commands with `rtk proxy`. Keep docs and CI snippets as raw user-facing commands.
+- Do not run publish/write gates (`npm publish`, `git push`, GitHub Release upload, Docker push, registry submission) without explicit confirmation.
 
 ## Harness: 8-agent parallel team
 
@@ -96,3 +98,11 @@ Work proceeds in 8 phases. Phase 0 is the spike: scaffold the TS server, minimal
 |------|--------|--------|--------|
 | 2026-06-08 | Initial build — 7 agents + 7 skills + orchestrator + workspace | `.claude/agents/`, `.claude/skills/`, `_workspace/PROGRESS.md` | `/harness assemble a team to execute this plan across multiple phases in parallel` |
 | 2026-06-10 | Added local-copilot track + tdmcp-compatible backlog | `.claude/agents/local-copilot-engineer.md`, `.claude/skills/local-copilot/`, `_workspace/tdmcp-compatible-features.md` | Port tdmcp local LLM feature and compatible backlog to ableton-mind |
+| 2026-06-10 | Added quality-audit team and orchestrator | `.claude/agents/*audit*.md`, `.claude/agents/test-coverage-engineer.md`, `.claude/agents/refactor-maintainability-engineer.md`, `.claude/skills/ableton-mind-quality-audit/` | Full repo audit: commands, security, usability, refactor, coverage and runtime/release readiness |
+| 2026-06-10 | Registered audit workspace and boundary ADR | `_workspace/quality-audit/`, `_workspace/decisions/0012-quality-audit-harness-boundaries.md` | Keep audit reports and build-phase execution separated |
+
+## Harness: quality audit
+
+**Goal:** audit and harden ableton-mind across command execution, security, usability, flow quality, missing tests, maintainability and release/runtime readiness.
+
+**Trigger:** any request for a complete audit, "test all commands", security/usability/flow review, refactor audit, missing-test coverage, launch readiness, release readiness or follow-up hardening -> invoke the `ableton-mind-quality-audit` skill. Use `ableton-mind-build` for feature phase execution, not broad quality sweeps.

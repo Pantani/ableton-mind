@@ -91,7 +91,7 @@ async function readAdvXml(filePath) {
 /**
  * Regex-based sax-lite parser. Extracts `(tag_path, manual_value)` pairs.
  *
- * Live encoding: cada parameter aparece como
+ * Live encoding: each parameter appears as
  *   <ParamName>
  *     <LomId Value="0" />
  *     <Manual Value="100" />

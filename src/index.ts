@@ -17,6 +17,7 @@
 
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
+import { resolveEntrypointAction } from "./cli/entrypoint.js";
 import { TcpJsonRpcClient, performHandshake } from "./live-client/index.js";
 import { allPrompts } from "./prompts/index.js";
 import { allResources } from "./resources/index.js";
@@ -25,22 +26,31 @@ import { createServer } from "./server/index.js";
 import { attachNotificationForwarder, createMcpNotifier } from "./server/notifications.js";
 import { allTools } from "./tools/index.js";
 import { logger } from "./utils/logger.js";
+import { PACKAGE_VERSION } from "./version.js";
 
 async function main(): Promise<void> {
-  const argv = process.argv.slice(2);
-  if (argv[0] === "chat" || argv[0] === "llm-run") {
-    const { runChat } = await import("./cli/chat.js");
-    await runChat(argv.slice(1));
+  const action = resolveEntrypointAction(process.argv.slice(2));
+  if (action.kind === "print") {
+    if (action.stdout) process.stdout.write(action.stdout);
+    if (action.stderr) process.stderr.write(action.stderr);
+    process.exitCode = action.exitCode;
     return;
   }
-  if (argv[0] === "ask") {
+
+  if (action.kind === "chat") {
+    const { runChat } = await import("./cli/chat.js");
+    await runChat(action.args);
+    return;
+  }
+
+  if (action.kind === "ask") {
     const { runAsk } = await import("./cli/chat.js");
-    await runAsk(argv.slice(1));
+    await runAsk(action.args);
     return;
   }
 
   logger.info("ableton-mind starting", {
-    version: "0.0.1",
+    version: PACKAGE_VERSION,
     node: process.versions.node,
   });
 
@@ -70,7 +80,7 @@ async function main(): Promise<void> {
     prompts: allPrompts,
     resources: allResources,
     name: "ableton-mind",
-    version: "0.0.19",
+    version: PACKAGE_VERSION,
   });
   logger.info("prompts registered", { count: registeredPrompts.length });
   logger.info("resources registered", { count: registeredResources.length });

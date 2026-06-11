@@ -20,6 +20,7 @@ import {
   JsonRpcTransportError,
   TcpJsonRpcClient,
 } from "../src/live-client/index.js";
+import { decodeIncoming } from "../src/live-client/jsonrpc.js";
 
 interface MockServer {
   server: Server;
@@ -212,6 +213,87 @@ describe("TcpJsonRpcClient", () => {
     await client.close();
   });
 
+  it("rejects new calls when maxPendingRequests is reached", async () => {
+    mock.onLine = () => {
+      /* keep first request pending */
+    };
+
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: false,
+      defaultTimeoutMs: 50,
+      maxPendingRequests: 1,
+    });
+    await client.connect();
+
+    const first = client.call("system.ping", {}).catch((err) => err);
+    await expect(client.call("transport.play", {})).rejects.toMatchObject({
+      name: "JsonRpcTransportError",
+      message: "max pending JSON-RPC requests exceeded: 1",
+    });
+
+    await client.close();
+    await first;
+  });
+
+  it("rejects pending calls when incoming frame exceeds maxFrameBytes", async () => {
+    mock.onLine = (_line, sock) => {
+      sock.write("x".repeat(80));
+    };
+
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: false,
+      defaultTimeoutMs: 100,
+      maxFrameBytes: 64,
+    });
+    client.on("error", () => {
+      /* expected transport error */
+    });
+    await client.connect();
+
+    await expect(client.call("system.ping", {})).rejects.toMatchObject({
+      name: "JsonRpcTransportError",
+      message: "incoming JSON-RPC frame exceeded 64 bytes",
+    });
+    expect(client.getState()).toBe("disconnected");
+  });
+
+  it("schedules only one reconnect after oversized incoming frame", async () => {
+    mock.onLine = (_line, sock) => {
+      sock.write("x".repeat(80));
+    };
+
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: true,
+      defaultTimeoutMs: 100,
+      maxFrameBytes: 64,
+      reconnectInitialMs: 1_000,
+    });
+    client.on("error", () => {
+      /* expected transport error */
+    });
+    let disconnects = 0;
+    client.on("disconnect", () => {
+      disconnects += 1;
+    });
+    await client.connect();
+
+    await expect(client.call("system.ping", {})).rejects.toMatchObject({
+      name: "JsonRpcTransportError",
+      message: "incoming JSON-RPC frame exceeded 64 bytes",
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(disconnects).toBe(1);
+    expect((client as unknown as { reconnectAttempt: number }).reconnectAttempt).toBe(1);
+    await client.close();
+  });
+
   it("refuses call when not connected", async () => {
     const client = new TcpJsonRpcClient({
       host: "127.0.0.1",
@@ -219,5 +301,21 @@ describe("TcpJsonRpcClient", () => {
       autoReconnect: false,
     });
     await expect(client.call("system.ping")).rejects.toBeInstanceOf(JsonRpcTransportError);
+  });
+});
+
+describe("JSON-RPC envelope validation", () => {
+  it("rejects ambiguous responses containing both result and error", () => {
+    const line = JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      result: { ok: true },
+      error: {
+        code: ABLETON_MIND_ERRORS.INTERNAL_ERROR,
+        message: "should not coexist with result",
+      },
+    });
+
+    expect(() => decodeIncoming(line)).toThrow(JsonRpcTransportError);
   });
 });

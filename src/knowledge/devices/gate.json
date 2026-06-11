@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Noise gate com sidechain interno e flip mode (Gate / Duck).",
+  "description": "Noise gate with internal sidechain and flip mode (Gate / Duck).",
   "source": "curated (Cycle 11)",
   "completeness": "complete",
   "parameters": [

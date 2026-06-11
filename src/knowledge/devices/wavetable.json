@@ -29,7 +29,7 @@
       "unit": "%",
       "automatable": true,
       "modulatable": true,
-      "description": "Primeiro modificador do Osc 1 (varia por effect mode)."
+      "description": "First Osc 1 modifier (varies by effect mode)."
     },
     {
       "index": 2,
@@ -40,7 +40,7 @@
       "unit": "%",
       "automatable": true,
       "modulatable": true,
-      "description": "Segundo modificador do Osc 1."
+      "description": "Second Osc 1 modifier."
     },
     {
       "index": 3,

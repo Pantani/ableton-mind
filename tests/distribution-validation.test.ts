@@ -11,6 +11,9 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
+import { TS_CLIENT_VERSION } from "../src/live-client/handshake.js";
+import { allTools } from "../src/tools/index.js";
+
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 function read(rel: string): string {
@@ -27,6 +30,35 @@ describe("package.json + dxt/manifest.json version sync (ADR-0009)", () => {
   it("version follows SemVer", () => {
     const pkg = JSON.parse(read("package.json")) as { version: string };
     expect(pkg.version).toMatch(/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/);
+  });
+
+  it("runtime TS handshake version matches package.json", () => {
+    const pkg = JSON.parse(read("package.json")) as { version: string };
+    expect(TS_CLIENT_VERSION).toBe(pkg.version);
+  });
+
+  it("entrypoint source does not contain stale runtime versions", () => {
+    const src = read("src/index.ts");
+    expect(src).not.toContain('version: "0.0.1"');
+    expect(src).not.toContain('version: "0.0.19"');
+  });
+});
+
+describe("DXT manifest tool metadata", () => {
+  it("uses current MCPB manifest_version schema key", () => {
+    const dxt = JSON.parse(read("dxt/manifest.json")) as {
+      manifest_version?: string;
+      dxt_version?: string;
+    };
+    expect(dxt.manifest_version).toBe("0.4");
+    expect(dxt.dxt_version).toBeUndefined();
+  });
+
+  it("lists the same tool names as the runtime registry", () => {
+    const dxt = JSON.parse(read("dxt/manifest.json")) as { tools?: Array<{ name: string }> };
+    const manifestTools = (dxt.tools ?? []).map((tool) => tool.name).sort();
+    const runtimeTools = allTools.map((tool) => tool.name).sort();
+    expect(manifestTools).toEqual(runtimeTools);
   });
 });
 
@@ -71,6 +103,15 @@ describe(".github/workflows/*.yml — parseability + required keys", () => {
     expect(rel).toMatch(/gh release (create|upload)/);
   });
 
+  it("release.yml runs all release-readiness gates before publish steps", () => {
+    const rel = read(".github/workflows/release.yml");
+    expect(rel).toContain("npm run test:bridge");
+    expect(rel).toContain("npm run docs:build");
+    expect(rel).toContain("npm audit --omit=dev");
+    expect(rel).toContain("npm pack --dry-run --json");
+    expect(rel).toContain("@anthropic-ai/mcpb");
+  });
+
   it("release.yml requires expected permissions for OIDC + release", () => {
     const rel = read(".github/workflows/release.yml");
     expect(rel).toMatch(/contents:\s*write/);
@@ -105,6 +146,21 @@ describe("Dockerfile + smithery.yaml + .npmignore", () => {
     expect(ig).not.toMatch(/^CHANGELOG\.md$/m);
     // recipes/ is kept (not in the ignore list)
     expect(ig).not.toMatch(/^recipes\/$/m);
+  });
+});
+
+describe("package publish gate", () => {
+  it("prepublishOnly includes runtime, docs, bridge and package checks", () => {
+    const pkg = JSON.parse(read("package.json")) as { scripts: Record<string, string> };
+    const prepublish = pkg.scripts.prepublishOnly;
+    expect(prepublish).toContain("npm run typecheck");
+    expect(prepublish).toContain("npm run lint");
+    expect(prepublish).toContain("npm run test");
+    expect(prepublish).toContain("npm run test:bridge");
+    expect(prepublish).toContain("npm run docs:build");
+    expect(prepublish).toContain("npm run build");
+    expect(prepublish).toContain("npm run build:dxt:check");
+    expect(prepublish).toContain("npm audit --omit=dev");
   });
 });
 

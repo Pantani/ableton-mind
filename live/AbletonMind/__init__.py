@@ -30,7 +30,10 @@ try:  # pragma: no cover - importable only inside Live
             with self.component_guard():
                 host = os.environ.get("ABLETON_MIND_HOST", DEFAULT_HOST)
                 port = int(os.environ.get("ABLETON_MIND_PORT", str(DEFAULT_PORT)))
-                self.bridge = BridgeServer(self, host=host, port=port)
+                allow_remote = os.environ.get("ABLETON_MIND_ALLOW_REMOTE") == "1"
+                self.bridge = BridgeServer(
+                    self, host=host, port=port, allow_remote=allow_remote
+                )
                 self.bridge.start()
                 self.listeners = ListenerManager(self, self.bridge.broadcast)
                 self.listeners.setup()

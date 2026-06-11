@@ -28,16 +28,16 @@ export const mixChainPrompt: PromptDefinition = {
     const recommendations: Record<string, string[]> = {
       drums: [
         `1. \`apply_recipe { recipe_id: 'racks/parallel-comp', overrides: { track_index: ${idx} } }\``,
-        "2. Drum Buss for glue: load + tweak Drive (non-linear curve, start at 0.2-0.4) and Boom Freq.",
-        "3. EQ Eight for shape: cut mud (200-400 Hz) and brighten (8-12 kHz).",
+        "2. Drum Buss for glue: load it and tweak Drive (non-linear curve, start at 0.2-0.4) and Boom Freq.",
+        "3. EQ Eight for shaping: cut mud (200-400 Hz) and add brightness (8-12 kHz).",
       ],
       bass: [
         `1. \`apply_recipe { recipe_id: 'mixing/bass-glue', overrides: { track_index: ${idx} } }\``,
-        `2. Sidechain do kick: \`apply_recipe { recipe_id: 'racks/sidechain-rack', overrides: { track_index: ${idx} } }\``,
+        `2. Kick sidechain: \`apply_recipe { recipe_id: 'racks/sidechain-rack', overrides: { track_index: ${idx} } }\``,
       ],
       vocal: [
         `1. \`apply_recipe { recipe_id: 'mixing/vocal-chain', overrides: { track_index: ${idx} } }\``,
-        "2. De-essing (no recipe yet; set up manual EQ Eight bell @ 6-8 kHz dynamic).",
+        "2. De-essing (no recipe yet; manually set up a dynamic EQ Eight bell @ 6-8 kHz).",
         "3. Add Reverb (send-style) with Predelay 30 ms.",
       ],
       master: [

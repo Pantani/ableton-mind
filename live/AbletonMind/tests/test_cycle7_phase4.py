@@ -71,7 +71,7 @@ def _seed_song_with_track():
 
 class TestClipEnvelopeSetPoints(unittest.TestCase):
     def _seed_clip(self, song):
-        # Substitui o clip default por um FakeClipWithEnvelope.
+        # Replace the default clip with a FakeClipWithEnvelope.
         slot = song.tracks[0].clip_slots[0]
         slot.clip = FakeClipWithEnvelope()
         return slot.clip
@@ -154,7 +154,7 @@ class TestClipEnvelopeSetPoints(unittest.TestCase):
 
     def test_rejects_empty_slot(self):
         song = _seed_song_with_track()
-        # Sem clip
+        # No clip
         h = ClipEnvelopeSetPointsHandler(FakeCtrl(song))
         with self.assertRaises(RpcError):
             h.execute(
@@ -322,7 +322,7 @@ class TestListenerManagerExpansion(unittest.TestCase):
     def test_track_name_callback_broadcasts_with_track_index(self):
         self.mgr.setup()
         self.song.tracks[0].name = "Drums"
-        # Acha o callback do track name
+        # Find the track name callback
         cb = None
         for obj, prop, c in self.mgr._registered:
             if prop == "name" and obj is self.song.tracks[0]:

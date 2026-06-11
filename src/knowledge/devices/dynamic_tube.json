@@ -5,7 +5,7 @@
   "category": "audio_effect",
   "vendor": "Ableton",
   "live_version_min": "9.0",
-  "description": "Tube saturation modelado em 3 tipos (A/B/C — cool, gentle, aggressive). Bias + Envelope controls.",
+  "description": "Tube saturation modeled in three types (A/B/C: cool, gentle, aggressive). Bias + Envelope controls.",
   "source": "curated (Cycle 15)",
   "completeness": "complete",
   "parameters": [

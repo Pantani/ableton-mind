@@ -123,7 +123,7 @@
       "default": 0,
       "unit": "bool",
       "automatable": true,
-      "description": "Mono < freq abaixo."
+      "description": "Mono below this frequency."
     },
     {
       "index": 12,
