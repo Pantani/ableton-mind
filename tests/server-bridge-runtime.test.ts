@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { TcpJsonRpcClient } from "../src/live-client/index.js";
+import { JsonRpcTransportError, type TcpJsonRpcClient } from "../src/live-client/index.js";
 import { createBridgeRuntime } from "../src/server/bridge-runtime.js";
 
 describe("createBridgeRuntime", () => {
@@ -21,6 +21,7 @@ describe("createBridgeRuntime", () => {
     expect(runtime.detail).toContain("connect ECONNREFUSED 127.0.0.1:9876");
     expect(handshake).not.toHaveBeenCalled();
     expect(client.close).toHaveBeenCalledTimes(1);
+    await expect(runtime.bridge.call("session.get_info")).rejects.toThrow(JsonRpcTransportError);
     await expect(runtime.bridge.call("session.get_info")).rejects.toThrow(
       "Ableton bridge offline: connect ECONNREFUSED 127.0.0.1:9876",
     );
@@ -42,5 +43,28 @@ describe("createBridgeRuntime", () => {
     await expect(runtime.bridge.call("system.ping")).resolves.toEqual({ ok: true });
     await runtime.close();
     expect(client.close).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to offline when handshake fails after connect", async () => {
+    const client = {
+      connect: vi.fn(async () => {}),
+      close: vi.fn(async () => {}),
+      call: vi.fn(),
+    } as unknown as TcpJsonRpcClient;
+    const handshake = vi.fn(async () => {
+      throw new Error("invalid system.hello response");
+    });
+
+    const runtime = await createBridgeRuntime({ client, handshake });
+
+    expect(runtime.connected).toBe(false);
+    expect(runtime.client).toBeNull();
+    expect(runtime.detail).toContain("invalid system.hello response");
+    expect(handshake).toHaveBeenCalledTimes(1);
+    expect(client.close).toHaveBeenCalledTimes(1);
+    await expect(runtime.bridge.call("session.get_info")).rejects.toThrow(JsonRpcTransportError);
+    await expect(runtime.bridge.call("session.get_info")).rejects.toThrow(
+      "Ableton bridge offline: invalid system.hello response",
+    );
   });
 });

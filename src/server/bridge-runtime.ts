@@ -1,4 +1,4 @@
-import { TcpJsonRpcClient, performHandshake } from "../live-client/index.js";
+import { JsonRpcTransportError, TcpJsonRpcClient, performHandshake } from "../live-client/index.js";
 import { type BridgeClient, createBridgeClient } from "./context.js";
 
 export interface BridgeRuntime {
@@ -17,7 +17,7 @@ export interface CreateBridgeRuntimeOptions {
 export function createOfflineBridgeClient(detail: string): BridgeClient {
   return {
     call: async () => {
-      throw new Error(`Ableton bridge offline: ${detail}`);
+      throw new JsonRpcTransportError(`Ableton bridge offline: ${detail}`);
     },
   };
 }
