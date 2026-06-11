@@ -30,7 +30,7 @@ const outputSchema = linkStatusBridgeResult.extend({
 export const sessionLinkStatusTool = defineTool({
   name: "session_link_status",
   description:
-    "Read-only Ableton Link and external sync status discovery. Returns available=false with nullable status fields when the Live runtime does not expose Link state.",
+    "Read-only Ableton Link and external sync status discovery. Use before sync-sensitive playback or collaboration workflows. Returns available=false with nullable status fields and a reason when the Live runtime does not expose Link state.",
   input: inputSchema,
   output: outputSchema,
   handler: async (_input, ctx) => {

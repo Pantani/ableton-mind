@@ -73,147 +73,147 @@
   "tools": [
     {
       "name": "play",
-      "description": "Start or continue Ableton Live playback (idempotent)."
+      "description": "Start or continue Ableton Live playback. Use when the user wants transport running; optional from_beginning restarts at song start. Idempotent: already-playing sessions return changed=false; transport state is async, so the result is marked unverified with current song time."
     },
     {
       "name": "stop",
-      "description": "Stop Ableton Live playback (idempotent)."
+      "description": "Stop Ableton Live playback. Use before editing or when the user asks to halt audio. Idempotent: already-stopped sessions return changed=false; transport state is async, so the result returns current song time and is marked unverified."
     },
     {
       "name": "set_tempo",
-      "description": "Set the global tempo in BPM (20–999)."
+      "description": "Set the global Ableton Live tempo in BPM (20-999). Use for song-wide tempo changes before creating clips or scenes. Idempotent within 0.001 BPM and verified via read-after-write; returns before/after tempo and diff if verification disagrees."
     },
     {
       "name": "track_list",
-      "description": "List all tracks (regular, return, master) in the Live session."
+      "description": "Read-only list of regular, return, and master tracks in the current Live set. Use before addressing tracks by index or deciding where to create content; returns counts and optional return/master sections without mutating the session."
     },
     {
       "name": "track_get_info",
-      "description": "Read detailed state for one regular, return or master track."
+      "description": "Read-only details for one regular track by index. Use before track-scoped edits to inspect name, type, volume, panning, sends, clip slots, clips, and device counts; returns verified state without mutating the session."
     },
     {
       "name": "track_create",
-      "description": "Create a new MIDI or audio track at an optional index."
+      "description": "Create a new MIDI or audio track at an optional index. Use when the user explicitly wants another track. NOT idempotent: every call creates a track; returns the created track and verifies that its type matches the request."
     },
     {
       "name": "track_upsert",
-      "description": "Find or create a track by name and type."
+      "description": "Find or create a track by name and type. Use when a workflow needs a named target track but should avoid duplicates. Idempotent: returns changed=false when the track already exists; verified by returned name/type."
     },
     {
       "name": "track_set_name",
-      "description": "Rename a track with read-after-write verification."
+      "description": "Rename a regular track by index. Use after track_list or track_get_info has confirmed the target track. Idempotent: unchanged names return changed=false; verified via read-after-write and returns before/after names."
     },
     {
       "name": "track_set_volume",
-      "description": "Set a track mixer volume with read-after-write verification."
+      "description": "Set a regular track's mixer volume as a normalized 0..1 value. Use for mix balance changes after confirming the track index. Idempotent within 1e-4; returns linear and dB before/after values with verification diff on mismatch."
     },
     {
       "name": "create_midi_clip",
-      "description": "Create an empty MIDI clip in a session clip slot."
+      "description": "Create an empty MIDI clip in a session clip slot. Use when the target MIDI track and clip slot are known and a new clip is needed. NOT idempotent for occupied slots; wrapped in an undo step and verified by returned clip length/name."
     },
     {
       "name": "clip_add_notes",
-      "description": "Add MIDI notes to a session clip."
+      "description": "Add MIDI notes to an existing session clip using ADR-0003 note fields. Use after creating or locating the target clip. NOT idempotent: repeated calls append notes; returns added count and verification diff if the count does not match."
     },
     {
       "name": "clip_fire",
-      "description": "Trigger a session clip slot."
+      "description": "Trigger a session clip slot. Use when the user wants to launch a specific clip in Session view. Idempotent for already-playing clips, returning changed=false; playback state is async, so verification is marked unverified."
     },
     {
       "name": "clip_stop",
-      "description": "Stop a playing session clip."
+      "description": "Stop playback for a specific session clip slot. Use to halt one clip without stopping the global transport. Idempotent for already-stopped clips; returns changed=false when no launch state changed and marks async playback verification unverified."
     },
     {
       "name": "clip_set_name",
-      "description": "Rename a clip with read-after-write verification."
+      "description": "Rename a session clip by track and slot index. Use after confirming the target clip exists. Idempotent: unchanged names return changed=false; verified via read-after-write and returns before/after names."
     },
     {
       "name": "clip_set_loop",
-      "description": "Configure clip loop bounds and looping state."
+      "description": "Configure a clip's loop_start, loop_end, and/or looping flag while preserving omitted fields. Use for clip loop edits after locating the clip. Idempotent within 1e-4 and verified against only the fields provided by the caller."
     },
     {
       "name": "clip_set_envelope",
-      "description": "Write clip automation envelope points."
+      "description": "Replace all automation points for one clip envelope. Use when the user wants a complete envelope rewrite for mixer or device parameters. NOT idempotent for partial edits; returns written point count and verification diff after hold-curve expansion."
     },
     {
       "name": "scene_fire",
-      "description": "Trigger a session scene."
+      "description": "Fire a Session view scene by index, triggering all clips on that row. Use for arrangement-style playback from scenes. NOT idempotent: re-triggering restarts clips; returns scene name and marks async transport verification unverified."
     },
     {
       "name": "session_get_info",
-      "description": "Read session-level song, scene and track summary."
+      "description": "Read-only top-level snapshot of the Live set. Use first when orienting an agent before edits; returns tempo, transport, time signature, track counts, root note, and scale without mutating the session."
     },
     {
       "name": "session_link_status",
-      "description": "Read-only Ableton Link and external sync status discovery. Returns available=false with nullable status fields when the Live runtime does not expose Link state."
+      "description": "Read-only Ableton Link and external sync status discovery. Use before sync-sensitive playback or collaboration workflows. Returns available=false with nullable status fields and a reason when the Live runtime does not expose Link state."
     },
     {
       "name": "browser_get_categories",
-      "description": "List Ableton browser categories exposed by the bridge."
+      "description": "Read-only list of root categories exposed by the Ableton Live Browser. Use before loading instruments, effects, presets, or samples by browser path; returns available=false with a reason when browser access is unavailable or headless."
     },
     {
       "name": "browser_load_item",
-      "description": "Load a browser item onto a target track or context."
+      "description": "Load an Ableton Browser item such as an instrument, effect, preset, or sample onto the selected or armed track. Use after browser_get_categories/path discovery. NOT idempotent: repeated calls can add or replace devices/content; returns loaded item name and path."
     },
     {
       "name": "device_get_parameters",
-      "description": "List device parameters with knowledge-base metadata where available."
+      "description": "Read-only list of parameters for a device by track/device index. Use before parameter automation or value changes; returns value/range/automation state and knowledge-base unit/description metadata when the device matches bundled schemas."
     },
     {
       "name": "device_set_parameter",
-      "description": "Set a device parameter by name with verification."
+      "description": "Set one device parameter by parameter_index or parameter_name. Use after device_get_parameters when possible. Idempotent within 1e-4 (or exact for quantized values); name lookup adds one bridge call and returns before/after value with verification diff."
     },
     {
       "name": "device_inspect_patcher",
-      "description": "Read-only Max for Live patcher discovery for a device. Returns available=false with a reason when the target is not inspectable or the runtime does not expose patcher metadata."
+      "description": "Read-only Max for Live patcher discovery for a device. Use when deciding whether a device exposes inspectable M4L patcher metadata. Returns available=false with a reason when the target is not inspectable or the runtime lacks patcher access."
     },
     {
       "name": "device_inspect_plugin",
-      "description": "Read-only VST/AU plug-in discovery for a device. Returns plug-in identity and exposed parameters, or available=false with a reason for built-in devices/unsupported runtimes."
+      "description": "Read-only VST/AU plug-in discovery for a device. Use when identifying third-party plug-ins without relying on user-edited device names. Returns plug-in identity and parameters, or available=false with a reason for native devices or unsupported runtimes."
     },
     {
       "name": "arrangement_add_automation_point",
-      "description": "Add an arrangement automation point."
+      "description": "Add one automation point in the Arrangement view for a mixer or device parameter path. Use for incremental arrangement automation edits. NOT idempotent: repeated calls add more points; returns the written time/value/curve after the bridge accepts it."
     },
     {
       "name": "session_snapshot",
-      "description": "Capture a structured snapshot of the current Live set."
+      "description": "Read-only deep snapshot of the Live session. Use before and after mutating tools to verify changes with session_diff; returns tracks and optional clips/devices without changing playback or session state."
     },
     {
       "name": "session_diff",
-      "description": "Compare two session snapshots."
+      "description": "Compare a previous session_snapshot with the current Live state. Use after a mutation batch to verify what actually changed; returns added/removed/changed paths with before/after values and a change count."
     },
     {
       "name": "render_preview",
-      "description": "Render or describe an audio preview for the current session."
+      "description": "Preview the current Live set state. Use when an agent needs a lightweight result check; mode 'snapshot' returns deep state without audio, while mode 'bounce' is reserved for future audio export and returns requested bar count."
     },
     {
       "name": "list_recipes",
-      "description": "List available declarative music recipes."
+      "description": "Read-only list of embedded music recipes, optionally filtered by category. Use before apply_recipe to choose a valid recipe id; returns recipe metadata, tags, version, category, and total count without touching Live."
     },
     {
       "name": "apply_recipe",
-      "description": "Apply a declarative recipe to the current Live set."
+      "description": "Apply an embedded recipe by id with optional overrides. Use after list_recipes when the user asks for a genre pattern, rack, mix chain, or arrangement scaffold. NOT fully transactional in Phase 5; returns progress and failed_at/error if a step fails."
     },
     {
       "name": "list_prompts",
-      "description": "List prompt templates bundled with the server."
+      "description": "Read-only list of MCP prompts bundled with the server for clients that do not expose prompt discovery natively. Use when the user asks what workflows are available; returns prompt names, descriptions, arguments, and total count."
     },
     {
       "name": "list_resources",
-      "description": "List MCP resources bundled with the server."
+      "description": "Read-only list of MCP resources exposed by the server for clients that do not expose resource discovery natively. Use when the user asks what context URIs are available; returns resource URI, name, description, MIME type, and total count."
     },
     {
       "name": "push_set_pad_color",
-      "description": "Set an Ableton Push pad color."
+      "description": "Set the color of one Ableton Push 2/3 pad on the 0..63 grid. Use for visual feedback or performance layouts after hardware detection. Requires Push 2/3; returns sent=true with the pad and color accepted by the bridge."
     },
     {
       "name": "push_set_button_led",
-      "description": "Set an Ableton Push button LED state."
+      "description": "Set the LED color and mode for a Push transport or utility button. Use for hardware feedback after Push detection. Requires Push 2/3; defaults mode to solid and returns sent=true with the accepted button/color/mode."
     },
     {
       "name": "push_set_mode",
-      "description": "Switch Ableton Push mode."
+      "description": "Switch Ableton Push 2/3 to note, session, drum, or step mode. Use when preparing a performance or editing workflow on Push hardware. Requires Push 2/3; returns sent=true with the mode accepted by the bridge."
     }
   ],
   "prompts": [

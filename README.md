@@ -1,5 +1,7 @@
 # ableton-mind
 
+[![ableton-mind MCP server](https://glama.ai/mcp/servers/Pantani/ableton-mind/badges/score.svg)](https://glama.ai/mcp/servers/Pantani/ableton-mind)
+
 Definitive MCP (Model Context Protocol) server for **Ableton Live**. Exposes the full **Live Object Model** to LLMs (Claude, Cursor, etc.) with an embedded native device knowledge base, declarative music recipes, an integrated verify loop, and reactive listeners.
 
 > Status: **alpha / v0.1.0 published** — core smoke passed against Ableton Live 12.4.1 on macOS and package validation is green. npm, GitHub Release `.mcpb`, MCP Registry and Glama are live; Smithery metadata is present and may lag indexing. API unstable. Don't use in production yet.

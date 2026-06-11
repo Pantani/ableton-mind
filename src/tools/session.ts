@@ -35,7 +35,7 @@ const bridgeResultSchema = outputSchema.omit({ ok: true, verified: true });
 export const sessionGetInfoTool = defineTool({
   name: "session_get_info",
   description:
-    "Top-level read-only snapshot of the Live session: tempo, transport, time signature, track counts, root note, scale.",
+    "Read-only top-level snapshot of the Live set. Use first when orienting an agent before edits; returns tempo, transport, time signature, track counts, root note, and scale without mutating the session.",
   input: inputSchema,
   output: outputSchema,
   handler: async (_input, ctx) => {

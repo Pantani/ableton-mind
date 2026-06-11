@@ -32,7 +32,7 @@ const outputSchema = z.object({
 export const listPromptsTool = defineTool({
   name: "list_prompts",
   description:
-    "List all MCP prompts available on this server (workflow templates: create_genre_track, build_mix_chain, build_arrangement, sound_design_session, process_vocal_take).",
+    "Read-only list of MCP prompts bundled with the server for clients that do not expose prompt discovery natively. Use when the user asks what workflows are available; returns prompt names, descriptions, arguments, and total count.",
   input: inputSchema,
   output: outputSchema,
   handler: async () => {

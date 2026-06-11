@@ -191,3 +191,43 @@ describe("README + docs", () => {
     expect(existsSync(join(REPO_ROOT, "docs/smoke-test.md"))).toBe(true);
   });
 });
+
+describe("Glama listing quality", () => {
+  it("README exposes the Glama score badge", () => {
+    const readme = read("README.md");
+    expect(readme).toContain(
+      "[![ableton-mind MCP server](https://glama.ai/mcp/servers/Pantani/ableton-mind/badges/score.svg)](https://glama.ai/mcp/servers/Pantani/ableton-mind)",
+    );
+  });
+
+  it("runtime tool descriptions are detailed enough for Glama TDQS scoring", () => {
+    const weakDescriptions = allTools
+      .filter((tool) => {
+        const description = tool.description.trim();
+        const hasBehavior =
+          /\b(Read-only|Idempotent|NOT idempotent|Returns|Verified|Use (?:when|to)|Requires|available=false|no rollback|re-trigger)\b/i.test(
+            description,
+          );
+        const hasOutcome =
+          /\b(returns?|verified|diff|changed|available=false|error|fails?|sent|loaded|snapshot|progress)\b/i.test(
+            description,
+          );
+        return description.length < 110 || !hasBehavior || !hasOutcome;
+      })
+      .map((tool) => `${tool.name}: ${tool.description}`);
+
+    expect(weakDescriptions).toEqual([]);
+  });
+
+  it("DXT tool descriptions stay aligned with runtime tool descriptions", () => {
+    const dxt = JSON.parse(read("dxt/manifest.json")) as {
+      tools?: Array<{ name: string; description: string }>;
+    };
+    const runtimeDescriptions = new Map(allTools.map((tool) => [tool.name, tool.description]));
+    const mismatches = (dxt.tools ?? [])
+      .filter((tool) => runtimeDescriptions.get(tool.name) !== tool.description)
+      .map((tool) => tool.name);
+
+    expect(mismatches).toEqual([]);
+  });
+});

@@ -46,7 +46,7 @@ const createMidiClipBridgeResult = createMidiClipOutputSchema.pick({ changed: tr
 export const createMidiClipTool = defineTool({
   name: "create_midi_clip",
   description:
-    "Create an empty MIDI clip in a session clip slot. Wrapped in an undo step. Verified via length match.",
+    "Create an empty MIDI clip in a session clip slot. Use when the target MIDI track and clip slot are known and a new clip is needed. NOT idempotent for occupied slots; wrapped in an undo step and verified by returned clip length/name.",
   input: createMidiClipInputSchema,
   output: createMidiClipOutputSchema,
   handler: async (input, ctx) => {
@@ -112,7 +112,7 @@ const clipAddNotesBridgeResult = z.object({
 export const clipAddNotesTool = defineTool({
   name: "clip_add_notes",
   description:
-    "Add MIDI notes to an existing clip. NOT idempotent — repeated calls append. ADR-0003 note format. Verified via note count.",
+    "Add MIDI notes to an existing session clip using ADR-0003 note fields. Use after creating or locating the target clip. NOT idempotent: repeated calls append notes; returns added count and verification diff if the count does not match.",
   input: clipAddNotesInputSchema,
   output: clipAddNotesOutputSchema,
   handler: async (input, ctx) => {
@@ -160,7 +160,8 @@ const clipFireBridgeResult = z.object({
 
 export const clipFireTool = defineTool({
   name: "clip_fire",
-  description: "Trigger a session clip slot. Idempotent: changed=false if already playing.",
+  description:
+    "Trigger a session clip slot. Use when the user wants to launch a specific clip in Session view. Idempotent for already-playing clips, returning changed=false; playback state is async, so verification is marked unverified.",
   input: clipSlotRefSchema,
   output: clipFireOutputSchema,
   handler: async (input, ctx) => {
@@ -178,7 +179,8 @@ export const clipFireTool = defineTool({
 
 export const clipStopTool = defineTool({
   name: "clip_stop",
-  description: "Stop a playing session clip. Idempotent.",
+  description:
+    "Stop playback for a specific session clip slot. Use to halt one clip without stopping the global transport. Idempotent for already-stopped clips; returns changed=false when no launch state changed and marks async playback verification unverified.",
   input: clipSlotRefSchema,
   output: clipFireOutputSchema,
   handler: async (input, ctx) => {
@@ -224,7 +226,8 @@ const clipSetNameBridgeResult = z.object({
 
 export const clipSetNameTool = defineTool({
   name: "clip_set_name",
-  description: "Rename a clip. Idempotent. Verified via read-after-write.",
+  description:
+    "Rename a session clip by track and slot index. Use after confirming the target clip exists. Idempotent: unchanged names return changed=false; verified via read-after-write and returns before/after names.",
   input: clipSetNameInputSchema,
   output: clipSetNameOutputSchema,
   handler: async (input, ctx) => {
@@ -323,7 +326,7 @@ const clipSetEnvelopeBridgeResult = z.object({
 export const clipSetEnvelopeTool = defineTool({
   name: "clip_set_envelope",
   description:
-    "Replace all automation points of a clip envelope. parameter_path: 'mixer.volume' | 'device.<i>.parameter.<n>'. Verified via point count match.",
+    "Replace all automation points for one clip envelope. Use when the user wants a complete envelope rewrite for mixer or device parameters. NOT idempotent for partial edits; returns written point count and verification diff after hold-curve expansion.",
   input: clipSetEnvelopeInputSchema,
   output: clipSetEnvelopeOutputSchema,
   handler: async (input, ctx) => {
@@ -349,7 +352,7 @@ export const clipSetEnvelopeTool = defineTool({
 export const clipSetLoopTool = defineTool({
   name: "clip_set_loop",
   description:
-    "Configure a clip's loop_start / loop_end / looping flag. Any field omitted is preserved. Idempotent within 1e-4. Verified via after match.",
+    "Configure a clip's loop_start, loop_end, and/or looping flag while preserving omitted fields. Use for clip loop edits after locating the clip. Idempotent within 1e-4 and verified against only the fields provided by the caller.",
   input: clipSetLoopInputSchema,
   output: clipSetLoopOutputSchema,
   handler: async (input, ctx) => {

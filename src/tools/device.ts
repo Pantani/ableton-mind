@@ -127,7 +127,7 @@ async function matchKnowledgeDevice(
 export const deviceGetParametersTool = defineTool({
   name: "device_get_parameters",
   description:
-    "List all parameters of a device (knowledge-aware: enriches with unit/description when device is in the knowledge base).",
+    "Read-only list of parameters for a device by track/device index. Use before parameter automation or value changes; returns value/range/automation state and knowledge-base unit/description metadata when the device matches bundled schemas.",
   input: getParamsInputSchema,
   output: getParamsOutputSchema,
   handler: async (input, ctx) => {
@@ -202,7 +202,7 @@ const setParamBridgeResult = z.object({
 export const deviceSetParameterTool = defineTool({
   name: "device_set_parameter",
   description:
-    "Set a device parameter by `parameter_index` OR `parameter_name`. When name is used, looks up the index via device.get_parameters (1 extra bridge call). Idempotent within 1e-4 (or exact for quantized).",
+    "Set one device parameter by parameter_index or parameter_name. Use after device_get_parameters when possible. Idempotent within 1e-4 (or exact for quantized values); name lookup adds one bridge call and returns before/after value with verification diff.",
   input: setParamInputSchema,
   output: setParamOutputSchema,
   handler: async (input, ctx) => {
@@ -273,7 +273,7 @@ const inspectPatcherOutputSchema = inspectPatcherBridgeResult.extend({
 export const deviceInspectPatcherTool = defineTool({
   name: "device_inspect_patcher",
   description:
-    "Read-only Max for Live patcher discovery for a device. Returns available=false with a reason when the target is not inspectable or the runtime does not expose patcher metadata.",
+    "Read-only Max for Live patcher discovery for a device. Use when deciding whether a device exposes inspectable M4L patcher metadata. Returns available=false with a reason when the target is not inspectable or the runtime lacks patcher access.",
   input: deviceDiscoveryInputSchema,
   output: inspectPatcherOutputSchema,
   handler: async (input, ctx) => {
@@ -309,7 +309,7 @@ const inspectPluginOutputSchema = inspectPluginBridgeResult.extend({
 export const deviceInspectPluginTool = defineTool({
   name: "device_inspect_plugin",
   description:
-    "Read-only VST/AU plug-in discovery for a device. Returns plug-in identity and exposed parameters, or available=false with a reason for built-in devices/unsupported runtimes.",
+    "Read-only VST/AU plug-in discovery for a device. Use when identifying third-party plug-ins without relying on user-edited device names. Returns plug-in identity and parameters, or available=false with a reason for native devices or unsupported runtimes.",
   input: deviceDiscoveryInputSchema,
   output: inspectPluginOutputSchema,
   handler: async (input, ctx) => {

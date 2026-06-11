@@ -47,7 +47,7 @@ const padOutputSchema = z.object({
 export const pushSetPadColorTool = defineTool({
   name: "push_set_pad_color",
   description:
-    "Set the color of a Push pad (0..63 grid). color is 0..127 (Ableton Push color palette). Requires Push 2/3 detected.",
+    "Set the color of one Ableton Push 2/3 pad on the 0..63 grid. Use for visual feedback or performance layouts after hardware detection. Requires Push 2/3; returns sent=true with the pad and color accepted by the bridge.",
   input: padInputSchema,
   output: padOutputSchema,
   handler: async (input, ctx) => {
@@ -93,7 +93,7 @@ const modeOutputSchema = z.object({
 export const pushSetModeTool = defineTool({
   name: "push_set_mode",
   description:
-    "Switch Push 2/3 to a top-level mode: note (instrument) / session (clip grid) / drum (drum rack) / step (step seq).",
+    "Switch Ableton Push 2/3 to note, session, drum, or step mode. Use when preparing a performance or editing workflow on Push hardware. Requires Push 2/3; returns sent=true with the mode accepted by the bridge.",
   input: modeInputSchema,
   output: modeOutputSchema,
   handler: async (input, ctx) => {
@@ -106,7 +106,7 @@ export const pushSetModeTool = defineTool({
 export const pushSetButtonLedTool = defineTool({
   name: "push_set_button_led",
   description:
-    "Set the LED color/mode of a Push transport/utility button. mode default 'solid'. Requires Push 2/3 detected.",
+    "Set the LED color and mode for a Push transport or utility button. Use for hardware feedback after Push detection. Requires Push 2/3; defaults mode to solid and returns sent=true with the accepted button/color/mode.",
   input: buttonInputSchema,
   output: buttonOutputSchema,
   handler: async (input, ctx) => {

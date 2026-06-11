@@ -69,7 +69,7 @@ const snapOutputSchema = snapshotSchema.extend({
 export const sessionSnapshotTool = defineTool({
   name: "session_snapshot",
   description:
-    "Read-only deep snapshot of the Live session (tracks + clips + devices). Use before+after a mutation to verify changes via session_diff.",
+    "Read-only deep snapshot of the Live session. Use before and after mutating tools to verify changes with session_diff; returns tracks and optional clips/devices without changing playback or session state.",
   input: snapInputSchema,
   output: snapOutputSchema,
   handler: async (input, ctx) => {
@@ -109,7 +109,7 @@ const diffBridgeResult = diffOutputSchema.omit({ ok: true, verified: true });
 export const sessionDiffTool = defineTool({
   name: "session_diff",
   description:
-    "Diff between a previous session_snapshot and the current state. Returns list of changes with path + before + after.",
+    "Compare a previous session_snapshot with the current Live state. Use after a mutation batch to verify what actually changed; returns added/removed/changed paths with before/after values and a change count.",
   input: diffInputSchema,
   output: diffOutputSchema,
   handler: async (input, ctx) => {
@@ -143,7 +143,7 @@ const previewBridgeResult = z.object({
 export const renderPreviewTool = defineTool({
   name: "render_preview",
   description:
-    "Preview the current state. Mode 'snapshot' (default) returns deep state without audio. Mode 'bounce' (Cycle 10) renders 8-bar bounce.",
+    "Preview the current Live set state. Use when an agent needs a lightweight result check; mode 'snapshot' returns deep state without audio, while mode 'bounce' is reserved for future audio export and returns requested bar count.",
   input: previewInputSchema,
   output: previewOutputSchema,
   handler: async (input, ctx) => {

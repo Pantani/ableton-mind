@@ -38,7 +38,7 @@ const listOutputSchema = z.object({
 export const listRecipesTool = defineTool({
   name: "list_recipes",
   description:
-    "List embedded recipes. Optionally filter by category (drums, bass, chords, racks, arrangements, mixing, live_performance).",
+    "Read-only list of embedded music recipes, optionally filtered by category. Use before apply_recipe to choose a valid recipe id; returns recipe metadata, tags, version, category, and total count without touching Live.",
   input: listInputSchema,
   output: listOutputSchema,
   handler: async (input, _ctx) => {
@@ -84,7 +84,7 @@ const applyOutputSchema = z.object({
 export const applyRecipeTool = defineTool({
   name: "apply_recipe",
   description:
-    "Apply a recipe by id. Recipes encode genre/style patterns (drum kits, basslines, racks) as sequences of LOM operations. Use list_recipes first to see available ids. Returns progress if a step fails (no rollback in Phase 5).",
+    "Apply an embedded recipe by id with optional overrides. Use after list_recipes when the user asks for a genre pattern, rack, mix chain, or arrangement scaffold. NOT fully transactional in Phase 5; returns progress and failed_at/error if a step fails.",
   input: applyInputSchema,
   output: applyOutputSchema,
   handler: async (input, ctx) => {

@@ -43,7 +43,7 @@ const bridgeResultSchema = z.object({
 export const arrangementAddAutomationPointTool = defineTool({
   name: "arrangement_add_automation_point",
   description:
-    "Add an automation point in the Arrangement view. parameter_path: 'mixer.volume' | 'mixer.panning' | 'mixer.send.<i>' | 'device.<i>.parameter.<n>'. NOT idempotent.",
+    "Add one automation point in the Arrangement view for a mixer or device parameter path. Use for incremental arrangement automation edits. NOT idempotent: repeated calls add more points; returns the written time/value/curve after the bridge accepts it.",
   input: inputSchema,
   output: outputSchema,
   handler: async (input, ctx) => {

@@ -27,7 +27,7 @@ const outputSchema = z.object({
 export const listResourcesTool = defineTool({
   name: "list_resources",
   description:
-    "List all MCP resources exposed by this server (read-only URIs: live://session/state, live://knowledge/devices, live://recipes/index).",
+    "Read-only list of MCP resources exposed by the server for clients that do not expose resource discovery natively. Use when the user asks what context URIs are available; returns resource URI, name, description, MIME type, and total count.",
   input: inputSchema,
   output: outputSchema,
   handler: async () => {
