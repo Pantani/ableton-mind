@@ -143,11 +143,12 @@ jobs:
       - name: Compute Docker tags
         id: docker_tags
         run: |
+          OWNER_LC="$(printf '%s' "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')"
           {
             echo "tags<<EOF"
-            echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/ableton-mind:${GITHUB_REF_NAME}"
+            echo "ghcr.io/${OWNER_LC}/ableton-mind:${GITHUB_REF_NAME}"
             if [[ "$GITHUB_REF_NAME" != *-* ]]; then
-              echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/ableton-mind:latest"
+              echo "ghcr.io/${OWNER_LC}/ableton-mind:latest"
             fi
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
