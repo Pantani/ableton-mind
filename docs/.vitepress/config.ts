@@ -94,6 +94,24 @@ export default defineConfig({
           "MCP server for Ableton Live with full LOM coverage, embedded knowledge base and music recipes.",
       },
     ],
+    ["meta", { property: "og:url", content: "https://pantani.github.io/ableton-mind/" }],
+    [
+      "meta",
+      {
+        property: "og:image",
+        content: "https://pantani.github.io/ableton-mind/social-preview.png",
+      },
+    ],
+    ["meta", { property: "og:image:width", content: "1280" }],
+    ["meta", { property: "og:image:height", content: "640" }],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
+    [
+      "meta",
+      {
+        name: "twitter:image",
+        content: "https://pantani.github.io/ableton-mind/social-preview.png",
+      },
+    ],
   ],
 
   themeConfig: {
