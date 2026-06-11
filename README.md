@@ -4,7 +4,7 @@
 
 Definitive MCP (Model Context Protocol) server for **Ableton Live**. Exposes the full **Live Object Model** to LLMs (Claude, Cursor, etc.) with an embedded native device knowledge base, declarative music recipes, an integrated verify loop, and reactive listeners.
 
-> Status: **alpha / v0.1.0 published** — core smoke passed against Ableton Live 12.4.1 on macOS and package validation is green. npm, GitHub Release `.mcpb`, MCP Registry and Glama are live; Smithery metadata is present and may lag indexing. API unstable. Don't use in production yet.
+> Status: **alpha / v0.1.0 published** — core smoke passed against Ableton Live 12.4.1 on macOS and package validation is green. npm, GitHub Release `.mcpb`, and the MCP Registry are live. Glama has a listing, but its hosted release/deploy must be published separately from the Glama admin build flow; Smithery metadata is present and may lag indexing. API unstable. Don't use in production yet.
 >
 > Phase 8 status: slice 1 delivers read-only Max for Live/plug-in introspection and Link/remote status discovery. Deeper M4L control, VST3 sidecars, remote DAW integration and mobile companion work remain pending.
 
@@ -125,7 +125,7 @@ Checks Node version, Remote Script install, bridge port, knowledge base integrit
 - **npm:** `npm install -g ableton-mind`.
 - **Claude Desktop one-click:** download `ableton-mind-0.1.0.mcpb` from the [v0.1.0 GitHub Release](https://github.com/Pantani/ableton-mind/releases/tag/v0.1.0).
 - **MCP Registry:** `io.github.Pantani/ableton-mind` is active in the official registry.
-- **Glama:** listed at [glama.ai/mcp/servers/Pantani/ableton-mind](https://glama.ai/mcp/servers/Pantani/ableton-mind).
+- **Glama:** listed at [glama.ai/mcp/servers/Pantani/ableton-mind](https://glama.ai/mcp/servers/Pantani/ableton-mind); hosted release is separate from the GitHub Release and still requires the Glama admin deploy + Make Release flow.
 - **Source:** `npm ci && npm run build && npm run install:remote-script`.
 - **Docker:** `docker build -t ableton-mind . && docker run --rm -i --network host ableton-mind`.
 - **Smithery:** [`smithery.yaml`](smithery.yaml) is ready for listing/indexing.

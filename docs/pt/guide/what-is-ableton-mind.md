@@ -25,7 +25,7 @@ Muitos fluxos de IA para musica param em conselho. `ableton-mind` foi desenhado 
 
 ## Estado atual
 
-O codigo ja passou smoke real no Ableton Live 12.4.1 para operacoes centrais de transport/session/track, e os gates de package validation do `0.1.0` estao verdes. npm, GitHub Release `.mcpb`, MCP Registry e Glama estao publicados; use instalacao via source quando precisar desenvolver ou validar mudancas locais.
+O codigo ja passou smoke real no Ableton Live 12.4.1 para operacoes centrais de transport/session/track, e os gates de package validation do `0.1.0` estao verdes. npm, GitHub Release `.mcpb` e MCP Registry estao publicados. Glama tem listagem, mas o release hospedado e publicado por um fluxo admin separado da Glama; use instalacao via source quando precisar desenvolver ou validar mudancas locais.
 
 A slice 1 da Phase 8 entrega introspeccao read-only de Max for Live/plug-in e descoberta de status Link/remote. Isso nao significa que controle M4L amplo, sidecars VST3, integracao remote DAW ou mobile companion ja estejam disponiveis.
 

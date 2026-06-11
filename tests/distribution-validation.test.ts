@@ -157,6 +157,24 @@ describe("Dockerfile + smithery.yaml + .npmignore", () => {
   });
 });
 
+describe("hosted catalog release docs", () => {
+  it("documents Glama release as separate from GitHub release", () => {
+    const readme = read("README.md");
+    const distribution = read("docs/distribution.md");
+
+    expect(readme).toContain("Glama has a listing");
+    expect(readme).toContain("hosted release is separate from the GitHub Release");
+    expect(distribution).toContain("A Glama listing is not the same thing as a Glama release.");
+    expect(distribution).toContain(
+      "https://glama.ai/mcp/servers/Pantani/ableton-mind/admin/dockerfile",
+    );
+    expect(distribution).toContain('["npm ci", "npm run build"]');
+    expect(distribution).toContain('["node", "dist/index.js"]');
+    expect(distribution).toContain("Make Release");
+    expect(distribution).not.toMatch(/Glama (?:channels are|are|is) published/);
+  });
+});
+
 describe("package publish gate", () => {
   it("prepublishOnly includes runtime, docs, bridge and package checks", () => {
     const pkg = JSON.parse(read("package.json")) as { scripts: Record<string, string> };
