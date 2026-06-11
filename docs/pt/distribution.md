@@ -4,7 +4,7 @@ Como o `ableton-mind` chega ao usuario final no release `0.1.0`.
 
 ## Estado do release
 
-`0.1.0` esta preparado localmente, mas nao publicado ate o gate manual final. Nao assuma que npm, GitHub Release, MCP Registry, Smithery, Glama ou ghcr.io estao no ar antes dos comandos de publicacao.
+`0.1.0` esta publicado no npm, GitHub Releases, MCP Registry oficial e Glama. O metadata da Smithery existe em `smithery.yaml`, mas a listagem hospedada pode atrasar por indexacao. Nao assuma que ghcr.io esta no ar sem checar o container registry.
 
 A integracao com Ableton tem duas partes:
 
@@ -36,7 +36,7 @@ node scripts/install-remote-script.mjs --copy --force
 
 ## npm
 
-Apos publicar:
+Instale pelo npm:
 
 ```bash
 npm install -g ableton-mind
@@ -89,11 +89,15 @@ Antes de submeter, confira a sincronizacao de versao:
 node -e "const p=require('./package.json'),s=require('./server.json'); console.log(p.version, p.mcpName, s.name, s.version, s.packages[0].version)"
 ```
 
-Submeta apenas depois que o pacote npm e o asset da GitHub Release existirem.
+`0.1.0` esta publicado como versao latest ativa no MCP Registry oficial. Rode `mcp-publisher validate` antes de publicar qualquer versao futura.
 
 ## Smithery e Glama
 
-`smithery.yaml` e `glama.json` sao metadata para canais de catalogo/hosting.
+`smithery.yaml` e `glama.json` sao metadata para canais de catalogo/hosting. Glama esta ao vivo em:
+
+```text
+https://glama.ai/mcp/servers/Pantani/ableton-mind
+```
 
 ```bash
 smithery publish

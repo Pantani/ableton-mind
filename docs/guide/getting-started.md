@@ -10,7 +10,7 @@
 
 ## 1. Build from source
 
-Public npm and `.mcpb` channels are not published yet. Use the source path for now:
+For development, use the source path:
 
 ```bash
 npm ci

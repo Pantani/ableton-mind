@@ -34,7 +34,7 @@ features:
     details: Mudanças no LOM viram MCP notifications. O LLM "vê" o usuário tocar, gravar, mudar tempo.
   - icon: 📦
     title: Caminho de distribuicao
-    details: Source install funciona hoje. .mcpb one-click, npm, Docker e Smithery estao validados para 0.1.0; canais publicos esperam o gate manual de publicacao.
+    details: Source install, npm, GitHub Release .mcpb, Docker build, MCP Registry e Glama estao prontos para 0.1.0; metadata da Smithery existe para indexacao.
 ---
 
 ## Dois caminhos
@@ -59,6 +59,6 @@ features:
 
 > Atualmente: **36 tools MCP**, **5 prompts**, **3 resources MCP**, **55 device schemas**, **14 recipes** em 7/7 categorias, **verify loop em 23/23 tools de mutacao/preview** e **smoke real PASS no Ableton Live 12.4.1** para core bridge/session/transport/track.
 
-Os gates de validacao estao verdes para `0.1.0`, incluindo typecheck, lint, testes, build, `.mcpb`, docs build, dry-runs de package e doctor. Os canais publicos npm, GitHub Release, MCP Registry, Smithery/Glama e Docker/ghcr.io ainda nao foram publicados; eles esperam o gate manual final. TD-030, smoke de hardware Push 2/3, continua bloqueado ate existir hardware fisico disponivel.
+Os gates de validacao estao verdes para `0.1.0`, incluindo typecheck, lint, testes, build, `.mcpb`, docs build, dry-runs de package e doctor. npm, GitHub Release `.mcpb`, MCP Registry e Glama estao publicados; indexacao da Smithery e disponibilidade de ghcr.io devem ser verificadas por canal. TD-030, smoke de hardware Push 2/3, continua bloqueado ate existir hardware fisico disponivel.
 
 Phase 8 ainda nao e um release amplo de long tail. A slice 1 entrega introspeccao read-only de Max for Live/plug-in e descoberta de status Link/remote. Controle M4L mais profundo, sidecars VST3, integracao remote DAW e mobile companion continuam pendentes, e smoke real em Live para M4L/plug-in/Link ainda nao foi provado nesta passada.

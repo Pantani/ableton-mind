@@ -1,8 +1,8 @@
 # Instalação
 
-O caminho funcional hoje e **instalacao via source**. Os canais publicos npm, GitHub Release e `.mcpb` one-click estao configurados no repo, mas ainda nao foram publicados.
+Os caminhos mais rapidos agora sao **npm global** ou o `.mcpb` da GitHub Release. Use instalacao via source para desenvolver o repo ou testar mudancas locais.
 
-## 1. Instalacao via source (atual)
+## 1. Instalacao via source
 
 ```bash
 git clone https://github.com/Pantani/ableton-mind.git
@@ -33,19 +33,19 @@ Para checkout local, aponte o cliente para `dist/index.js`:
 
 Use o path absoluto da sua maquina.
 
-## 3. Claude Desktop `.mcpb` (bundle local)
+## 3. Claude Desktop `.mcpb`
 
-O repo ja consegue montar bundle local:
+Baixe `ableton-mind-0.1.0.mcpb` na [GitHub Release v0.1.0](https://github.com/Pantani/ableton-mind/releases/tag/v0.1.0) e arraste para o Claude Desktop.
+
+O repo tambem consegue montar bundle local:
 
 ```bash
 npm run build:dxt
 ```
 
-Arraste o `.mcpb` gerado para o Claude Desktop. Downloads publicos entram depois do gate manual final do `0.1.0`.
+Arraste o `.mcpb` gerado para o Claude Desktop.
 
-## 4. npm global (apos publicacao)
-
-Comando planejado depois da publicacao:
+## 4. npm global
 
 ```bash
 npm install -g ableton-mind
@@ -53,7 +53,7 @@ ableton-mind
 ableton-mind-doctor
 ```
 
-Estado atual do registry: `ableton-mind` ainda nao esta publicado no npm.
+Estado atual do registry: `ableton-mind@0.1.0` esta publicado no npm.
 
 ## 5. Docker
 
@@ -76,7 +76,7 @@ Util para CI e sandboxes; para uso interativo no desktop, source ou `.mcpb` tend
 
 ## 6. Smithery
 
-`smithery.yaml` existe para o caminho de release. Publique depois do gate manual final de release.
+`smithery.yaml` existe para o caminho de listagem. A indexacao hospedada da Smithery pode atrasar em relacao ao metadata do repo.
 
 ## Detalhes completos
 

@@ -1,61 +1,39 @@
-# Smithery MCP listing — ableton-mind
-# https://smithery.ai
-
+# Smithery configuration — https://smithery.ai/docs/build/project-config/smithery.yaml
+#
+# ableton-mind is a local stdio MCP server: it drives a Remote Script bridge
+# running inside Ableton Live on the same machine (default 127.0.0.1:9876), so
+# the public listing should install the npm package and let the user run the
+# Ableton bridge locally.
 startCommand:
   type: stdio
   configSchema:
     type: object
+    required: []
     properties:
-      ABLETON_MIND_HOST:
+      abletonHost:
         type: string
-        description: Bridge host (default 127.0.0.1)
         default: "127.0.0.1"
-      ABLETON_MIND_PORT:
-        type: string
-        description: Bridge TCP port (default 9876)
-        default: "9876"
-      ABLETON_MIND_LOG_LEVEL:
+        description: Host of the Ableton Live Remote Script bridge.
+      abletonPort:
+        type: integer
+        default: 9876
+        description: TCP port of the Ableton Live Remote Script bridge.
+      logLevel:
         type: string
         enum: [debug, info, warn, error]
         default: info
+        description: Log level for the local MCP server.
   commandFunction: |
     (config) => ({
-      command: "node",
-      args: ["dist/index.js"],
+      command: "npx",
+      args: ["-y", "ableton-mind"],
       env: {
-        ABLETON_MIND_HOST: config.ABLETON_MIND_HOST || "127.0.0.1",
-        ABLETON_MIND_PORT: config.ABLETON_MIND_PORT || "9876",
-        ABLETON_MIND_LOG_LEVEL: config.ABLETON_MIND_LOG_LEVEL || "info"
+        ...(config.abletonHost && { ABLETON_MIND_HOST: config.abletonHost }),
+        ...(config.abletonPort && { ABLETON_MIND_PORT: String(config.abletonPort) }),
+        ...(config.logLevel && { ABLETON_MIND_LOG_LEVEL: config.logLevel })
       }
     })
-
-build:
-  dockerfile: Dockerfile
-  dockerBuildPath: .
-
-metadata:
-  name: ableton-mind
-  description: Definitive MCP server for Ableton Live — full LOM coverage, embedded device knowledge base, declarative music recipes.
-  homepage: https://github.com/Pantani/ableton-mind
-  license: MIT
-  keywords:
-    - ableton
-    - ableton-live
-    - music
-    - production
-    - llm
-    - claude
-  tools:
-    count: 33
-    categories:
-      - transport
-      - track
-      - clip
-      - scene
-      - session
-      - browser
-      - device
-      - arrangement
-      - preview
-      - recipes
-      - push
+  exampleConfig:
+    abletonHost: "127.0.0.1"
+    abletonPort: 9876
+    logLevel: info

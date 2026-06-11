@@ -34,7 +34,7 @@ features:
     details: LOM property changes become MCP notifications. The LLM "sees" the user play, record, change tempo.
   - icon: 📦
     title: Distribution path
-    details: Source install works today. One-click .mcpb, npm, Docker and Smithery are validated for 0.1.0, with public channels waiting on the manual publish gate.
+    details: Source install, npm, GitHub Release .mcpb, Docker build, MCP Registry and Glama are ready for 0.1.0; Smithery metadata is present for indexing.
 ---
 
 ## Two ways in
@@ -47,6 +47,6 @@ features:
 
 **36 MCP tools**, **5 prompts**, **3 MCP resources**, **55 device schemas**, **14 recipes** across 7/7 categories, **verify loop 23/23 mutation/preview tools**, and **real Ableton Live 12.4.1 smoke PASS** for core bridge/session/transport/track flows.
 
-Validation gates are green for `0.1.0`, including typecheck, lint, tests, build, `.mcpb`, docs build, package dry-runs and doctor. Public npm, GitHub Release, MCP Registry, Smithery/Glama and Docker/ghcr.io channels are not published yet; they wait on the final manual publish gate. TD-030 Push 2/3 hardware smoke remains hardware-blocked until physical hardware is available.
+Validation gates are green for `0.1.0`, including typecheck, lint, tests, build, `.mcpb`, docs build, package dry-runs and doctor. npm, GitHub Release `.mcpb`, MCP Registry and Glama are published; Smithery indexing and ghcr.io availability should be verified per channel. TD-030 Push 2/3 hardware smoke remains hardware-blocked until physical hardware is available.
 
 Phase 8 is not a broad long-tail release yet. Slice 1 delivers read-only Max for Live/plug-in introspection and Link/remote status discovery. Deeper M4L control, VST3 sidecars, remote DAW integration and mobile companion work remain pending, and real Live smoke for M4L/plug-in/Link is still unproven in this pass.

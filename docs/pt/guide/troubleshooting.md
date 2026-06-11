@@ -34,7 +34,7 @@ Reinicie o Live depois de copiar.
 
 ## npm ou .mcpb nao funciona
 
-Os canais publicos npm e release bundle ainda nao foram publicados. Use build via source ate o gate manual final de publicacao rodar:
+Se o pacote npm publicado ou o release bundle nao funcionar no seu ambiente, gere via source para isolar se o problema e empacotamento ou setup local da bridge Ableton:
 
 ```bash
 npm ci

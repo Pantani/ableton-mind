@@ -10,7 +10,7 @@
 
 ## 1. Build via source
 
-Os canais publicos npm e `.mcpb` ainda nao foram publicados. Use o caminho via source por enquanto:
+Para desenvolvimento, use o caminho via source:
 
 ```bash
 npm ci

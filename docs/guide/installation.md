@@ -1,8 +1,8 @@
 # Installation
 
-The current working path is **source install**. Public npm, GitHub Release and one-click `.mcpb` channels are wired in the repo, but they are not published yet.
+The fastest install paths are now **npm global** or the GitHub Release `.mcpb`. Use source install when developing the repo or testing local changes.
 
-## 1. Source install (current)
+## 1. Source install
 
 ```bash
 git clone https://github.com/Pantani/ableton-mind.git
@@ -33,19 +33,19 @@ For a local source checkout, point the client at `dist/index.js`:
 
 Use the absolute path from your machine.
 
-## 3. Claude Desktop `.mcpb` (local bundle)
+## 3. Claude Desktop `.mcpb`
 
-The repo can build a bundle locally:
+Download `ableton-mind-0.1.0.mcpb` from the [v0.1.0 GitHub Release](https://github.com/Pantani/ableton-mind/releases/tag/v0.1.0), then drag it into Claude Desktop.
+
+The repo can also build a bundle locally:
 
 ```bash
 npm run build:dxt
 ```
 
-Drag the generated `.mcpb` into Claude Desktop. Public downloads will be linked after the final `0.1.0` publish gate.
+Drag the generated `.mcpb` into Claude Desktop.
 
-## 4. npm global (after publish)
-
-Planned command after publication:
+## 4. npm global
 
 ```bash
 npm install -g ableton-mind
@@ -53,7 +53,7 @@ ableton-mind
 ableton-mind-doctor
 ```
 
-Current registry status: `ableton-mind` is not published on npm yet.
+Current registry status: `ableton-mind@0.1.0` is published on npm.
 
 ## 5. Docker
 
@@ -74,6 +74,6 @@ docker run --rm -it \
 
 ## 6. Smithery
 
-`smithery.yaml` is present for the release path. Publish after the final manual release gate.
+`smithery.yaml` is present for the listing path. Hosted Smithery indexing can lag the repository metadata.
 
 Full details in [Distribution](../distribution).

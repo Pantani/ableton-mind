@@ -34,7 +34,7 @@ Restart Live after copying.
 
 ## npm or .mcpb install does not work
 
-Public npm and release bundle channels are not published yet. Build from source until the final manual publish gate runs:
+If the published npm package or release bundle does not work in your environment, build from source to isolate whether the issue is packaging or local Ableton bridge setup:
 
 ```bash
 npm ci
