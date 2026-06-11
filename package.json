@@ -1,6 +1,6 @@
 {
   "name": "ableton-mind",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "mcpName": "io.github.Pantani/ableton-mind",
   "description": "Definitive MCP server for Ableton Live: complete LOM coverage, embedded knowledge base and music recipes.",
   "license": "MIT",

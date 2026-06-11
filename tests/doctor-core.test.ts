@@ -26,14 +26,14 @@ describe("doctor remote script checks", () => {
 
 describe("doctor bridge version checks", () => {
   it("fails when bridge version differs from package version", () => {
-    const result = versionMatchCheck("0.1.0", "0.0.21");
+    const result = versionMatchCheck("0.1.1", "0.0.21");
     expect(result.ok).toBe(false);
-    expect(result.detail).toBe("bridge=0.0.21 pkg=0.1.0");
+    expect(result.detail).toBe("bridge=0.0.21 pkg=0.1.1");
   });
 
   it("passes when bridge version matches package version", () => {
-    const result = versionMatchCheck("0.1.0", "0.1.0");
+    const result = versionMatchCheck("0.1.1", "0.1.1");
     expect(result.ok).toBe(true);
-    expect(result.detail).toBe("bridge=0.1.0 pkg=0.1.0");
+    expect(result.detail).toBe("bridge=0.1.1 pkg=0.1.1");
   });
 });

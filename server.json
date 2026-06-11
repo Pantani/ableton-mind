@@ -3,7 +3,7 @@
   "name": "io.github.Pantani/ableton-mind",
   "title": "ableton-mind — Ableton Live MCP server",
   "description": "Control Ableton Live from Claude, Cursor or Codex with LOM tools, device knowledge and recipes.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "url": "https://github.com/Pantani/ableton-mind",
     "source": "github"
@@ -13,7 +13,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "ableton-mind",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": {
         "type": "stdio"
       }

@@ -34,7 +34,7 @@ features:
     details: LOM property changes become MCP notifications. The LLM "sees" the user play, record, change tempo.
   - icon: 📦
     title: Distribution path
-    details: Source install, npm, GitHub Release .mcpb, Docker build and MCP Registry are ready for 0.1.0; Glama has a listing, but its hosted release is a separate admin publish flow.
+    details: Source install, npm, GitHub Release .mcpb, Docker build and MCP Registry are ready for 0.1.1; Glama has a listing, but its hosted release is a separate admin publish flow.
 ---
 
 ## Two ways in
@@ -47,6 +47,6 @@ features:
 
 **36 MCP tools**, **5 prompts**, **3 MCP resources**, **55 device schemas**, **14 recipes** across 7/7 categories, **verify loop 23/23 mutation/preview tools**, and **real Ableton Live 12.4.1 smoke PASS** for core bridge/session/transport/track flows.
 
-Validation gates are green for `0.1.0`, including typecheck, lint, tests, build, `.mcpb`, docs build, package dry-runs and doctor. npm, GitHub Release `.mcpb` and MCP Registry are published. Glama has a listing, but its hosted release requires the Glama admin Deploy -> Make Release flow; Smithery indexing and ghcr.io availability should be verified per channel. TD-030 Push 2/3 hardware smoke remains hardware-blocked until physical hardware is available.
+Validation gates are green for `0.1.1`, including typecheck, lint, tests, build, `.mcpb`, docs build, package dry-runs and doctor. npm, GitHub Release `.mcpb` and MCP Registry are published. Glama has a listing, but its hosted release requires the Glama admin Deploy -> Make Release flow; Smithery indexing and ghcr.io availability should be verified per channel. TD-030 Push 2/3 hardware smoke remains hardware-blocked until physical hardware is available.
 
 Phase 8 is not a broad long-tail release yet. Slice 1 delivers read-only Max for Live/plug-in introspection and Link/remote status discovery. Deeper M4L control, VST3 sidecars, remote DAW integration and mobile companion work remain pending, and real Live smoke for M4L/plug-in/Link is still unproven in this pass.

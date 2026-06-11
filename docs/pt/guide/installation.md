@@ -35,7 +35,7 @@ Use o path absoluto da sua maquina.
 
 ## 3. Claude Desktop `.mcpb`
 
-Baixe `ableton-mind-0.1.0.mcpb` na [GitHub Release v0.1.0](https://github.com/Pantani/ableton-mind/releases/tag/v0.1.0) e arraste para o Claude Desktop.
+Baixe `ableton-mind-0.1.1.mcpb` na [GitHub Release v0.1.1](https://github.com/Pantani/ableton-mind/releases/tag/v0.1.1) e arraste para o Claude Desktop.
 
 O repo tambem consegue montar bundle local:
 
@@ -53,7 +53,7 @@ ableton-mind
 ableton-mind-doctor
 ```
 
-Estado atual do registry: `ableton-mind@0.1.0` esta publicado no npm.
+Estado atual do registry: `ableton-mind@0.1.1` esta publicado no npm.
 
 ## 5. Docker
 

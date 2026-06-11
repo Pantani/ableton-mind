@@ -1,10 +1,10 @@
 # Distribution
 
-How `ableton-mind` reaches end users for the `0.1.0` release.
+How `ableton-mind` reaches end users for the `0.1.1` release.
 
 ## Release status
 
-`0.1.0` is published on npm, GitHub Releases and the official MCP Registry. Glama has a server listing, but a Glama hosted release is a separate release action that must be completed in the Glama admin UI. Smithery metadata is present in `smithery.yaml`, but the hosted listing can lag indexing. Do not assume ghcr.io is live without checking the container registry.
+`0.1.1` is published on npm, GitHub Releases and the official MCP Registry. Glama has a server listing, but a Glama hosted release is a separate release action that must be completed in the Glama admin UI. Smithery metadata is present in `smithery.yaml`, but the hosted listing can lag indexing. Do not assume ghcr.io is live without checking the container registry.
 
 Ableton integration has two pieces:
 
@@ -69,7 +69,7 @@ npm run build
 npm run build:mcpb
 ```
 
-Install by dragging `build/ableton-mind-0.1.0.mcpb` into Claude Desktop or by using an MCPB installer.
+Install by dragging `build/ableton-mind-0.1.1.mcpb` into Claude Desktop or by using an MCPB installer.
 
 The bundle installs and runs the Node MCP server. It also includes the Remote Script files and installer script for reference, but Claude Desktop does not automatically copy those files into Ableton Live. Install the Remote Script separately through the npm/source installer, then activate it in Live:
 
@@ -89,7 +89,7 @@ Before submission, verify version sync:
 node -e "const p=require('./package.json'),s=require('./server.json'); console.log(p.version, p.mcpName, s.name, s.version, s.packages[0].version)"
 ```
 
-`0.1.0` is published as an active latest version in the official MCP Registry. Re-run `mcp-publisher validate` before publishing any future version.
+`0.1.1` is published as an active latest version in the official MCP Registry. Re-run `mcp-publisher validate` before publishing any future version.
 
 ## Smithery and Glama
 
@@ -149,7 +149,7 @@ docker run --rm -i --network host ableton-mind
 Release workflow tags for stable releases:
 
 ```text
-ghcr.io/pantani/ableton-mind:v0.1.0
+ghcr.io/pantani/ableton-mind:v0.1.1
 ghcr.io/pantani/ableton-mind:latest
 ```
 
@@ -189,7 +189,7 @@ npm behavior:
 
 - prerelease tags containing `-` are skipped
 - stable tags publish only when `ABLETON_MIND_AUTO_NPM_PUBLISH=true` and `NPM_TOKEN` is configured
-- manual npm publish remains the default for `0.1.0`
+- manual npm publish remains the default for `0.1.1`
 
 Required GitHub Actions secrets/variables:
 

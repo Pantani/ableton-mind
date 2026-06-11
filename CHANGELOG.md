@@ -16,12 +16,12 @@ All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.c
 - Clarified status docs for Phase 8: slice 1 is read-only Max for Live/plug-in introspection and Link/remote status discovery only; broader M4L/VST3/remote DAW/mobile work remains pending.
 - Clarified Glama distribution docs: a Glama listing is not a Glama release, and the hosted release requires the Glama admin Deploy -> Make Release flow.
 
-## [0.1.0] — 2026-06-10 — Release closure
+## [0.1.1] — 2026-06-10 — Release closure
 
 ### Added
 
 - npm package now exposes `ableton-mind-install-remote-script` and includes the `live/AbletonMind/` Remote Script runtime needed after global install.
-- MCP Registry, DXT, Safeskill, Smithery and Glama metadata are synced for the `0.1.0` release surface.
+- MCP Registry, DXT, Safeskill, Smithery and Glama metadata are synced for the `0.1.1` release surface.
 - `.mcpb` bundles include server output, knowledge assets, Remote Script runtime files, installer script, and release metadata.
 
 ### Fixed
@@ -32,7 +32,7 @@ All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.c
 
 ### Release notes
 
-- Local LLM/copilot/chat is not part of the stable `0.1.0` surface in this checkout; no stable bin or export is exposed for it.
+- Local LLM/copilot/chat is not part of the stable `0.1.1` surface in this checkout; no stable bin or export is exposed for it.
 - TD-030 Push 2/3 hardware smoke remains hardware-blocked and is deferred until physical hardware is available.
 - Publishing still requires the final manual gate: no tag, push, npm publish, registry submission, or Docker push is automatic from this local closure.
 

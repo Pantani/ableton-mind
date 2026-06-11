@@ -1,7 +1,7 @@
 # PROGRESS — ableton-mind
 
-**Status:** Cycle 24 delivered Phase 8 slice 1 as read-only discovery. Release closure for `v0.1.0` remains green and ready for the final manual publish gate. TD-048 is closed; TD-030 remains blocked by missing Push hardware.
-**Last update:** 2026-06-10
+**Status:** Cycle 24 delivered Phase 8 slice 1 as read-only discovery. Package metadata and public docs are prepared for `v0.1.1`; the previous `v0.1.0` release-closure artifacts remain as historical evidence. TD-048 is closed; TD-030 remains blocked by missing Push hardware.
+**Last update:** 2026-06-11
 
 ## Cycle 24 - Phase 8 long tail slice 1
 
@@ -19,18 +19,18 @@ Details:
 - [24_knowledge_summary.md](24_knowledge_summary.md)
 - [24_recipes_summary.md](24_recipes_summary.md)
 
-## Release closure - v0.1.0
+## Release prep - v0.1.1
 
 - ✅ **TD-048 closed:** package validation is green on the final tree.
-- ✅ Version sync is `0.1.0` across `package.json`, `package-lock.json`, `dxt/manifest.json`, `server.json`, `server.json::packages[0].version`, and `safeskill.manifest.json`.
+- ✅ Version sync is `0.1.1` across `package.json`, `package-lock.json`, `dxt/manifest.json`, `server.json`, `server.json::packages[0].version`, and `safeskill.manifest.json`.
 - ✅ npm package includes the compiled server, runtime knowledge/recipes, `live/AbletonMind/` Remote Script runtime, metadata manifests, and `ableton-mind-install-remote-script`.
 - ✅ `.mcpb` build includes the server, runtime assets, Remote Script files, installer script, and release metadata. The manifest validates with `@anthropic-ai/mcpb`.
 - ✅ Python bridge gate is normalized to `python3 -m unittest discover -s live/AbletonMind/tests -t live -v`.
-- ✅ Local LLM/copilot/chat is not present in this checkout and is not exposed as a stable `0.1.0` bin/export.
+- ✅ Local LLM/copilot/chat is not present in this checkout and is not exposed as a stable `0.1.1` bin/export.
 - ⚠️ **TD-030 still open:** Push 2/3 hardware smoke remains hardware-blocked.
 - ⛔ No tag, push, npm publish, GitHub Release, MCP Registry submission, Smithery/Glama publish, or Docker/ghcr push has been performed.
 
-Details:
+Historical `v0.1.0` release-closure evidence:
 - [qa/release-0.1.0-report.md](qa/release-0.1.0-report.md)
 - [cycle-briefing-release-0.1.0.md](cycle-briefing-release-0.1.0.md)
 - [release-0.1.0-ts-summary.md](release-0.1.0-ts-summary.md)
@@ -43,7 +43,7 @@ Details:
 
 - ✅ **TD-005 closed:** npm install environment verified on the real machine (`npm ci --dry-run` PASS; `npm ci` PASS in a temporary clean copy).
 - ⚠️ **TD-030 still open:** no Push 2/3 visible over USB/CoreMIDI, so no real Push Sysex hardware smoke ran.
-- ✅ **TD-048 superseded by release closure:** package validation is now green for `v0.1.0`.
+- ✅ **TD-048 superseded by release closure:** package validation is now green for the prepared release surface.
 
 Details:
 - [qa/cycle-23-report.md](qa/cycle-23-report.md)
