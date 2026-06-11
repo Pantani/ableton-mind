@@ -64,6 +64,7 @@
     "complexity:all": "eslint --config eslint.config.js --rule \"{\\\"complexity\\\":[\\\"warn\\\",1]}\" \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{js,mjs,cjs,ts}\"",
     "complexity:py": "ruff check --select C901 --statistics live/AbletonMind",
     "test": "vitest run",
+    "validate:recipes": "vitest run tests/phase5-6-recipes.test.ts",
     "test:watch": "vitest",
     "install:remote-script": "node scripts/install-remote-script.mjs",
     "extract:devices": "node scripts/extract-device-schemas.mjs",
