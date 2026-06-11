@@ -31,29 +31,35 @@ export const jsonRpcErrorObjectSchema = z.object({
 export type JsonRpcErrorObject = z.infer<typeof jsonRpcErrorObjectSchema>;
 
 /** Success response: result present, error absent. */
-export const jsonRpcSuccessSchema = z.object({
-  jsonrpc: z.literal("2.0"),
-  id: jsonRpcIdSchema,
-  result: z.unknown(),
-});
+export const jsonRpcSuccessSchema = z
+  .object({
+    jsonrpc: z.literal("2.0"),
+    id: jsonRpcIdSchema,
+    result: z.unknown(),
+  })
+  .strict();
 
 /** Error response: error present, result absent. */
-export const jsonRpcErrorResponseSchema = z.object({
-  jsonrpc: z.literal("2.0"),
-  id: jsonRpcIdSchema.nullable(),
-  error: jsonRpcErrorObjectSchema,
-});
+export const jsonRpcErrorResponseSchema = z
+  .object({
+    jsonrpc: z.literal("2.0"),
+    id: jsonRpcIdSchema.nullable(),
+    error: jsonRpcErrorObjectSchema,
+  })
+  .strict();
 
 /** Response union, discriminated by the presence of `result` vs `error`. */
 export const jsonRpcResponseSchema = z.union([jsonRpcSuccessSchema, jsonRpcErrorResponseSchema]);
 export type JsonRpcResponse = z.infer<typeof jsonRpcResponseSchema>;
 
 /** Notification: no `id`, server to client. */
-export const jsonRpcNotificationSchema = z.object({
-  jsonrpc: z.literal("2.0"),
-  method: z.string().min(1),
-  params: z.unknown().optional(),
-});
+export const jsonRpcNotificationSchema = z
+  .object({
+    jsonrpc: z.literal("2.0"),
+    method: z.string().min(1),
+    params: z.unknown().optional(),
+  })
+  .strict();
 export type JsonRpcNotification = z.infer<typeof jsonRpcNotificationSchema>;
 
 /** Any incoming bridge message; can be a response or notification. */

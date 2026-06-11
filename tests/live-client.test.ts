@@ -20,6 +20,7 @@ import {
   JsonRpcTransportError,
   TcpJsonRpcClient,
 } from "../src/live-client/index.js";
+import { decodeIncoming } from "../src/live-client/jsonrpc.js";
 
 interface MockServer {
   server: Server;
@@ -300,5 +301,21 @@ describe("TcpJsonRpcClient", () => {
       autoReconnect: false,
     });
     await expect(client.call("system.ping")).rejects.toBeInstanceOf(JsonRpcTransportError);
+  });
+});
+
+describe("JSON-RPC envelope validation", () => {
+  it("rejects ambiguous responses containing both result and error", () => {
+    const line = JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      result: { ok: true },
+      error: {
+        code: ABLETON_MIND_ERRORS.INTERNAL_ERROR,
+        message: "should not coexist with result",
+      },
+    });
+
+    expect(() => decodeIncoming(line)).toThrow(JsonRpcTransportError);
   });
 });
