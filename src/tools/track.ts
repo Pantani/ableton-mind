@@ -67,7 +67,7 @@ const trackListBridgeResult = z.object({
 export const trackListTool = defineTool({
   name: "track_list",
   description:
-    "List all tracks in the Ableton Live session, separated into regular, return, and master.",
+    "Read-only list of regular, return, and master tracks in the current Live set. Use before addressing tracks by index or deciding where to create content; returns counts and optional return/master sections without mutating the session.",
   input: trackListInputSchema,
   output: trackListOutputSchema,
   handler: async (input, ctx) => {
@@ -113,7 +113,7 @@ const trackCreateBridgeResult = trackCreateOutputSchema.pick({ changed: true, tr
 export const trackCreateTool = defineTool({
   name: "track_create",
   description:
-    "Create a new MIDI or audio track. NOT idempotent — each call creates a new track. Verified via track type match.",
+    "Create a new MIDI or audio track at an optional index. Use when the user explicitly wants another track. NOT idempotent: every call creates a track; returns the created track and verifies that its type matches the request.",
   input: trackCreateInputSchema,
   output: trackCreateOutputSchema,
   handler: async (input, ctx) => {
@@ -171,7 +171,7 @@ const trackUpsertBridgeResult = z.object({
 export const trackUpsertTool = defineTool({
   name: "track_upsert",
   description:
-    "Create a track only if a track with the given name does not already exist. Idempotent. Verified via name+type match.",
+    "Find or create a track by name and type. Use when a workflow needs a named target track but should avoid duplicates. Idempotent: returns changed=false when the track already exists; verified by returned name/type.",
   input: trackUpsertInputSchema,
   output: trackUpsertOutputSchema,
   handler: async (input, ctx) => {
@@ -217,7 +217,8 @@ const trackSetNameBridgeResult = z.object({
 
 export const trackSetNameTool = defineTool({
   name: "track_set_name",
-  description: "Rename a regular track. Idempotent. Verified via read-after-write.",
+  description:
+    "Rename a regular track by index. Use after track_list or track_get_info has confirmed the target track. Idempotent: unchanged names return changed=false; verified via read-after-write and returns before/after names.",
   input: trackSetNameInputSchema,
   output: trackSetNameOutputSchema,
   handler: async (input, ctx) => {
@@ -264,7 +265,7 @@ const trackSetVolumeBridgeResult = z.object({
 export const trackSetVolumeTool = defineTool({
   name: "track_set_volume",
   description:
-    "Set track volume (normalized 0..1, ADR-0004). Returns dB approximation. Idempotent within 1e-4. Verified via read-after-write.",
+    "Set a regular track's mixer volume as a normalized 0..1 value. Use for mix balance changes after confirming the track index. Idempotent within 1e-4; returns linear and dB before/after values with verification diff on mismatch.",
   input: trackSetVolumeInputSchema,
   output: trackSetVolumeOutputSchema,
   handler: async (input, ctx) => {
@@ -309,7 +310,7 @@ const trackGetInfoBridgeResult = trackGetInfoOutputSchema.omit({ ok: true, verif
 export const trackGetInfoTool = defineTool({
   name: "track_get_info",
   description:
-    "Read-only detail of a single regular track (volume, panning, sends, clips, devices counts).",
+    "Read-only details for one regular track by index. Use before track-scoped edits to inspect name, type, volume, panning, sends, clip slots, clips, and device counts; returns verified state without mutating the session.",
   input: trackGetInfoInputSchema,
   output: trackGetInfoOutputSchema,
   handler: async (input, ctx) => {

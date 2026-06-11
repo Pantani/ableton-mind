@@ -39,7 +39,7 @@ const bridgeResultSchema = z.object({
 export const sceneFireTool = defineTool({
   name: "scene_fire",
   description:
-    "Fire a scene (triggers all clips on the scene's row). Returns the scene name. NOT strictly idempotent — re-trigger restarts clips. Marked UNVERIFIABLE (transport state oscilates async).",
+    "Fire a Session view scene by index, triggering all clips on that row. Use for arrangement-style playback from scenes. NOT idempotent: re-triggering restarts clips; returns scene name and marks async transport verification unverified.",
   input: inputSchema,
   output: outputSchema,
   handler: async (input, ctx) => {

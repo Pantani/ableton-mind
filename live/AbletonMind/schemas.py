@@ -205,7 +205,7 @@ class BrowserGetCategoriesInput:
 
 
 # ---------------------------------------------------------------------------
-# browser.load_item — loads item on selected/armed track
+# browser.load_item — best-effort idempotent load on selected/armed track
 # ---------------------------------------------------------------------------
 @dataclass
 class BrowserLoadItemInput:

@@ -45,7 +45,7 @@ const playBridgeResult = z.object({
 export const playTool = defineTool({
   name: "play",
   description:
-    "Start (or continue) Ableton Live playback. Idempotent: if already playing, returns changed=false. Marked UNVERIFIABLE — transport state oscilates async.",
+    "Start or continue Ableton Live playback. Use when the user wants transport running; optional from_beginning restarts at song start. Idempotent: already-playing sessions return changed=false; transport state is async, so the result is marked unverified with current song time.",
   input: playInputSchema,
   output: playOutputSchema,
   handler: async (input, ctx) => {
@@ -90,7 +90,8 @@ const stopBridgeResult = z.object({
 
 export const stopTool = defineTool({
   name: "stop",
-  description: "Stop Ableton Live playback. Idempotent: if already stopped, returns changed=false.",
+  description:
+    "Stop Ableton Live playback. Use before editing or when the user asks to halt audio. Idempotent: already-stopped sessions return changed=false; transport state is async, so the result returns current song time and is marked unverified.",
   input: stopInputSchema,
   output: stopOutputSchema,
   handler: async (_input, ctx) => {
@@ -138,7 +139,7 @@ const setTempoBridgeResult = z.object({
 export const setTempoTool = defineTool({
   name: "set_tempo",
   description:
-    "Set the global tempo (BPM) of the Ableton Live song. Idempotent within 0.001 BPM. Verified via read-after-write.",
+    "Set the global Ableton Live tempo in BPM (20-999). Use for song-wide tempo changes before creating clips or scenes. Idempotent within 0.001 BPM and verified via read-after-write; returns before/after tempo and diff if verification disagrees.",
   input: setTempoInputSchema,
   output: setTempoOutputSchema,
   handler: async (input, ctx) => {

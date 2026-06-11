@@ -381,6 +381,11 @@ Configures clip loop. Idempotent at 1e-4.
 
 Loads a BrowserItem on the selected/armed track. LiveAPI: `application.browser.load_item(item)` (Live chooses the destination track itself).
 
+The bridge performs a best-effort read-before-write check against the selected
+track, then the first armed track. If the final BrowserItem already appears in
+that track's device chain or clip slots by name/path, the handler returns
+`changed: false` and does not call `load_item`.
+
 **Request:**
 ```ts
 { path: string[] }   // e.g.: ["instruments", "Wavetable", "Pads", "Air Pad"]
@@ -388,7 +393,7 @@ Loads a BrowserItem on the selected/armed track. LiveAPI: `application.browser.l
 
 **Response:**
 ```ts
-{ loaded: true; name: string; path: string[] }
+{ loaded: true; changed: boolean; existing: boolean; name: string; path: string[] }
 ```
 
 **Errors:**

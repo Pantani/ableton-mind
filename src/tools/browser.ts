@@ -38,7 +38,7 @@ const bridgeResultSchema = z.object({
 export const browserGetCategoriesTool = defineTool({
   name: "browser_get_categories",
   description:
-    "List the root categories of the Ableton Live Browser. Returns available=false if browser is unavailable (headless).",
+    "Read-only list of root categories exposed by the Ableton Live Browser. Use before loading instruments, effects, presets, or samples by browser path; returns available=false with a reason when browser access is unavailable or headless.",
   input: inputSchema,
   output: outputSchema,
   handler: async (_input, ctx) => {
@@ -63,12 +63,16 @@ const loadItemOutputSchema = z.object({
   ok: z.literal(true),
   verified: z.literal(true),
   loaded: z.literal(true),
+  changed: z.boolean(),
+  existing: z.boolean(),
   name: z.string(),
   path: z.array(z.string()),
 });
 
 const loadItemBridgeResult = z.object({
   loaded: z.literal(true),
+  changed: z.boolean(),
+  existing: z.boolean(),
   name: z.string(),
   path: z.array(z.string()),
 });
@@ -76,7 +80,7 @@ const loadItemBridgeResult = z.object({
 export const browserLoadItemTool = defineTool({
   name: "browser_load_item",
   description:
-    "Load a browser item (instrument / effect / preset / sample) onto the selected or armed track. Path is an array of names starting with a root category key (instruments, audio_effects, …).",
+    "Load an Ableton Browser item such as an instrument, effect, preset, or sample onto the selected or armed track. Use after browser_get_categories/path discovery. Idempotent best-effort: if the selected/armed track already has the item, returns changed=false; otherwise returns changed=true with loaded item name/path.",
   input: loadItemInputSchema,
   output: loadItemOutputSchema,
   handler: async (input, ctx) => {
