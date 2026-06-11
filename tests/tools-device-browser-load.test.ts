@@ -24,7 +24,7 @@ describe("browserLoadItemTool", () => {
     const call = vi.fn(async (m: string, p: unknown) => {
       expect(m).toBe("browser.load_item");
       expect(p).toEqual({ path: ["instruments", "Wavetable", "Pads", "Air Pad"] });
-      return { loaded: true, name: "Air Pad", path: p.path };
+      return { loaded: true, changed: true, existing: false, name: "Air Pad", path: p.path };
     });
     const ctx = createToolContext(bridge(call as BridgeClient["call"]));
     const r = await browserLoadItemTool.handler(
@@ -33,6 +33,23 @@ describe("browserLoadItemTool", () => {
     );
     expect(r.name).toBe("Air Pad");
     expect(r.loaded).toBe(true);
+  });
+
+  it("returns changed and existing flags from the bridge", async () => {
+    const call = vi.fn(async () => ({
+      loaded: true,
+      changed: false,
+      existing: true,
+      name: "Air Pad",
+      path: ["instruments", "Wavetable", "Pads", "Air Pad"],
+    }));
+    const ctx = createToolContext(bridge(call as BridgeClient["call"]));
+    const r = await browserLoadItemTool.handler(
+      { path: ["instruments", "Wavetable", "Pads", "Air Pad"] },
+      ctx,
+    );
+    expect(r.changed).toBe(false);
+    expect(r.existing).toBe(true);
   });
 
   it("input schema rejects empty path", () => {

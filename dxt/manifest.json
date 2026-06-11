@@ -153,7 +153,7 @@
     },
     {
       "name": "browser_load_item",
-      "description": "Load an Ableton Browser item such as an instrument, effect, preset, or sample onto the selected or armed track. Use after browser_get_categories/path discovery. NOT idempotent: repeated calls can add or replace devices/content; returns loaded item name and path."
+      "description": "Load an Ableton Browser item such as an instrument, effect, preset, or sample onto the selected or armed track. Use after browser_get_categories/path discovery. Idempotent best-effort: if the selected/armed track already has the item, returns changed=false; otherwise returns changed=true with loaded item name/path."
     },
     {
       "name": "device_get_parameters",

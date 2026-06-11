@@ -63,12 +63,16 @@ const loadItemOutputSchema = z.object({
   ok: z.literal(true),
   verified: z.literal(true),
   loaded: z.literal(true),
+  changed: z.boolean(),
+  existing: z.boolean(),
   name: z.string(),
   path: z.array(z.string()),
 });
 
 const loadItemBridgeResult = z.object({
   loaded: z.literal(true),
+  changed: z.boolean(),
+  existing: z.boolean(),
   name: z.string(),
   path: z.array(z.string()),
 });
@@ -76,7 +80,7 @@ const loadItemBridgeResult = z.object({
 export const browserLoadItemTool = defineTool({
   name: "browser_load_item",
   description:
-    "Load an Ableton Browser item such as an instrument, effect, preset, or sample onto the selected or armed track. Use after browser_get_categories/path discovery. NOT idempotent: repeated calls can add or replace devices/content; returns loaded item name and path.",
+    "Load an Ableton Browser item such as an instrument, effect, preset, or sample onto the selected or armed track. Use after browser_get_categories/path discovery. Idempotent best-effort: if the selected/armed track already has the item, returns changed=false; otherwise returns changed=true with loaded item name/path.",
   input: loadItemInputSchema,
   output: loadItemOutputSchema,
   handler: async (input, ctx) => {

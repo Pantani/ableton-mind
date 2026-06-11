@@ -118,6 +118,56 @@ def _walk_path(browser, path):
     return node
 
 
+def _selected_or_armed_track(song):
+    """Best-effort approximation of the track Live will target for Browser load."""
+    if song is None:
+        return None
+    view = getattr(song, "view", None)
+    selected = getattr(view, "selected_track", None) if view is not None else None
+    if selected is not None:
+        return selected
+    for track in list(getattr(song, "tracks", []) or []):
+        if bool(getattr(track, "arm", False)):
+            return track
+    return None
+
+
+def _same_path(value, path) -> bool:
+    if isinstance(value, (list, tuple)):
+        return [str(x).lower() for x in value] == [str(x).lower() for x in path]
+    if isinstance(value, str):
+        normalized = value.lower()
+        joined = "/".join(str(x) for x in path).lower()
+        return normalized == joined or normalized.endswith(f"/{joined}")
+    return False
+
+
+def _loaded_object_matches(obj, item_name: str, path) -> bool:
+    needle = item_name.lower()
+    for attr in ("name", "class_display_name", "class_name", "preset_name"):
+        value = getattr(obj, attr, None)
+        if value is not None and str(value).lower() == needle:
+            return True
+    for attr in ("browser_path", "path"):
+        if _same_path(getattr(obj, attr, None), path):
+            return True
+    return False
+
+
+def _item_present_on_track(track, item, path) -> bool:
+    if track is None:
+        return False
+    item_name = str(getattr(item, "name", path[-1] if path else ""))
+    for device in list(getattr(track, "devices", []) or []):
+        if _loaded_object_matches(device, item_name, path):
+            return True
+    for slot in list(getattr(track, "clip_slots", []) or []):
+        clip = getattr(slot, "clip", None)
+        if clip is not None and _loaded_object_matches(clip, item_name, path):
+            return True
+    return False
+
+
 @register("browser.load_item")
 class BrowserLoadItemHandler(Handler):
     """Loads a BrowserItem onto the selected/armed track.
@@ -145,6 +195,15 @@ class BrowserLoadItemHandler(Handler):
                 "browser item is not loadable (folder?)",
                 {"path": params.path, "is_folder": bool(getattr(item, "is_folder", True))},
             )
+        target_track = _selected_or_armed_track(self.song)
+        if _item_present_on_track(target_track, item, params.path):
+            return {
+                "loaded": True,
+                "changed": False,
+                "existing": True,
+                "name": str(getattr(item, "name", "")),
+                "path": params.path,
+            }
         try:
             browser.load_item(item)
         except Exception as exc:
@@ -155,6 +214,8 @@ class BrowserLoadItemHandler(Handler):
             ) from exc
         return {
             "loaded": True,
+            "changed": True,
+            "existing": False,
             "name": str(getattr(item, "name", "")),
             "path": params.path,
         }

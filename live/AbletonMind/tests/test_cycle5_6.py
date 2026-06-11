@@ -95,8 +95,38 @@ class TestBrowserLoadItem(unittest.TestCase):
         h = BrowserLoadItemHandler(ctrl)
         r = h.execute(BrowserLoadItemInput(path=["instruments", "Wavetable", "Pads", "Air Pad"]))
         self.assertTrue(r["loaded"])
+        self.assertTrue(r["changed"])
+        self.assertFalse(r["existing"])
         self.assertEqual(r["name"], "Air Pad")
         self.assertEqual(loaded, ["Air Pad"])
+
+    def test_skips_load_when_item_already_present_on_armed_track(self):
+        song = FakeSong()
+        track = FakeTrack(name="Synth", is_midi=True)
+        track.arm = True
+        track.devices = [type("Device", (), {"name": "Air Pad"})()]
+        song.tracks.append(track)
+
+        app = FakeApplication()
+        wt = FakeBrowserItem("Wavetable", is_folder=True, is_loadable=False)
+        pads = FakeBrowserItem("Pads", is_folder=True, is_loadable=False)
+        air_pad = FakeBrowserItem("Air Pad", is_folder=False, is_loadable=True)
+        pads.children = [air_pad]
+        wt.children = [pads]
+        app.browser.instruments.children = [wt]
+
+        loaded = []
+        app.browser.load_item = lambda item: loaded.append(item.name)
+
+        ctrl = FakeCtrl(song, application=app)
+        h = BrowserLoadItemHandler(ctrl)
+        r = h.execute(BrowserLoadItemInput(path=["instruments", "Wavetable", "Pads", "Air Pad"]))
+
+        self.assertTrue(r["loaded"])
+        self.assertFalse(r["changed"])
+        self.assertTrue(r["existing"])
+        self.assertEqual(r["name"], "Air Pad")
+        self.assertEqual(loaded, [])
 
     def test_empty_path(self):
         ctrl = FakeCtrl(FakeSong(), application=FakeApplication())
