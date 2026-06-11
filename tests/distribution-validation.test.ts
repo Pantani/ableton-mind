@@ -103,6 +103,14 @@ describe(".github/workflows/*.yml — parseability + required keys", () => {
     expect(rel).toMatch(/gh release (create|upload)/);
   });
 
+  it("release.yml normalizes ghcr.io owner names to lowercase", () => {
+    const rel = read(".github/workflows/release.yml");
+    expect(rel).toContain("OWNER_LC=");
+    expect(rel).toContain("ghcr.io/${OWNER_LC}/ableton-mind:${GITHUB_REF_NAME}");
+    expect(rel).toContain("ghcr.io/${OWNER_LC}/ableton-mind:latest");
+    expect(rel).not.toContain("ghcr.io/${GITHUB_REPOSITORY_OWNER}/ableton-mind");
+  });
+
   it("release.yml runs all release-readiness gates before publish steps", () => {
     const rel = read(".github/workflows/release.yml");
     expect(rel).toContain("npm run test:bridge");

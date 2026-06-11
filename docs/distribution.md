@@ -117,8 +117,8 @@ docker run --rm -i --network host ableton-mind
 Release workflow tags for stable releases:
 
 ```text
-ghcr.io/Pantani/ableton-mind:v0.1.0
-ghcr.io/Pantani/ableton-mind:latest
+ghcr.io/pantani/ableton-mind:v0.1.0
+ghcr.io/pantani/ableton-mind:latest
 ```
 
 Prerelease tags keep only their exact version tag and do not move `latest`.
