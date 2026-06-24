@@ -3,6 +3,8 @@
 //   - dxt/manifest.json
 //   - server.json (top-level + packages[].version)
 //   - safeskill.manifest.json
+//   - .claude-plugin/marketplace.json
+//   - plugins/ableton-mind/.claude-plugin/plugin.json
 //
 // Invoked by the npm `version` lifecycle (see package.json), so `npm version
 // patch` rewrites the satellite manifests before tagging.
@@ -40,4 +42,25 @@ patch("server.json", (m) => {
 });
 patch("safeskill.manifest.json", (m) => {
   m.version = version;
+});
+patch(".claude-plugin/marketplace.json", (m) => {
+  m.version = version;
+  if (Array.isArray(m.plugins)) {
+    for (const plugin of m.plugins) {
+      if (plugin?.name === "ableton-mind") {
+        plugin.version = version;
+      }
+    }
+  }
+});
+patch("plugins/ableton-mind/.claude-plugin/plugin.json", (m) => {
+  m.version = version;
+  const server = m.mcpServers?.["ableton-mind"];
+  if (server && Array.isArray(server.args)) {
+    server.args = server.args.map((arg) =>
+      typeof arg === "string" && arg.startsWith("ableton-mind@")
+        ? `ableton-mind@${version}`
+        : arg,
+    );
+  }
 });

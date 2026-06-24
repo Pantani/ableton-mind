@@ -10,11 +10,13 @@ All notable changes go here. Format: [Keep a Changelog](https://keepachangelog.c
 - Harness extension for the local-copilot track plus `_workspace/tdmcp-compatible-features.md`, mapping portable `tdmcp` features to Ableton Mind priorities.
 - Phase 8 slice 1: read-only `device_inspect_patcher`, `device_inspect_plugin`, and `session_link_status` MCP tools backed by `device.inspect_patcher`, `device.inspect_plugin`, and `session.link_status` bridge methods.
 - Compact Phase 8 discovery metadata (`src/knowledge/discovery.json`) for plug-in formats, M4L capability labels, and Link status fields.
+- Claude Code plugin marketplace catalog plus an `ableton-mind` plugin wrapper that starts the published npm MCP server through `npx`.
 
 ### Changed
 
 - Clarified status docs for Phase 8: slice 1 is read-only Max for Live/plug-in introspection and Link/remote status discovery only; broader M4L/VST3/remote DAW/mobile work remains pending.
 - Clarified Glama distribution docs: a Glama listing is not a Glama release, and the hosted release requires the Glama admin Deploy -> Make Release flow.
+- Extended the version-sync release helper to keep Claude Code marketplace/plugin manifests pinned to the package version.
 
 ## [0.1.1] — 2026-06-10 — Release closure
 

@@ -1,6 +1,6 @@
 # Installation
 
-The fastest install paths are now **npm global** or the GitHub Release `.mcpb`. Use source install when developing the repo or testing local changes.
+The fastest install paths are now **npm global**, the GitHub Release `.mcpb`, or the Claude Code plugin marketplace. Use source install when developing the repo or testing local changes.
 
 ## 1. Source install
 
@@ -45,7 +45,16 @@ npm run build:dxt
 
 Drag the generated `.mcpb` into Claude Desktop.
 
-## 4. npm global
+## 4. Claude Code plugin marketplace
+
+```bash
+claude plugin marketplace add Pantani/ableton-mind
+claude plugin install ableton-mind@ableton-mind
+```
+
+The plugin starts `npx -y ableton-mind@0.1.1`. Install and activate the Remote Script in Live before using the MCP tools.
+
+## 5. npm global
 
 ```bash
 npm install -g ableton-mind
@@ -55,7 +64,7 @@ ableton-mind-doctor
 
 Current registry status: `ableton-mind@0.1.1` is published on npm.
 
-## 5. Docker
+## 6. Docker
 
 Build locally:
 
@@ -72,7 +81,7 @@ docker run --rm -it \
   ableton-mind
 ```
 
-## 6. Smithery
+## 7. Smithery
 
 `smithery.yaml` is present for the listing path. Hosted Smithery indexing can lag the repository metadata.
 

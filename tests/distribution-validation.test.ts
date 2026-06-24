@@ -157,6 +157,43 @@ describe("Dockerfile + smithery.yaml + .npmignore", () => {
   });
 });
 
+describe("Claude Code plugin marketplace", () => {
+  it("has a marketplace catalog pointing to the bundled plugin wrapper", () => {
+    const marketplace = JSON.parse(read(".claude-plugin/marketplace.json")) as {
+      name: string;
+      owner?: { name?: string };
+      plugins?: Array<{ name: string; source: string; version?: string }>;
+      version?: string;
+    };
+    const pkg = JSON.parse(read("package.json")) as { version: string };
+    const plugin = marketplace.plugins?.find((entry) => entry.name === "ableton-mind");
+
+    expect(marketplace.name).toBe("ableton-mind");
+    expect(marketplace.owner?.name).toBe("Pantani");
+    expect(marketplace.version).toBe(pkg.version);
+    expect(plugin?.source).toBe("./plugins/ableton-mind");
+    expect(plugin?.version).toBe(pkg.version);
+    expect(existsSync(join(REPO_ROOT, "plugins/ableton-mind/.claude-plugin/plugin.json"))).toBe(
+      true,
+    );
+  });
+
+  it("starts the published npm MCP server without install-time userConfig prompts", () => {
+    const plugin = JSON.parse(read("plugins/ableton-mind/.claude-plugin/plugin.json")) as {
+      version?: string;
+      userConfig?: unknown;
+      mcpServers?: Record<string, { command?: string; args?: string[] }>;
+    };
+    const pkg = JSON.parse(read("package.json")) as { version: string };
+    const server = plugin.mcpServers?.["ableton-mind"];
+
+    expect(plugin.version).toBe(pkg.version);
+    expect(plugin.userConfig).toBeUndefined();
+    expect(server?.command).toBe("npx");
+    expect(server?.args).toEqual(["-y", `ableton-mind@${pkg.version}`]);
+  });
+});
+
 describe("hosted catalog release docs", () => {
   it("documents Glama release as separate from GitHub release", () => {
     const readme = read("README.md");

@@ -1,0 +1,37 @@
+{
+  "name": "ableton-mind",
+  "owner": {
+    "name": "Pantani"
+  },
+  "description": "Claude Code plugin marketplace for Ableton Mind.",
+  "version": "0.1.1",
+  "plugins": [
+    {
+      "name": "ableton-mind",
+      "displayName": "Ableton Mind",
+      "source": "./plugins/ableton-mind",
+      "description": "Control Ableton Live from Claude Code through the Ableton Mind MCP server.",
+      "version": "0.1.1",
+      "author": {
+        "name": "Pantani"
+      },
+      "homepage": "https://pantani.github.io/ableton-mind/",
+      "repository": "https://github.com/Pantani/ableton-mind",
+      "license": "MIT",
+      "keywords": [
+        "mcp",
+        "ableton",
+        "ableton-live",
+        "music",
+        "claude-code"
+      ],
+      "category": "creative-tools",
+      "tags": [
+        "mcp",
+        "ableton",
+        "music-production",
+        "claude-code"
+      ]
+    }
+  ]
+}
