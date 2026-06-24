@@ -1,0 +1,28 @@
+{
+  "name": "ableton-mind",
+  "displayName": "Ableton Mind",
+  "version": "0.1.1",
+  "description": "Control Ableton Live from Claude Code through the Ableton Mind MCP server.",
+  "author": {
+    "name": "Pantani"
+  },
+  "homepage": "https://pantani.github.io/ableton-mind/",
+  "repository": "https://github.com/Pantani/ableton-mind",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ableton",
+    "ableton-live",
+    "music",
+    "claude-code"
+  ],
+  "mcpServers": {
+    "ableton-mind": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "ableton-mind@0.1.1"
+      ]
+    }
+  }
+}

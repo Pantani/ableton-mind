@@ -1,6 +1,6 @@
 # Instalação
 
-Os caminhos mais rapidos agora sao **npm global** ou o `.mcpb` da GitHub Release. Use instalacao via source para desenvolver o repo ou testar mudancas locais.
+Os caminhos mais rapidos agora sao **npm global**, o `.mcpb` da GitHub Release ou o marketplace de plugin do Claude Code. Use instalacao via source para desenvolver o repo ou testar mudancas locais.
 
 ## 1. Instalacao via source
 
@@ -45,7 +45,16 @@ npm run build:dxt
 
 Arraste o `.mcpb` gerado para o Claude Desktop.
 
-## 4. npm global
+## 4. Claude Code plugin marketplace
+
+```bash
+claude plugin marketplace add Pantani/ableton-mind
+claude plugin install ableton-mind@ableton-mind
+```
+
+O plugin inicia `npx -y ableton-mind@0.1.1`. Instale e ative o Remote Script no Live antes de usar as tools MCP.
+
+## 5. npm global
 
 ```bash
 npm install -g ableton-mind
@@ -55,7 +64,7 @@ ableton-mind-doctor
 
 Estado atual do registry: `ableton-mind@0.1.1` esta publicado no npm.
 
-## 5. Docker
+## 6. Docker
 
 Build local:
 
@@ -74,7 +83,7 @@ docker run --rm -it \
 
 Util para CI e sandboxes; para uso interativo no desktop, source ou `.mcpb` tendem a ser mais simples.
 
-## 6. Smithery
+## 7. Smithery
 
 `smithery.yaml` existe para o caminho de listagem. A indexacao hospedada da Smithery pode atrasar em relacao ao metadata do repo.
 

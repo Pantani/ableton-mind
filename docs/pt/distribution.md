@@ -75,6 +75,29 @@ O bundle instala e roda o MCP server Node. Ele tambem inclui os arquivos do Remo
 
 Live -> Preferences -> Link/Tempo/MIDI -> Control Surface -> AbletonMind.
 
+## Claude Code plugin marketplace
+
+O catalogo do marketplace do Claude Code fica em `.claude-plugin/marketplace.json`.
+Ele lista um plugin leve `ableton-mind` em `plugins/ableton-mind/`, que inicia
+o MCP server publicado no npm com `npx -y ableton-mind@0.1.1`.
+
+Valide o catalogo antes de compartilhar:
+
+```bash
+claude plugin validate .
+```
+
+Adicione o marketplace hospedado no GitHub e instale o plugin:
+
+```bash
+claude plugin marketplace add Pantani/ableton-mind
+claude plugin install ableton-mind@ableton-mind
+```
+
+O plugin inicia apenas o MCP server Node. O usuario ainda precisa instalar o
+Remote Script e ativar `AbletonMind` nas preferencias do Live antes das tools
+MCP conseguirem controlar o Ableton Live.
+
 ## MCP Registry
 
 `server.json` e o manifesto do MCP Registry. Ele usa o nome:

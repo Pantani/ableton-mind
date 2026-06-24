@@ -123,6 +123,7 @@ Checks Node version, Remote Script install, bridge port, knowledge base integrit
 ## Distribution
 
 - **npm:** `npm install -g ableton-mind`.
+- **Claude Code plugin marketplace:** `claude plugin marketplace add Pantani/ableton-mind`, then `claude plugin install ableton-mind@ableton-mind`.
 - **Claude Desktop one-click:** download `ableton-mind-0.1.1.mcpb` from the [v0.1.1 GitHub Release](https://github.com/Pantani/ableton-mind/releases/tag/v0.1.1).
 - **MCP Registry:** `io.github.Pantani/ableton-mind` is active in the official registry.
 - **Glama:** listed at [glama.ai/mcp/servers/Pantani/ableton-mind](https://glama.ai/mcp/servers/Pantani/ableton-mind); hosted release is separate from the GitHub Release and still requires the Glama admin deploy + Make Release flow.
