@@ -294,6 +294,28 @@ describe("TcpJsonRpcClient", () => {
     await client.close();
   });
 
+  it("keeps retrying after a failed reconnect attempt", async () => {
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: true,
+      reconnectInitialMs: 5,
+      reconnectMaxMs: 5,
+    });
+    client.on("error", () => {
+      /* expected while the bridge is down */
+    });
+    await client.connect();
+
+    // Simulate Live quitting: the bridge goes away and stays away.
+    await mock.close();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const attempts = (client as unknown as { reconnectAttempt: number }).reconnectAttempt;
+    expect(attempts).toBeGreaterThan(2);
+    await client.close();
+  });
+
   it("refuses call when not connected", async () => {
     const client = new TcpJsonRpcClient({
       host: "127.0.0.1",

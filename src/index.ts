@@ -57,7 +57,7 @@ async function main(): Promise<void> {
   if (bridgeRuntime.connected) {
     logger.info("Ableton bridge connected");
   } else {
-    logger.warn("Ableton bridge unavailable; starting MCP server in offline mode", {
+    logger.warn("Ableton bridge unavailable; will reconnect on the next tool call", {
       error: bridgeRuntime.detail,
     });
   }
@@ -78,10 +78,10 @@ async function main(): Promise<void> {
 
   // TD-015: repassa notifications do bridge → MCP client
   const notifier = createMcpNotifier(server);
-  const detachForwarder =
-    bridgeRuntime.client === null
-      ? () => {}
-      : attachNotificationForwarder(bridgeRuntime.client, notifier);
+  // Re-attaches automatically whenever the runtime reconnects to a new client.
+  const detachForwarder = bridgeRuntime.onClient((client) =>
+    attachNotificationForwarder(client, notifier),
+  );
 
   logger.info("MCP server listening on stdio", { tools: registered });
 

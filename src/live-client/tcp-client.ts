@@ -412,7 +412,10 @@ export class TcpJsonRpcClient extends EventEmitter {
       this.reconnectTimer = null;
       this.connect().catch((err) => {
         logger.warn("reconnect attempt failed", { message: (err as Error).message });
-        this.handleDisconnect();
+        // `connect()` leaves state "disconnected" with no socket, which makes
+        // handleDisconnect() return early — schedule the next attempt directly
+        // so the backoff loop keeps going until Live is back.
+        if (this.autoReconnect && this.state !== "closed") this.scheduleReconnect();
       });
     }, delay);
   }
