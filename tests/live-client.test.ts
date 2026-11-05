@@ -316,6 +316,77 @@ describe("TcpJsonRpcClient", () => {
     await client.close();
   });
 
+  it("stops reconnecting after close() lands mid-connect", async () => {
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: true,
+      reconnectInitialMs: 5,
+      reconnectMaxMs: 5,
+    });
+    client.on("error", () => {
+      /* expected while the bridge is down */
+    });
+    await client.connect();
+
+    // Call close() right after the first reconnect attempt starts connecting.
+    const internals = client as unknown as {
+      reconnectAttempt: number;
+      connect: () => Promise<void>;
+    };
+    const originalConnect = internals.connect.bind(client);
+    let closedMidConnect = false;
+    internals.connect = () => {
+      const attempt = originalConnect();
+      if (!closedMidConnect) {
+        closedMidConnect = true;
+        void client.close();
+      }
+      return attempt;
+    };
+
+    await mock.close();
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    const attemptsAfterClose = internals.reconnectAttempt;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(closedMidConnect).toBe(true);
+    expect(client.getState()).toBe("closed");
+    expect(internals.reconnectAttempt).toBe(attemptsAfterClose);
+  });
+
+  it("does not leak an open socket when close() lands mid-connect", async () => {
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: false,
+    });
+    const attempt = client.connect();
+    const settled = attempt.then(
+      () => "connected",
+      () => "rejected",
+    );
+    await client.close();
+
+    expect(await settled).toBe("rejected");
+    expect(client.getState()).toBe("closed");
+    expect((client as unknown as { socket: unknown }).socket).toBeNull();
+  });
+
+  it("fails fast when the host never completes the TCP handshake", async () => {
+    // 10.255.255.1 is unroutable on most networks: the SYN is silently dropped.
+    const client = new TcpJsonRpcClient({
+      host: "10.255.255.1",
+      port: 9,
+      autoReconnect: false,
+      defaultTimeoutMs: 50,
+    });
+    const started = Date.now();
+    await expect(client.connect()).rejects.toThrow(/failed to connect/);
+    expect(Date.now() - started).toBeLessThan(2_000);
+    expect(client.getState()).toBe("disconnected");
+  });
+
   it("refuses call when not connected", async () => {
     const client = new TcpJsonRpcClient({
       host: "127.0.0.1",

@@ -3,15 +3,17 @@
  *
  * Flow:
  *  1. Reads env vars (host, port).
- *  2. Creates a bridge runtime, using offline mode when Live is unavailable.
- *  3. Runs `system.hello` to validate protocol version when connected.
+ *  2. Creates a bridge runtime and tries to connect to Live once; if Live is
+ *     unavailable the runtime reconnects on demand at the next tool call.
+ *  3. Runs `system.hello` to validate protocol version on every (re)connection.
  *  4. Creates `McpServer`, registers tools.
  *  5. Connects the stdio transport.
  *  6. Keeps the process alive until SIGTERM/SIGINT.
  *
  * Fatal errors:
- *  - Failure to connect to the bridge → logs, makes MCP tooling respond in
- *    "bridge offline" mode so hosted catalogs can still inspect MCP metadata.
+ *  - Failure to connect to the bridge → logs and keeps serving MCP metadata;
+ *    tool calls fail fast with "bridge offline" until Live is reachable, then
+ *    reconnect automatically.
  *  - SIGTERM/SIGINT → graceful close.
  */
 

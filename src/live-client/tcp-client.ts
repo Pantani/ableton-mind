@@ -147,6 +147,7 @@ export class TcpJsonRpcClient extends EventEmitter {
   private readonly autoReconnect: boolean;
 
   private socket: net.Socket | null = null;
+  private connectingSocket: net.Socket | null = null;
   private buffer = "";
   private nextId = 1;
   private state: TcpClientState = "disconnected";
@@ -185,8 +186,26 @@ export class TcpJsonRpcClient extends EventEmitter {
     this.state = "connecting";
     return new Promise<void>((resolve, reject) => {
       const sock = net.createConnection({ host: this.host, port: this.port });
-      const onConnect = (): void => {
+      this.connectingSocket = sock;
+      let settled = false;
+      const settle = (): void => {
+        settled = true;
+        clearTimeout(connectTimer);
+        sock.removeListener("connect", onConnect);
         sock.removeListener("error", onError);
+        if (this.connectingSocket === sock) this.connectingSocket = null;
+      };
+      // close() landed while this attempt was in flight: never overwrite
+      // "closed" and never keep the socket.
+      const rejectIfClosed = (): boolean => {
+        if (this.state !== "closed") return false;
+        sock.destroy();
+        reject(new JsonRpcTransportError("client closed"));
+        return true;
+      };
+      const onConnect = (): void => {
+        settle();
+        if (rejectIfClosed()) return;
         this.socket = sock;
         this.state = "connected";
         this.reconnectAttempt = 0;
@@ -196,10 +215,22 @@ export class TcpJsonRpcClient extends EventEmitter {
         resolve();
       };
       const onError = (err: Error): void => {
-        sock.removeListener("connect", onConnect);
-        this.state = "disconnected";
+        settle();
+        sock.destroy();
+        if (this.state !== "closed") this.state = "disconnected";
         reject(new JsonRpcTransportError(`failed to connect: ${err.message}`, err));
       };
+      const connectTimer = setTimeout(() => {
+        if (settled) return;
+        settle();
+        sock.destroy();
+        if (this.state !== "closed") this.state = "disconnected";
+        reject(
+          new JsonRpcTransportError(
+            `failed to connect: timeout after ${this.defaultTimeoutMs}ms (${this.host}:${this.port})`,
+          ),
+        );
+      }, this.defaultTimeoutMs);
       sock.once("connect", onConnect);
       sock.once("error", onError);
     });
@@ -216,6 +247,9 @@ export class TcpJsonRpcClient extends EventEmitter {
       this.reconnectTimer = null;
     }
     this.rejectAllPending(new JsonRpcTransportError("client closed"));
+    // Abort an in-flight connect() so it rejects immediately instead of
+    // leaving a half-open socket behind.
+    this.connectingSocket?.destroy(new Error("client closed"));
     if (this.socket) {
       const sock = this.socket;
       this.socket = null;

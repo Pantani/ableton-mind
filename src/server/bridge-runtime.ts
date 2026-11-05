@@ -46,14 +46,6 @@ export interface CreateBridgeRuntimeOptions {
 
 export const DEFAULT_RECONNECT_COOLDOWN_MS = 1_000;
 
-export function createOfflineBridgeClient(detail: string): BridgeClient {
-  return {
-    call: async () => {
-      throw new JsonRpcTransportError(`Ableton bridge offline: ${detail}`);
-    },
-  };
-}
-
 type Attach = (client: TcpJsonRpcClient) => (() => void) | undefined;
 
 export async function createBridgeRuntime(
@@ -165,6 +157,8 @@ export async function createBridgeRuntime(
     connected,
     detail,
     onClient: (attach) => {
+      // Re-registering the same function must not leak the previous listener.
+      runCleanup(subscribers.get(attach));
       subscribers.set(attach, current ? safeAttach(attach, current) : undefined);
       return () => {
         runCleanup(subscribers.get(attach));

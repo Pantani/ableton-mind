@@ -3,6 +3,12 @@ import { describe, expect, it, vi } from "vitest";
 import { JsonRpcTransportError, type TcpJsonRpcClient } from "../src/live-client/index.js";
 import { createBridgeRuntime } from "../src/server/bridge-runtime.js";
 
+// Hermetic defaults: never fall back to the real clock or a real TCP socket to
+// 127.0.0.1:9876 (a dev machine may have Live running there).
+const noRealSocket = (): TcpJsonRpcClient => {
+  throw new Error("test must not open a real TCP client");
+};
+
 describe("createBridgeRuntime", () => {
   it("returns an offline bridge instead of throwing when the TCP bridge is unavailable", async () => {
     const client = {
@@ -14,7 +20,12 @@ describe("createBridgeRuntime", () => {
     } as unknown as TcpJsonRpcClient;
     const handshake = vi.fn();
 
-    const runtime = await createBridgeRuntime({ client, handshake });
+    const runtime = await createBridgeRuntime({
+      client,
+      handshake,
+      clientFactory: noRealSocket,
+      now: () => 0,
+    });
 
     expect(runtime.connected).toBe(false);
     expect(runtime.client).toBeNull();
@@ -35,7 +46,12 @@ describe("createBridgeRuntime", () => {
     } as unknown as TcpJsonRpcClient;
     const handshake = vi.fn(async () => ({ protocol_version: "0.1" }));
 
-    const runtime = await createBridgeRuntime({ client, handshake });
+    const runtime = await createBridgeRuntime({
+      client,
+      handshake,
+      clientFactory: noRealSocket,
+      now: () => 0,
+    });
 
     expect(runtime.connected).toBe(true);
     expect(runtime.client).toBe(client);
@@ -55,7 +71,12 @@ describe("createBridgeRuntime", () => {
       throw new Error("invalid system.hello response");
     });
 
-    const runtime = await createBridgeRuntime({ client, handshake });
+    const runtime = await createBridgeRuntime({
+      client,
+      handshake,
+      clientFactory: noRealSocket,
+      now: () => 0,
+    });
 
     expect(runtime.connected).toBe(false);
     expect(runtime.client).toBeNull();
@@ -192,5 +213,28 @@ describe("createBridgeRuntime reconnects on demand", () => {
     expect(factory).toHaveBeenCalledTimes(1);
     expect(up.connect).toHaveBeenCalledTimes(1);
     expect(up.call).toHaveBeenCalledTimes(3);
+  });
+
+  it("registering the same onClient function twice does not leak the first listener", async () => {
+    const client = fakeClient();
+    const runtime = await createBridgeRuntime({
+      client: asTcp(client),
+      clientFactory: noRealSocket,
+      handshake: vi.fn(async () => ({})),
+      now: () => 0,
+    });
+    const handler = vi.fn();
+    const attach = (c: TcpJsonRpcClient) => {
+      const tcp = c as unknown as Fake;
+      tcp.on("notification", handler);
+      return () => tcp.off("notification", handler);
+    };
+
+    runtime.onClient(attach);
+    const detach = runtime.onClient(attach);
+    expect(client.listenerCount()).toBe(1);
+
+    detach();
+    expect(client.listenerCount()).toBe(0);
   });
 });

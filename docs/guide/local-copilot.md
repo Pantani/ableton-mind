@@ -58,6 +58,6 @@ Flags `--model`, `--base-url`, `--port`, `--no-ollama`, and `--no-open` override
 
 ## Bridge behavior
 
-The local UI can start even when Ableton Live is closed. Static guidance still works, but tools that need Live return a bridge-offline error until the AbletonMind Remote Script is active.
+The local UI can start even when Ableton Live is closed. Static guidance still works, but tools that need Live return a bridge-offline error until the AbletonMind Remote Script is active. The bridge reconnects on demand, so once Live is up (or after a Live restart) the next tool call connects without restarting `chat`.
 
 The browser server binds to loopback only and rejects non-loopback Host/Origin requests.
