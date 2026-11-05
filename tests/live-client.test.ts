@@ -11,8 +11,8 @@
  * Doesn't touch Live. Uses no real network beyond loopback.
  */
 
-import { type AddressInfo, type Server, type Socket, createServer } from "node:net";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import net, { type AddressInfo, type Server, type Socket, createServer } from "node:net";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   ABLETON_MIND_ERRORS,
@@ -374,17 +374,24 @@ describe("TcpJsonRpcClient", () => {
   });
 
   it("fails fast when the host never completes the TCP handshake", async () => {
-    // 10.255.255.1 is unroutable on most networks: the SYN is silently dropped.
-    const client = new TcpJsonRpcClient({
-      host: "10.255.255.1",
-      port: 9,
-      autoReconnect: false,
-      defaultTimeoutMs: 50,
-    });
-    const started = Date.now();
-    await expect(client.connect()).rejects.toThrow(/failed to connect/);
-    expect(Date.now() - started).toBeLessThan(2_000);
-    expect(client.getState()).toBe("disconnected");
+    vi.useFakeTimers();
+    // A socket that never emits "connect" or "error" simulates a dropped SYN.
+    const spy = vi.spyOn(net, "createConnection").mockImplementation(() => new net.Socket());
+    try {
+      const client = new TcpJsonRpcClient({
+        host: "127.0.0.1",
+        port: 9,
+        autoReconnect: false,
+        defaultTimeoutMs: 50,
+      });
+      const attempt = expect(client.connect()).rejects.toThrow(/timeout after 50ms/);
+      await vi.advanceTimersByTimeAsync(50);
+      await attempt;
+      expect(client.getState()).toBe("disconnected");
+    } finally {
+      spy.mockRestore();
+      vi.useRealTimers();
+    }
   });
 
   it("refuses call when not connected", async () => {
