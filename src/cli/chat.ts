@@ -2,7 +2,6 @@ import { spawn, spawnSync } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 import { parseArgs } from "node:util";
 
-import { TcpJsonRpcClient, performHandshake } from "../live-client/index.js";
 import { runAgentTurn } from "../llm/agent.js";
 import { LlmClient } from "../llm/client.js";
 import {
@@ -13,8 +12,8 @@ import {
 } from "../llm/config.js";
 import { startChatServer } from "../llm/server.js";
 import { resolveTools } from "../llm/tools.js";
-import type { BridgeClient } from "../server/context.js";
-import { type ToolContext, createBridgeClient, createToolContext } from "../server/context.js";
+import { createBridgeRuntime } from "../server/bridge-runtime.js";
+import { type ToolContext, createToolContext } from "../server/context.js";
 import { logger } from "../utils/logger.js";
 
 function openBrowser(url: string): void {
@@ -163,28 +162,16 @@ async function createChatContext(): Promise<{
   close: () => Promise<void>;
   detail: string;
 }> {
-  const tcp = new TcpJsonRpcClient({ autoReconnect: false });
-  try {
-    await tcp.connect();
-    await performHandshake(tcp);
-    return {
-      ctx: createToolContext(createBridgeClient(tcp)),
-      close: () => tcp.close(),
-      detail: "Ableton bridge connected",
-    };
-  } catch (err) {
-    const message = (err as Error).message;
-    const offlineBridge: BridgeClient = {
-      call: async () => {
-        throw new Error(`Ableton bridge offline: ${message}`);
-      },
-    };
-    return {
-      ctx: createToolContext(offlineBridge),
-      close: async () => {},
-      detail: `Ableton bridge offline: ${message}`,
-    };
-  }
+  // Same on-demand reconnect as the MCP server: Live may start (or restart)
+  // after the chat process, and tool calls recover without restarting it.
+  const runtime = await createBridgeRuntime();
+  return {
+    ctx: createToolContext(runtime.bridge),
+    close: () => runtime.close(),
+    detail: runtime.connected
+      ? "Ableton bridge connected"
+      : `Ableton bridge offline: ${runtime.detail} (will reconnect on the next tool call)`,
+  };
 }
 
 export async function runHeadlessPrompt(

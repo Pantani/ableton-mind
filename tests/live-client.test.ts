@@ -11,8 +11,8 @@
  * Doesn't touch Live. Uses no real network beyond loopback.
  */
 
-import { type AddressInfo, type Server, type Socket, createServer } from "node:net";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import net, { type AddressInfo, type Server, type Socket, createServer } from "node:net";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   ABLETON_MIND_ERRORS,
@@ -292,6 +292,106 @@ describe("TcpJsonRpcClient", () => {
     expect(disconnects).toBe(1);
     expect((client as unknown as { reconnectAttempt: number }).reconnectAttempt).toBe(1);
     await client.close();
+  });
+
+  it("keeps retrying after a failed reconnect attempt", async () => {
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: true,
+      reconnectInitialMs: 5,
+      reconnectMaxMs: 5,
+    });
+    client.on("error", () => {
+      /* expected while the bridge is down */
+    });
+    await client.connect();
+
+    // Simulate Live quitting: the bridge goes away and stays away.
+    await mock.close();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const attempts = (client as unknown as { reconnectAttempt: number }).reconnectAttempt;
+    expect(attempts).toBeGreaterThan(2);
+    await client.close();
+  });
+
+  it("stops reconnecting after close() lands mid-connect", async () => {
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: true,
+      reconnectInitialMs: 5,
+      reconnectMaxMs: 5,
+    });
+    client.on("error", () => {
+      /* expected while the bridge is down */
+    });
+    await client.connect();
+
+    // Call close() right after the first reconnect attempt starts connecting.
+    const internals = client as unknown as {
+      reconnectAttempt: number;
+      connect: () => Promise<void>;
+    };
+    const originalConnect = internals.connect.bind(client);
+    let closedMidConnect = false;
+    internals.connect = () => {
+      const attempt = originalConnect();
+      if (!closedMidConnect) {
+        closedMidConnect = true;
+        void client.close();
+      }
+      return attempt;
+    };
+
+    await mock.close();
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    const attemptsAfterClose = internals.reconnectAttempt;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(closedMidConnect).toBe(true);
+    expect(client.getState()).toBe("closed");
+    expect(internals.reconnectAttempt).toBe(attemptsAfterClose);
+  });
+
+  it("does not leak an open socket when close() lands mid-connect", async () => {
+    const client = new TcpJsonRpcClient({
+      host: "127.0.0.1",
+      port: mock.port,
+      autoReconnect: false,
+    });
+    const attempt = client.connect();
+    const settled = attempt.then(
+      () => "connected",
+      () => "rejected",
+    );
+    await client.close();
+
+    expect(await settled).toBe("rejected");
+    expect(client.getState()).toBe("closed");
+    expect((client as unknown as { socket: unknown }).socket).toBeNull();
+  });
+
+  it("fails fast when the host never completes the TCP handshake", async () => {
+    vi.useFakeTimers();
+    // A socket that never emits "connect" or "error" simulates a dropped SYN.
+    const spy = vi.spyOn(net, "createConnection").mockImplementation(() => new net.Socket());
+    try {
+      const client = new TcpJsonRpcClient({
+        host: "127.0.0.1",
+        port: 9,
+        autoReconnect: false,
+        defaultTimeoutMs: 50,
+      });
+      const attempt = expect(client.connect()).rejects.toThrow(/timeout after 50ms/);
+      await vi.advanceTimersByTimeAsync(50);
+      await attempt;
+      expect(client.getState()).toBe("disconnected");
+    } finally {
+      spy.mockRestore();
+      vi.useRealTimers();
+    }
   });
 
   it("refuses call when not connected", async () => {
